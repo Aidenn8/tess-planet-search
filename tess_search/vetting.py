@@ -420,7 +420,10 @@ def classify(v):
         fp.append(f"odd/even depths differ ({g('oddeven_sigma'):.1f} sigma): likely eclipsing binary at 2x period")
     if g("phase05_sigma", 0) > 4 and g("phase05_depth_ppm", 0) > 0.1 * v["depth_ppm"]:
         fp.append(f"dip at phase 0.5 ({g('phase05_sigma'):.1f} sigma): secondary eclipse, or true period is P/2")
-    if g("sec_snr", 0) > 5 and g("sec_depth_ppm", 0) > 0.2 * v["depth_ppm"]:
+    # small planets emit far too little light for a visible secondary eclipse, so any
+    # clear second dip at a fixed phase points to an eclipsing binary (known planets in
+    # the validation set never exceed 3.3 sigma here)
+    if g("sec_snr", 0) > 5 and g("sec_depth_ppm", 0) > 0.1 * v["depth_ppm"]:
         fp.append(f"significant second dip at phase {g('sec_phase'):.2f} ({g('sec_snr'):.1f} sigma)")
     if g("rp_rearth", 0) > 20:
         fp.append(f"companion radius {g('rp_rearth'):.0f} R_earth is too large for a planet")
