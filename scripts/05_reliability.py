@@ -58,8 +58,12 @@ def make_trials(mode, n, seed=42):
     pool = targets[targets.tic.isin(have) & ~targets.tic.isin(hosts)].reset_index(drop=True)
     rng = np.random.default_rng(seed)
     trials = []
-    for i in range(n):
-        row = pool.iloc[int(rng.integers(len(pool)))].to_dict()
+    # inverted light curves are deterministic, so each star is used at most once;
+    # injections may reuse a star (each trial plants a different planet). The injection
+    # draws are kept in their original order so trial ids stay stable across resumes.
+    order = rng.permutation(len(pool)) if mode == "invert" else None
+    for i in range(n if mode == "inject" else min(n, len(pool))):
+        row = pool.iloc[int(order[i]) if mode == "invert" else int(rng.integers(len(pool)))].to_dict()
         trial = {"id": i, "row": row}
         if mode == "inject":
             trial.update(period=float(np.exp(rng.uniform(np.log(0.5), np.log(40)))),
