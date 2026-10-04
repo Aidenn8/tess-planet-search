@@ -152,8 +152,11 @@ def plot_detection(lc, det, vet, verdict, reasons, matches, periods=None, sde_cu
         f"star: Prot ~ {meta.get('prot', np.nan):.2f} d (LS power {meta.get('prot_power', 0):.2f}), "
         f"noise {meta.get('noise_ppm', np.nan):.0f} ppm per 2 min, detrend window {meta.get('window', np.nan):.2f} d, "
         f"flares removed {100 * meta.get('flare_fraction', 0):.2f}%",
-        "catalogue matches: " + (", ".join(f"{h['name']} ({h['relation']} period)" for h in matches) if matches else "none"),
+        "catalogue matches: " + (
+            ", ".join(f"{h['name']} ({h['relation']})" for h in matches[:4])
+            + (f" + {len(matches) - 4} more" if len(matches) > 4 else "") if matches else "none"),
     ]
+    lines = [l if len(l) <= 190 else l[:187] + "..." for l in lines]
     ax.text(0, 1, "\n".join(lines), va="top", family="monospace", fontsize=8.5)
 
     fig.suptitle(f"TIC {lc.tic}  {title_extra}", fontsize=14, x=0.01, ha="left")
