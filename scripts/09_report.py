@@ -104,9 +104,20 @@ def main():
         w(f"* stars with a false **candidate**: {sum(c > 0 for c in inv_cands)} of {len(inv)} "
           f"({pct(np.mean([c > 0 for c in inv_cands]))}); total false candidates {sum(inv_cands)}")
         w(f"* stars with a false **weak candidate**: {sum(c > 0 for c in inv_weak)} of {len(inv)}")
-        rate = sum(inv_cands) / len(inv)
-        w(f"* scaled to the {summary['stars']:,} searched stars this predicts ~{rate * summary['stars']:.0f} false "
-          f"candidates in the real search.\n")
+        n_inv = len(inv)
+        upper = 3.0 / n_inv if sum(c > 0 for c in inv_cands) == 0 else None  # "rule of three" 95% upper limit
+        if upper is not None:
+            w(f"* no flipped star produced a false candidate: at 95% confidence fewer than {pct(upper)} of stars do, "
+              f"i.e. fewer than ~{upper * summary['stars']:.0f} false candidates expected among the "
+              f"{summary['stars']:,} searched stars (best estimate: close to none).")
+        else:
+            rate = sum(inv_cands) / n_inv
+            w(f"* scaled to the {summary['stars']:,} searched stars this predicts ~{rate * summary['stars']:.0f} "
+              "false candidates in the real search.")
+        weak_rate = sum(c > 0 for c in inv_weak) / n_inv
+        w(f"* false weak candidates appear on {pct(weak_rate)} of flipped stars, i.e. ~{weak_rate * summary['stars']:.0f} "
+          f"expected among the searched stars. **Weak candidates are therefore mostly false alarms** and are listed "
+          "for completeness only.\n")
 
     w("## Results\n")
     w("| verdict | signals |")
