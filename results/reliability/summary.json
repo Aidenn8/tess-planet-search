@@ -1,0 +1,11 @@
+{
+ "inject_n": 300,
+ "inject_detected": 0.7966666666666666,
+ "inject_passed": 0.74,
+ "inject_candidate": 0.7166666666666667,
+ "inject_vetting_keep": 0.9288702928870293,
+ "invert_n": 200,
+ "invert_false_candidates": 0,
+ "invert_false_weak": 6,
+ "invert_stars_with_false_candidate": 0
+}
