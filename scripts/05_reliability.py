@@ -95,10 +95,13 @@ def run_trial(mode, trial):
             raw[key] = f.astype(np.float32)
     result = pipeline.process_star(row, known=_known, raw=raw, plots=False)
     rec["noise_ppm"] = result["diagnostics"]["noise_ppm"]
+    # keep the full vetting metrics so verdicts can be recomputed with the final rules
+    # (scripts/06_summarize.py re-classifies real detections the same way)
     rec["signals"] = [
         {"period": s["detection"]["period"], "t0": s["detection"]["t0"], "snr": s["detection"]["snr"],
          "snr_red": (s.get("vet") or {}).get("snr_red"), "depth": s["detection"]["depth"],
-         "verdict": s.get("verdict", "not vetted"), "reasons": s.get("reasons", [])}
+         "verdict": s.get("verdict", "not vetted"), "reasons": s.get("reasons", []),
+         "vet": {k: v for k, v in (s.get("vet") or {}).items() if k != "per_transit"} or None}
         for s in result["signals"]
     ]
     if mode == "inject":
