@@ -1,0 +1,9 @@
+.venv/
+data/
+__pycache__/
+*.pyc
+.DS_Store
+tools/thermal/state
+tools/thermal/thermal.log
+tools/thermal/pgids/
+tools/thermal/thermalstate
