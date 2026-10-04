@@ -41,6 +41,9 @@ ORBIT_DAYS = 13.7  # TESS orbital period; scattered light and pointing repeat on
 # 1/4 of the orbit removed real injected planets in the injection test without
 # matching a known TESS systematic.
 SPACECRAFT_MULTIPLES = (1 / 2, 1, 2)
+# TESS's orbit is not exactly 13.7 d: it drifts by a few percent over the mission, so
+# periods within 3% of these multiples are treated as possible spacecraft systematics.
+SPACECRAFT_TOL = 0.03
 N_NULL = 24
 
 
@@ -303,7 +306,7 @@ def harmonic_flags(period, prot, prot_power, var_amp, depth):
     flags = []
     for base, name in ((ORBIT_DAYS, "orbit"), (2 * ORBIT_DAYS, "sector")):
         for k in SPACECRAFT_MULTIPLES:
-            if abs(period / (base * k) - 1) < 0.01:
+            if abs(period / (base * k) - 1) < SPACECRAFT_TOL:
                 flags.append(f"period near {name} x {k:g}")
     if np.isfinite(prot) and prot_power > 0.2 and var_amp > max(0.002, 3 * depth):
         for k in (0.5, 1, 2):
@@ -488,9 +491,11 @@ def classify(v):
     # the depth (at high SNR, sector-to-sector dilution differences are significant but small)
     if g("chi2_depth", 1) > 3 and g("depth_scatter_frac", 0) > 0.3:
         flag.append(f"transit depths vary by ~{100 * g('depth_scatter_frac'):.0f}% (chi2/dof {g('chi2_depth'):.1f})")
-    for f in v.get("harmonic_flags", []):
-        if ("orbit" in f or "sector" in f) and not any(f.endswith(f"x {k:g}") for k in SPACECRAFT_MULTIPLES):
-            continue  # stored by an earlier version that also flagged 1/3 and 1/4 of the orbit
+    # spacecraft periods are recomputed from the period (stored flags may come from an
+    # earlier, narrower rule); rotation flags need the star's rotation, so they are stored
+    craft = harmonic_flags(v["period"], np.nan, 0.0, 0.0, 0.0)
+    rot = [f for f in v.get("harmonic_flags", []) if "rotation" in f]
+    for f in craft + rot:
         (fp if ("orbit" in f or "sector" in f or snr < 15) else flag).append(f)
 
     if fp:
