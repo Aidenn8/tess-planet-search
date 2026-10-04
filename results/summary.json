@@ -1,0 +1,41 @@
+{
+  "stars": 76,
+  "signals_total": 120,
+  "signals_vetted": 95,
+  "verdicts": {
+    "false positive": 86,
+    "candidate": 6,
+    "below threshold": 1,
+    "weak candidate": 2
+  },
+  "novelty_of_passed": {
+    "known (planet/TOI/CTOI)": 6,
+    "new": 2
+  },
+  "new_candidates": [],
+  "new_weak_candidates": 2,
+  "tce_only_candidates": [],
+  "fp_reason_counts": {
+    "transit depths vary by ~N%": 40,
+    "not distinct from other dips in folded light curve": 39,
+    "dip lasts Nx longer than a planet could take to cross this star": 33,
+    "another dip in the folded light curve is nearly as strong": 32,
+    "dip fills N% of the orbit": 31,
+    "red-noise test could not be run": 27,
+    "one transit carries N% of the signal": 26,
+    "odd/even depths differ": 23,
+    "period near rotation x N": 16,
+    "modest red-noise SNR N": 12,
+    "transit Nx longer than expected for this star": 7,
+    "dip at phase N": 7,
+    "V-shaped dip": 4,
+    "signal weak in one half of the data": 4,
+    "period near sector x N": 4,
+    "period near orbit x N": 3,
+    "possible off-target source ~N\" away": 1,
+    "centroid moves during transit": 1,
+    "fewer than N observed transits": 1,
+    "significant second dip at phase N": 1
+  },
+  "median_runtime_s": 43.9
+}

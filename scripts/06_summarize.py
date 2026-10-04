@@ -17,11 +17,26 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import numpy as np
 import pandas as pd
 
-from tess_search import RESULTS
+import re
+
+from tess_search import RESULTS, vetting
 
 out_dir = Path(sys.argv[1]) if len(sys.argv) > 1 else RESULTS
 records = [json.loads(p.read_text()) for p in sorted((out_dir / "search").glob("*.json"))]
 print(f"{len(records)} stars processed")
+
+# Re-apply the current classification rules to the stored metrics, so every star is
+# judged by the same (final) rules even if the search ran while rules were refined.
+for r in records:
+    for s in r["signals"]:
+        if s.get("vet"):
+            s["verdict"], s["reasons"] = vetting.classify(s["vet"])
+
+
+def reason_category(text):
+    """'one transit carries 63% of the signal' -> 'one transit carries N% of the signal'."""
+    t = text.split(" (")[0].split(":")[0]
+    return re.sub(r"[-+]?\d+(\.\d+)?", "N", t)
 
 rows = []
 for r in records:
@@ -62,7 +77,8 @@ summary = {
     "tce_only_candidates": passed[passed.novelty.str.startswith("SPOC TCE")][
         ["tic", "period", "depth_ppm", "rp_rearth", "snr_red", "verdict"]].to_dict("records"),
     "fp_reason_counts": dict(Counter(
-        r.split(" (")[0].split(":")[0] for rs in vetted[vetted.verdict == "false positive"].reasons for r in rs.split("; ") if r)),
+        reason_category(r) for rs in vetted[vetted.verdict == "false positive"].reasons for r in rs.split("; ") if r
+    ).most_common()),
     "median_runtime_s": float(np.median([r["runtime_s"] for r in records])) if records else None,
 }
 (out_dir / "summary.json").write_text(json.dumps(summary, indent=2, default=float))

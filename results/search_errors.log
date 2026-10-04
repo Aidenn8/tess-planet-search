@@ -14,3 +14,17 @@ Traceback (most recent call last):
                         ~^^^
 IndexError: index 0 is out of bounds for axis 0 with size 0
 
+TIC 382160308
+Traceback (most recent call last):
+  File "scripts/04_search.py", line 41, in run_one
+    rec = pipeline.process_star(row, known=_known, out_dir=out_dir)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "tess_search/pipeline.py", line 37, in process_star
+    v = vetting.vet(lc, d, r_star, m_star)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "tess_search/vetting.py", line 322, in vet
+  File "tess_search/vetting.py", line 56, in timescale_noise
+    keep = np.ones(len(time), bool)
+                    ^^^^
+IndexError: index 0 is out of bounds for axis 0 with size 0
+

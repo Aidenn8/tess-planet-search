@@ -459,10 +459,18 @@ def classify(v):
         fp.append(f"one transit carries {100 * g('max_single_frac'):.0f}% of the signal")
     if g("edge_frac", 0) > 0.5:
         fp.append(f"{100 * g('edge_frac'):.0f}% of transits sit next to data gaps")
-    if g("red_snr", 99) < 5:
-        fp.append(f"not distinct from other dips in folded light curve (red-noise SNR {g('red_snr'):.1f})")
-    elif g("red_snr", 99) < 7:
-        flag.append(f"modest red-noise SNR {g('red_snr'):.1f}")
+    # a transit around an M dwarf lasts at most ~10% of the orbit (ultra-short periods)
+    dur_days = (v.get("trap") or {}).get("t14") or v.get("duration_h", 0) / 24.0
+    duty = dur_days / v["period"]
+    if duty > 0.15:
+        fp.append(f"dip fills {100 * duty:.0f}% of the orbit (not a transit)")
+    red = g("red_snr")
+    if not np.isfinite(red):
+        flag.append("red-noise test could not be run")  # a missing test never counts as a pass
+    elif red < 5:
+        fp.append(f"not distinct from other dips in folded light curve (red-noise SNR {red:.1f})")
+    elif red < 7:
+        flag.append(f"modest red-noise SNR {red:.1f}")
     if g("uniqueness", 99) < 2:
         flag.append(f"another dip in the folded light curve is nearly as strong (uniqueness {g('uniqueness'):.1f})")
     # background RISING in transit means the dip could be over-subtracted sky; a
