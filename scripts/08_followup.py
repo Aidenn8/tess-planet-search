@@ -40,6 +40,54 @@ def half_search(lc, period, r_star, m_star):
     return out
 
 
+def dossier(i):
+    """One page per candidate with everything a CTOI submission (ExoFOP) asks for."""
+    f, v, g = i["fit"], i["vet"], i["gaia"]
+    ok = "error" not in f
+    lines = [f"# TIC {i['tic']}, signal {i['signal']}", "",
+             f"**Verdict:** {i['verdict']} ({i['novelty']})" + (f"; flags: {'; '.join(i['reasons'])}" if i["reasons"] else ""), "",
+             "## Star", f"TESS mag {i['tmag']:.2f}, Teff {i['teff']:.0f} K, R* {i['r_star']:.3f} R_sun, "
+             f"M* {i['m_star']:.3f} M_sun (TIC v8.2). RA {i['ra']:.5f}, Dec {i['dec']:.5f}. "
+             f"{len(i['sectors'])} sectors: {', '.join(map(str, i['sectors']))}.", ""]
+    if ok:
+        lines += ["## Transit fit (batman, quadratic limb darkening fixed; stellar-density prior on a/R*)",
+                  "| parameter | value |", "|---|---|",
+                  f"| period (d) | {f['period']:.6f} ± {f['period_err']:.6f} |",
+                  f"| mid-transit (BJD_TDB) | {f['t0_bjd']:.5f} ± {f['t0_err']:.5f} |",
+                  f"| depth (ppm) | {f['depth_ppm']:.0f} |",
+                  f"| Rp/R* | {f['rp_rs']:.4f} ± {f['rp_rs_err']:.4f} |",
+                  f"| planet radius (R_earth) | {f['rp_rearth']:.2f} ± {f['rp_rearth_err']:.2f} (stellar radius error not included) |",
+                  f"| impact parameter | {f['b']:.2f} ± {f['b_err']:.2f} |",
+                  f"| a/R* | {f['a_rs']:.1f} ± {f['a_rs_err']:.1f} |",
+                  f"| duration T14 (h) | {f['t14_h']:.2f} |",
+                  f"| reduced chi-square | {f['chi2_reduced']:.3f} ({f['n_points']} points) |", ""]
+    lines += ["## Vetting", f"SNR {v.get('snr_red', float('nan')):.1f} (red-noise aware), folded red-noise SNR "
+              f"{v.get('red_snr', float('nan')):.1f}, {v.get('n_transits_measured')} transits observed. "
+              f"Odd/even difference {v.get('oddeven_sigma', float('nan')):.1f} sigma; phase-0.5 depth "
+              f"{v.get('phase05_depth_ppm', float('nan')):.0f} ppm ({v.get('phase05_sigma', float('nan')):.1f} sigma); "
+              f"centroid shift z {v.get('centroid_shift_z', float('nan')):.1f}; largest single-transit share "
+              f"{v.get('max_single_frac', float('nan')):.2f}; depth in SAP flux {v.get('sap_depth_ppm', float('nan')):.0f} ppm.",
+              "Independent searches of each half of the data: " + ", ".join(
+                  f"{h['half']} SNR {h['snr']:.1f}" + (" (same period)" if h.get("period_match") else " (different period)")
+                  for h in i["halves"] if h.get("snr") is not None) + ".", ""]
+    if "error" not in g:
+        lines += ["## Neighbouring stars (Gaia DR3, within 63\")",
+                  f"{g['n_gaia']} Gaia sources; target RUWE {g.get('target_ruwe')}; neighbours bright enough to mimic the "
+                  f"dip if they were eclipsing binaries: {g['possible_sources']}.", ""]
+        risky = [n for n in g["neighbours"] if n["could_be_source"]]
+        if risky:
+            lines += ["| Gaia DR3 | separation (\") | Δmag | eclipse depth it would need |", "|---|---|---|---|"]
+            lines += [f"| {n['source_id']} | {n['sep_arcsec']:.1f} | {n['delta_mag']:.2f} | {100 * n['needed_depth']:.1f}% |"
+                      for n in sorted(risky, key=lambda n: n["needed_depth"])]
+            lines += [""]
+    lines += ["## Catalogue matches", ", ".join(f"{h['name']} ({h['relation']} period, {h['disposition']})"
+                                                for h in i["matches"]) or "none", "",
+              "## What would confirm or refute it",
+              "Ground-based photometry of the predicted transits (to see which star dims), high-resolution imaging, "
+              "and radial velocities or statistical validation (e.g. TRICERATOPS).", ""]
+    return "\n".join(lines)
+
+
 def main():
     sig = pd.read_csv(RESULTS / "candidates.csv")
     sig = sig[sig.novelty.isin(["new", "SPOC TCE only (never promoted)"])]
@@ -64,13 +112,19 @@ def main():
             except Exception as exc:  # archive hiccups should not stop the rest
                 gaia = {"error": repr(exc)}
             halves = half_search(lc, d["period"], r_star, m_star)
+            try:
+                fit = followup.fit_transit(lc, d["period"], d["t0"], d["duration"], d["depth"], r_star, m_star)
+            except Exception as exc:
+                fit = {"error": repr(exc)}
             png = OUT / f"TIC{tic}_{int(s.signal)}.png"
             report.plot_detection(lc, d, v, verdict, reasons, hits, path=png,
                                   title_extra=f"signal {int(s.signal)}: {verdict} ({s.novelty})")
             info = {"tic": int(tic), "signal": int(s.signal), "verdict": verdict, "reasons": reasons,
-                    "novelty": s.novelty, "matches": hits, "vet": v, "gaia": gaia, "halves": halves,
-                    "tmag": float(row.Tmag), "teff": float(row.Teff), "r_star": r_star}
+                    "novelty": s.novelty, "matches": hits, "vet": v, "gaia": gaia, "halves": halves, "fit": fit,
+                    "tmag": float(row.Tmag), "teff": float(row.Teff), "r_star": r_star, "m_star": m_star,
+                    "ra": float(t.ra), "dec": float(t.dec), "sectors": rec["sectors"]}
             (OUT / f"TIC{tic}_{int(s.signal)}.json").write_text(json.dumps(info, default=float, indent=1))
+            (OUT / f"TIC{tic}_{int(s.signal)}.md").write_text(dossier(info))
             both = all(h.get("snr") and h["snr"] > 3 and h.get("period_match") for h in halves)
             rows.append({"tic": int(tic), "signal": int(s.signal), "period": d["period"], "depth_ppm": v["depth_ppm"],
                          "rp_rearth": v["rp_rearth"], "snr_red": v.get("snr_red"), "verdict": verdict,

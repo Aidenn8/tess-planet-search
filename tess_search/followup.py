@@ -14,6 +14,77 @@ import numpy as np
 SEARCH_RADIUS_ARCSEC = 63.0  # 3 TESS pixels
 
 
+def fit_transit(lc, period, t0, duration, depth, r_star, m_star, window=3.0):
+    """Least-squares fit of a physical transit model (batman, quadratic limb darkening
+    fixed at M-dwarf values) to all data within `window` durations of each transit.
+
+    Free parameters: period, mid-transit time, Rp/R*, impact parameter b, a/R*.
+    Returns best values, 1-sigma errors (from the covariance, scaled by the reduced
+    chi-square), and derived planet radius, transit duration and stellar density.
+    """
+    import batman
+    from scipy.optimize import least_squares
+
+    from .inject import LIMB_DARKENING, a_over_r
+
+    ph = ((lc.time - t0 + 0.5 * period) % period) - 0.5 * period
+    m = np.abs(ph) < window * duration
+    t, f = lc.time[m], lc.flux[m]
+    sigma = np.std(f[np.abs(ph[m]) > duration]) or 1e-3
+    # reference epoch near the middle of the data keeps period and t0 uncorrelated
+    n_mid = np.round((np.median(t) - t0) / period)
+    tref = t0 + n_mid * period
+    params = batman.TransitParams()
+    params.ecc, params.w, params.u, params.limb_dark = 0.0, 90.0, list(LIMB_DARKENING), "quadratic"
+    params.t0, params.per, params.rp, params.a, params.inc = tref, period, np.sqrt(max(depth, 1e-6)), 20.0, 89.0
+    model = batman.TransitModel(params, t, supersample_factor=3, exp_time=2 / 1440)
+
+    def curve(x):
+        P, tc, k, b, aR = x
+        params.per, params.t0, params.rp, params.a = P, tc, k, aR
+        params.inc = float(np.degrees(np.arccos(np.clip(b / aR, 0, 1))))
+        return model.light_curve(params)
+
+    aR0 = a_over_r(period, r_star, m_star)
+    # b and a/R* are degenerate at low SNR; the star's catalogue density pins a/R*
+    # (rho ~ (a/R*)^3 / P^2), so a 20% density uncertainty is a ~7% prior on a/R*
+    aR_sigma = aR0 * 0.2 / 3
+    x0 = [period, tref, np.sqrt(max(depth, 1e-6)), 0.4, aR0]
+    lo = [period * (1 - 1e-3), tref - duration, 0.002, 0.0, 1.5]
+    hi = [period * (1 + 1e-3), tref + duration, 0.5, 1.2, 200.0]
+
+    def resid(x):
+        return np.append((curve(x) - f) / sigma, (x[4] - aR0) / aR_sigma)
+
+    best, best_cost = None, np.inf
+    for b0 in (0.2, 0.5, 0.8):  # a few starts in impact parameter
+        x0[3] = b0
+        r = least_squares(resid, x0, bounds=(lo, hi), x_scale="jac")
+        if r.cost < best_cost:
+            best, best_cost = r, r.cost
+    J = best.jac
+    dof = max(len(f) - len(best.x), 1)
+    chi2r = 2 * best.cost / dof
+    try:
+        cov = np.linalg.inv(J.T @ J) * chi2r
+        err = np.sqrt(np.clip(np.diag(cov), 0, None))
+    except np.linalg.LinAlgError:
+        err = np.full(len(best.x), np.nan)
+    P, tc, k, b, aR = best.x
+    rho_sun = 1.41  # g/cm^3
+    G = 6.674e-8
+    rho_star = 3 * np.pi * aR ** 3 / (G * (P * 86400) ** 2)
+    t14 = P / np.pi * np.arcsin(np.sqrt(max((1 + k) ** 2 - b ** 2, 0)) / aR / np.sin(np.arccos(min(b / aR, 1))))
+    return {
+        "period": float(P), "period_err": float(err[0]), "t0_btjd": float(tc), "t0_err": float(err[1]),
+        "t0_bjd": float(tc + 2457000), "rp_rs": float(k), "rp_rs_err": float(err[2]), "b": float(b), "b_err": float(err[3]),
+        "a_rs": float(aR), "a_rs_err": float(err[4]), "depth_ppm": float(k ** 2 * 1e6),
+        "rp_rearth": float(k * r_star * 109.1), "rp_rearth_err": float(err[2] * r_star * 109.1),
+        "t14_h": float(t14 * 24), "rho_star_fit_cgs": float(rho_star),
+        "rho_star_tic_cgs": float(m_star / r_star ** 3 * rho_sun), "chi2_reduced": float(chi2r), "n_points": int(len(f)),
+    }
+
+
 def gaia_neighbours(ra, dec, radius_arcsec=SEARCH_RADIUS_ARCSEC):
     """Gaia DR3 sources around (ra, dec), via VizieR (I/355/gaiadr3).
 
