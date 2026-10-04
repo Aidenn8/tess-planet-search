@@ -1,0 +1,16 @@
+TIC 406857100
+Traceback (most recent call last):
+  File "scripts/04_search.py", line 41, in run_one
+    rec = pipeline.process_star(row, known=_known, out_dir=out_dir)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "tess_search/pipeline.py", line 37, in process_star
+    v = vetting.vet(lc, d, r_star, m_star)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "tess_search/vetting.py", line 322, in vet
+    sigma_core = timescale_noise(lc.time, lc.flux, 0.8 * dur_fit, exclude=in_any)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "tess_search/vetting.py", line 56, in timescale_noise
+    idx = np.floor((t - t[0]) / window).astype(np.int64)
+                        ~^^^
+IndexError: index 0 is out of bounds for axis 0 with size 0
+

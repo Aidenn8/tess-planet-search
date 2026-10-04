@@ -52,6 +52,8 @@ def epochs(time, period, t0):
 def timescale_noise(time, flux, window, exclude=None, cadence=2 / 1440):
     """Robust scatter of `window`-day averages of the flux (includes red noise)."""
     keep = np.ones(len(time), bool) if exclude is None else ~exclude
+    if keep.sum() < 1000:  # "transit" covers nearly the whole orbit (junk); use everything
+        keep = np.ones(len(time), bool)
     t, f = time[keep], flux[keep]
     idx = np.floor((t - t[0]) / window).astype(np.int64)
     uniq, inv, counts = np.unique(idx, return_inverse=True, return_counts=True)
