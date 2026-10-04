@@ -439,7 +439,12 @@ def classify(v):
                   f"(shift z={g('centroid_shift_z'):.1f} vs fake epochs)")
     elif g("centroid_shift_z", 0) > 4 and off > 15:
         flag.append(f"possible off-target source ~{off:.0f}\" away (shift z={g('centroid_shift_z'):.1f})")
-    if g("duration_ratio", 1) > 2.0:
+    # a planet crossing this star cannot take much longer than the central-transit
+    # duration (an eccentric orbit stretches it by at most ~1.5-2x for plausible e)
+    if g("duration_ratio", 1) > 3.0:
+        fp.append(f"dip lasts {g('duration_ratio'):.1f}x longer than a planet could take to cross "
+                  f"this star (blend or variability)")
+    elif g("duration_ratio", 1) > 2.0:
         flag.append(f"transit {g('duration_ratio'):.1f}x longer than expected for this star")
 
     # --- artefacts
@@ -457,7 +462,7 @@ def classify(v):
         flag.append(f"another dip in the folded light curve is nearly as strong (uniqueness {g('uniqueness'):.1f})")
     # background RISING in transit means the dip could be over-subtracted sky; a
     # background dip is expected for bright stars whose wings leak into sky pixels
-    if g("bkg_signed_z", 0) > 5 and g("bkg_p", 1) <= 1 / (N_NULL + 1) + 1e-9:
+    if g("bkg_signed_z", 0) > 6 and g("bkg_p", 1) <= 1 / (N_NULL + 1) + 1e-9:
         flag.append(f"background rises during transit (z={g('bkg_signed_z'):.1f})")
     hs = v.get("halves_snr")
     if hs and min(hs) < 1.5 and snr > 9:

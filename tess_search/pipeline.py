@@ -7,7 +7,7 @@ import numpy as np
 from . import RESULTS, crossmatch, lightcurve, report, search, vetting
 
 PLOT_SNR = 6.0    # make a diagnostic sheet for every detection at least this strong
-VET_SNR = 5.0     # vet everything above this (weaker ones are recorded but not vetted)
+VET_SNR = 6.0     # vet everything at least this strong (weaker ones are recorded but not vetted)
 
 _KNOWN = None
 
