@@ -26,6 +26,14 @@ from .lightcurve import bin_lightcurve, robust_std
 DURATIONS_H = np.array([0.5, 0.75, 1.0, 1.4, 2.0, 2.8, 4.0])
 SEARCH_BIN_MIN = 10.0
 PERIOD_MIN, PERIOD_MAX = 0.4, 40.0
+# Durations tried in each period range (hours). Expected central-transit durations
+# for M dwarfs (0.15-0.65 R_sun) run from ~0.5-1.3 h at 1 d to ~1.9-4.5 h at 40 d;
+# searching only plausible durations per range saves ~30% of the time.
+DURATION_BANDS = [
+    (0.0, 2.0, [0.5, 0.75, 1.0, 1.4]),
+    (2.0, 10.0, [0.75, 1.0, 1.4, 2.0, 2.8]),
+    (10.0, 1e9, [1.0, 1.4, 2.0, 2.8, 4.0]),
+]
 
 
 def period_grid(time_span, r_star, m_star, pmin=PERIOD_MIN, pmax=PERIOD_MAX, oversample=3):
@@ -79,7 +87,6 @@ class Detection:
 
 def stacked_periodogram(lc, periods, mask=None, bin_min=SEARCH_BIN_MIN):
     """Sum of per-season BLS log-likelihoods on a common period grid."""
-    durations = DURATIONS_H / 24.0
     total = np.zeros(len(periods))
     keep = np.ones(len(lc.time), bool) if mask is None else ~mask
     for s in np.unique(lc.season):
@@ -95,10 +102,15 @@ def stacked_periodogram(lc, periods, mask=None, bin_min=SEARCH_BIN_MIN):
         if p_ok.sum() == 0:
             continue
         bls = BoxLeastSquares(t, f, dy=sigma)
-        res = bls.power(periods[p_ok], durations, objective="likelihood", oversample=5)
-        ll = np.nan_to_num(np.asarray(res.log_likelihood), nan=0.0)
-        ll[np.asarray(res.depth) <= 0] = 0.0  # only dips count
-        total[p_ok] += ll
+        for pmin, pmax, band_h in DURATION_BANDS:
+            sel = p_ok & (periods >= pmin) & (periods < pmax)
+            if not sel.any():
+                continue
+            res = bls.power(periods[sel], np.asarray(band_h) / 24.0, objective="likelihood",
+                            oversample=3)
+            ll = np.nan_to_num(np.asarray(res.log_likelihood), nan=0.0)
+            ll[np.asarray(res.depth) <= 0] = 0.0  # only dips count
+            total[sel] += ll
     return total
 
 
@@ -136,7 +148,7 @@ def count_transits(time, period, t0, duration, min_coverage=0.5):
     return int(np.sum(counts >= min_coverage * expected))
 
 
-def search_star(lc, r_star, m_star, max_signals=3, sde_min=7.0, snr_min=6.0):
+def search_star(lc, r_star, m_star, max_signals=3, sde_min=7.0, snr_min=7.0):
     """Iterative search: find the strongest signal, mask it, repeat.
 
     Thresholds here are deliberately loose (more false alarms, fewer missed
