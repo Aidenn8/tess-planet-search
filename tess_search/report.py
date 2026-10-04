@@ -68,6 +68,10 @@ def plot_detection(lc, det, vet, verdict, reasons, matches, periods=None, sde_cu
         ax.set_xscale("log")
         ax.set_xlabel("period (days)")
         ax.set_ylabel("SDE")
+    else:
+        ax.axis("off")
+        ax.text(0.5, 0.5, f"periodogram: see results/plots/TIC{lc.tic}_*.png\n(search-stage sheet)",
+                ha="center", va="center", fontsize=9, color="0.4", transform=ax.transAxes)
     ax.set_title("B. Stacked periodogram", fontsize=10, loc="left")
 
     # C: folded transit

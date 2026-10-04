@@ -5,8 +5,19 @@ telescope has watched the longest** (20 to 44 sectors of 2-minute data each, thr
 sector 107), with automated vetting, comparison against every public catalogue,
 and measured completeness and false-alarm rates.
 
-> **Status:** pipeline complete and validated; results are in `results/` and summarised
-> in [`REPORT.md`](REPORT.md). Plain-language overview: [`EXPLAINER.md`](EXPLAINER.md).
+> **Results** (full report: [`REPORT.md`](REPORT.md); plain-language version:
+> [`EXPLAINER.md`](EXPLAINER.md)):
+>
+> * **5 Earth-sized candidates in no planet catalogue** passed every test and a deeper
+>   follow-up (physical transit fit, Gaia neighbours, independent half-data searches),
+>   including a **third signal in the TOI-218 system** (2.147 d, 1.0 R_earth) and an
+>   **11-hour orbit** around TIC 229689348 (1.2 R_earth). Each has a dossier in
+>   `results/followup/` with what a community-TOI submission needs.
+> * Recovers **25 of 26 confirmed transiting planets** in range, including all four of TOI-700.
+> * **Completeness:** 74% of 300 injected planets found and kept (89% for 2-4 R_earth
+>   inside 15 days). **Reliability:** no false candidates in 200 flipped light curves.
+>
+> Candidates are signals worth follow-up observations, not confirmed planets.
 
 ## Why these stars
 
@@ -28,6 +39,11 @@ and measured completeness and false-alarm rates.
 | 5 | `scripts/05_reliability.py` | injection-recovery (completeness) and inverted light curves (false alarms) |
 | 6 | `scripts/06_summarize.py` | candidate tables and counts |
 | 7 | `scripts/07_figures.py` | figures for the report |
+| 8 | `scripts/08_followup.py` | for each surviving candidate: fresh vetting, physical transit fit, Gaia DR3 neighbours, half-data searches, dossier |
+| 9 | `scripts/09_report.py` | writes `REPORT.md` from the result files |
+
+Step 3 (`scripts/03_catalogs.py`) downloads the TOI, CTOI, confirmed-planet, SPOC TCE and
+eclipsing-binary catalogues used for crossmatching.
 
 ### Cleaning and detrending (`tess_search/lightcurve.py`)
 Good-quality cadences only (QUALITY = 0), each sector normalised, flares removed (two or
@@ -57,11 +73,12 @@ catalogue, and **every SPOC Threshold Crossing Event** (132 single- and multi-se
 runs), including signals NASA's pipeline found but never promoted.
 
 ## Validation on known planets
-On the stars hosting known planets, the pipeline independently recovers every transiting
-planet in its period range, including all four TOI-700 planets (TOI-700 d and e are
-Earth-sized, in or near the habitable zone) and L 98-59 b, c, d, and its vetting passes
-them while rejecting signals the TESS team had already classified as false positives.
-See `REPORT.md` for the full table.
+Across the searched stars the pipeline independently recovers 25 of the 26 confirmed
+transiting planets with periods of 0.4-40 days (the miss is TOI-1752 c at 32.7 d), including
+all four TOI-700 planets (TOI-700 d and e are Earth-sized, in or near the habitable zone)
+and L 98-59 b, c and d. Its vetting passes them while rejecting signals the TESS team had
+already classified as false positives. The transit fit reproduces published radii (TOI-700 d:
+1.02 ± 0.04 vs 1.07 R_earth; L 98-59 c: 1.34 vs 1.39 R_earth). See `REPORT.md`.
 
 ## Running it
 
@@ -78,10 +95,17 @@ mkdir -p data/scripts && seq 1 107 | xargs -P 6 -I{} curl -s -f -o data/scripts/
 caffeinate -i -s tools/thermal/daemon.sh &
 .venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/02_download.py
 .venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/04_search.py --workers 3
+.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/05_reliability.py inject --n 300
+.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/05_reliability.py invert --n 200
+.venv/bin/python scripts/06_summarize.py && .venv/bin/python scripts/check_known.py
+.venv/bin/python scripts/08_followup.py && .venv/bin/python scripts/07_figures.py && .venv/bin/python scripts/09_report.py
 .venv/bin/python -m pytest tests/
 ```
 
-The full run downloads ~13 GB (compressed) and takes several hours on a MacBook Air.
+The full run downloads ~12 GB (compressed light curves) and took about 6 hours of
+computing on a fanless MacBook Air M2 (search ~4.5 h with 3-4 workers, reliability tests
+alongside). The bulk diagnostic sheets (`results/plots/`, ~200 MB) are not in git;
+`04_search.py` regenerates them.
 
 ### Thermal guard
 This was developed on a fanless MacBook Air. `tools/thermal/daemon.sh` reads macOS's
@@ -97,4 +121,10 @@ their own process group so the guard can control them.
 * Only 2-minute-cadence stars with >= 20 sectors were searched, and only periods
   0.4-40 days with at least 3 transits.
 * Vetting thresholds were tuned on a small validation set (11 stars with known planets)
-  and checked with injection-recovery; they are not the TESS team's thresholds.
+  and checked with injection-recovery and inverted light curves; they are not the TESS
+  team's thresholds. Some rules were refined while the search ran; every stored result
+  is re-classified with the final rules (`06_summarize.py`), so all stars are judged alike.
+* Centroid tests use the flux-weighted centroids in the light-curve files, not
+  difference images, so they catch only fairly distant contaminating stars; a faint star
+  within one TESS pixel (21") cannot be excluded from TESS data alone.
+* Planet radii use TIC v8.2 stellar radii; their uncertainty is not propagated.

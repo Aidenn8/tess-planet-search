@@ -1,41 +1,84 @@
 {
-  "stars": 76,
-  "signals_total": 120,
-  "signals_vetted": 95,
+  "stars": 1279,
+  "signals_total": 1560,
+  "signals_vetted": 1139,
   "verdicts": {
-    "false positive": 86,
-    "candidate": 6,
-    "below threshold": 1,
-    "weak candidate": 2
+    "candidate": 50,
+    "false positive": 1044,
+    "weak candidate": 23,
+    "below threshold": 22
   },
   "novelty_of_passed": {
-    "known (planet/TOI/CTOI)": 6,
-    "new": 2
+    "known (planet/TOI/CTOI)": 47,
+    "new": 23,
+    "SPOC TCE only (never promoted)": 3
   },
-  "new_candidates": [],
-  "new_weak_candidates": 2,
-  "tce_only_candidates": [],
+  "new_candidates": [
+    {
+      "tic": 32090583,
+      "period": 2.146799282289458,
+      "depth_ppm": 1245.3434560394244,
+      "rp_rearth": 1.095492974263776,
+      "snr_red": 11.05390303656935
+    },
+    {
+      "tic": 294053492,
+      "period": 1.0852620610728547,
+      "depth_ppm": 1107.3677804155798,
+      "rp_rearth": 1.5518179575512507,
+      "snr_red": 7.9245608225234525
+    }
+  ],
+  "new_weak_candidates": 21,
+  "tce_only_candidates": [
+    {
+      "tic": 229689348,
+      "period": 0.46537685976547344,
+      "depth_ppm": 657.6848879910847,
+      "rp_rearth": 1.2039880754829682,
+      "snr_red": 10.40385723653951,
+      "verdict": "candidate"
+    },
+    {
+      "tic": 198412174,
+      "period": 1.3901609419472463,
+      "depth_ppm": 402.34674096538356,
+      "rp_rearth": 1.2536987814749794,
+      "snr_red": 9.740762107165423,
+      "verdict": "candidate"
+    },
+    {
+      "tic": 149390648,
+      "period": 2.836888323641019,
+      "depth_ppm": 828.9322605565926,
+      "rp_rearth": 1.083695183347988,
+      "snr_red": 9.060189445223806,
+      "verdict": "candidate"
+    }
+  ],
   "fp_reason_counts": {
-    "transit depths vary by ~N%": 40,
-    "not distinct from other dips in folded light curve": 39,
-    "dip lasts Nx longer than a planet could take to cross this star": 33,
-    "another dip in the folded light curve is nearly as strong": 32,
-    "dip fills N% of the orbit": 31,
-    "red-noise test could not be run": 27,
-    "one transit carries N% of the signal": 26,
-    "odd/even depths differ": 23,
-    "period near rotation x N": 16,
-    "modest red-noise SNR N": 12,
-    "transit Nx longer than expected for this star": 7,
-    "dip at phase N": 7,
-    "V-shaped dip": 4,
-    "signal weak in one half of the data": 4,
-    "period near sector x N": 4,
-    "period near orbit x N": 3,
-    "possible off-target source ~N\" away": 1,
+    "dip lasts Nx longer than a planet could take to cross this star": 531,
+    "dip fills N% of the orbit": 480,
+    "not distinct from other dips in folded light curve": 442,
+    "period near rotation x N": 437,
+    "red-noise test could not be run": 403,
+    "another dip in the folded light curve is nearly as strong": 346,
+    "transit depths vary by ~N%": 315,
+    "one transit carries N% of the signal": 205,
+    "odd/even depths differ": 160,
+    "dip at phase N": 146,
+    "modest red-noise SNR N": 129,
+    "transit Nx longer than expected for this star": 84,
+    "fewer than N observed transits": 64,
+    "period near orbit x N": 62,
+    "period near sector x N": 62,
+    "V-shaped dip": 43,
+    "significant second dip at phase N": 39,
+    "signal weak in one half of the data": 34,
+    "possible off-target source ~N\" away": 9,
+    "background rises during transit": 6,
     "centroid moves during transit": 1,
-    "fewer than N observed transits": 1,
-    "significant second dip at phase N": 1
+    "companion radius N R_earth is too large for a planet": 1
   },
-  "median_runtime_s": 43.9
+  "median_runtime_s": 33.1
 }

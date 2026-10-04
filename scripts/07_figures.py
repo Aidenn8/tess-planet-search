@@ -35,11 +35,11 @@ def sample_figure():
     ax[0].scatter(targets.Teff, targets.rad, s=4, c=targets.Tmag, cmap="viridis_r")
     ax[0].set_xlabel("effective temperature (K)")
     ax[0].set_ylabel("radius (R_sun)")
-    ax[0].set_title("1,279 M dwarfs (colour = TESS mag)", loc="left")
+    ax[0].set_title(f"{len(targets):,} M dwarfs (darker = fainter)", loc="left")
     ax[1].hist(targets.n_sectors, bins=np.arange(19.5, 46.5, 1), color="0.3")
     ax[1].set_xlabel("sectors of 2-minute data")
     ax[1].set_ylabel("stars")
-    ax[1].set_title("~27 months of data per star", loc="left")
+    ax[1].set_title(f"median {int(targets.n_sectors.median())} sectors (~2 years) per star", loc="left")
     if len(noise):
         m = targets.merge(noise, on="tic")
         ax[2].scatter(m.Tmag, m.noise, s=4, color="0.3")
@@ -63,7 +63,17 @@ def completeness_figure():
     inj = load_jsonl("inject")
     if inj.empty:
         return None
-    inj["passed"] = inj.recovered & inj.verdict.isin(["candidate", "weak candidate"])
+    from tess_search import vetting
+
+    def passed(r):
+        # final vetting rules re-applied to the stored metrics of the matching detection
+        if not r["recovered"]:
+            return False
+        s = next((s for s in r["signals"] if abs(s["period"] / r["period"] - 1) < 0.005), None)
+        v = vetting.classify(s["vet"])[0] if s and s.get("vet") else (s or {}).get("verdict")
+        return v in ("candidate", "weak candidate")
+
+    inj["passed"] = [passed(r) for r in inj.to_dict("records")]
     pb = np.exp(np.linspace(np.log(0.5), np.log(40), 7))
     rb = np.linspace(0.6, 4.0, 7)
     fig, ax = plt.subplots(1, 2, figsize=(12, 4.5))
@@ -130,13 +140,15 @@ def verdict_figure():
         return
     sig = pd.read_csv(p)
     sig = sig[sig.verdict != "not vetted"]
+    totals = sig.verdict.value_counts()
+    sig = sig[sig.depth_ppm > 1]  # zero/negative fitted depths cannot be drawn on a log axis
     fig, ax = plt.subplots(figsize=(8, 4.5))
     colors = {"false positive": "0.7", "below threshold": "0.85", "weak candidate": "tab:orange",
               "candidate": "tab:blue"}
     for v, c in colors.items():
         m = sig.verdict == v
         ax.scatter(sig.period[m], sig.depth_ppm[m].clip(1, 1e5), s=8 if v in ("false positive", "below threshold") else 22,
-                   color=c, label=f"{v} ({m.sum()})", zorder=3 if "candidate" in v else 1)
+                   color=c, label=f"{v} ({totals.get(v, 0)})", zorder=3 if "candidate" in v else 1)
     known = sig.novelty.fillna("").str.startswith("known")
     ax.scatter(sig.period[known], sig.depth_ppm[known].clip(1, 1e5), s=60, facecolor="none", edgecolor="k",
                label=f"matches known planet/TOI ({known.sum()})")
