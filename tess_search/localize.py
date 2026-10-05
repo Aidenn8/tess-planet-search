@@ -487,3 +487,22 @@ def aperture_fraction(cals, stars, k):
         x, y = pix(cal, *positions_at(stars.iloc[[k]], cal.year))
         fr.append(float(cal.prf.image(x[0], y[0])[cal.stamp.aperture].sum()))
     return float(np.median(fr))
+
+
+# scatter of (pixel light loss at the target) / (light-curve depth x target flux) for the confirmed
+# planets in the test set (11 planets: 0.85-1.29, standard deviation 0.12)
+DEPTH_RATIO_SYS = 0.12
+
+
+def pixel_depth_ratio(rec):
+    """Light lost at the target's position in the difference images, divided by what the light-curve
+    depth predicts for the target. A signal on the target gives ~1; a light-curve artefact that is not
+    in the pixels gives ~0. Returns (ratio, total error, sigma from 1, detection sigma in the pixels)."""
+    t = next(r for r in rec["stars"] if r["is_target"])
+    exp = rec["expected_amplitude"]
+    if not exp or exp <= 0:
+        return np.nan, np.nan, np.nan, np.nan
+    ratio = t["amplitude"] / exp
+    stat = rec["amplitude_err"] / exp
+    err = float(np.hypot(stat, DEPTH_RATIO_SYS * max(ratio, 0)))
+    return float(ratio), err, float((ratio - 1) / err), float(ratio / stat)

@@ -122,7 +122,7 @@
   "target_non_single_star": 0,
   "neighbours": [
    {
-    "source_id": 2262754492847655936,
+    "source_id": 2262754492847655808,
     "sep_arcsec": 32.29451097414711,
     "delta_mag": 0.7660429999999998,
     "needed_depth": 0.0017281647305725247,
@@ -157,7 +157,7 @@
     "could_be_source": false
    },
    {
-    "source_id": 2262754905163881472,
+    "source_id": 2262754905163881344,
     "sep_arcsec": 60.19351047881102,
     "delta_mag": 7.990112,
     "needed_depth": 0.8978137218826064,

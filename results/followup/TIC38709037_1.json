@@ -133,63 +133,63 @@
   "target_non_single_star": 0,
   "neighbours": [
    {
-    "source_id": 4674848395896244224,
+    "source_id": 4674848395896243712,
     "sep_arcsec": 54.214482473270515,
     "delta_mag": 3.3491730000000004,
     "needed_depth": 0.015238107411567831,
     "could_be_source": true
    },
    {
-    "source_id": 4674848425958589440,
+    "source_id": 4674848425958589568,
     "sep_arcsec": 51.538990340908704,
     "delta_mag": 6.452572000000002,
     "needed_depth": 0.2546850839569922,
     "could_be_source": true
    },
    {
-    "source_id": 4674848430255982592,
+    "source_id": 4674848430255982208,
     "sep_arcsec": 33.17605645145747,
     "delta_mag": 6.165733999999999,
     "needed_depth": 0.19570947812877082,
     "could_be_source": true
    },
    {
-    "source_id": 4674848529037819904,
+    "source_id": 4674848529037819392,
     "sep_arcsec": 36.76686943623722,
     "delta_mag": 6.199243999999998,
     "needed_depth": 0.20182311360194546,
     "could_be_source": true
    },
    {
-    "source_id": 4674860245708604416,
+    "source_id": 4674860245708604800,
     "sep_arcsec": 60.635757975842814,
     "delta_mag": 7.507695,
     "needed_depth": 0.6719633839355237,
     "could_be_source": true
    },
    {
-    "source_id": 4674848327176155136,
+    "source_id": 4674848327176155264,
     "sep_arcsec": 43.20541601190403,
     "delta_mag": 6.974797000000001,
     "needed_depth": 0.4115847729836355,
     "could_be_source": true
    },
    {
-    "source_id": 4674848529037824000,
+    "source_id": 4674848529037823744,
     "sep_arcsec": 59.729043728655654,
     "delta_mag": 7.783047000000002,
     "needed_depth": 0.8657448100171835,
     "could_be_source": false
    },
    {
-    "source_id": 4674848425958579200,
+    "source_id": 4674848425958579584,
     "sep_arcsec": 56.80248024678277,
     "delta_mag": 7.967121000000001,
     "needed_depth": 1.025574820263706,
     "could_be_source": false
    },
    {
-    "source_id": 4674848430254094336,
+    "source_id": 4674848430254093824,
     "sep_arcsec": 52.58328780650935,
     "delta_mag": 8.382128,
     "needed_depth": 1.5027283340220743,

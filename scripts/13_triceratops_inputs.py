@@ -62,7 +62,8 @@ if __name__ == "__main__":
         lc = lightcurve.prepare(d["tic"])
         t14 = fit["t14_h"] / 24
         time, flux, err = folded(lc, fit["period"], fit["t0_btjd"], t14)
-        rec = {"tic": d["tic"], "label": f"TIC{d['tic']}", "period": fit["period"], "depth": fit["depth_ppm"] * 1e-6,
+        rec = {"tic": d["tic"], "label": f"TIC{d['tic']}", "ra": d["ra"], "dec": d["dec"],
+               "period": fit["period"], "depth": fit["depth_ppm"] * 1e-6,
                "t14": t14, "time": time.tolist(), "flux": flux.tolist(), "flux_err": err,
                "apertures": apertures(d["tic"])}
         (OUT / f"TIC{d['tic']}_input.json").write_text(json.dumps(rec))

@@ -52,6 +52,9 @@ VALIDATION = [
     ("TOI-419.01", 279251651, 1, "neb", 5480636006390943872),   # TIC 279251647 per TFOP
     ("TOI-2084.02", 441738827, 2, "neb", None),
     ("TOI-2283.01", 198211976, 2, "neb", None),
+    # context: which star of the TOI-218 wide binary hosts its two known candidates
+    ("TOI-218.01", 32090583, 1, "context", None),
+    ("TOI-218.02", 32090583, 2, "context", None),
 ]
 # this search's detection of TOI-2283.01 is weak (24 ppm) with a box duration of 4.8 h, half its
 # 9.6-h orbit; use the TOI catalogue duration instead (1.578 h)
@@ -67,7 +70,27 @@ SYS_ARCSEC = float(os.environ.get("LOC_SYS_ARCSEC", 1.5))
 CHI2_RELIABLE = 2.0
 
 
-def signal_list(only=None):
+def weak_list():
+    """The new weak candidates (passed the hard tests but flagged), from their follow-up fits."""
+    c = pd.read_csv(RESULTS / "candidates.csv")
+    w = c[(c.verdict == "weak candidate") & c.novelty.isin(["new", "SPOC TCE only (never promoted)"])]
+    out = []
+    for _, r in w.iterrows():
+        d = json.loads((RESULTS / "followup" / f"TIC{r.tic}_{r.signal}.json").read_text())
+        fit = d.get("fit", {})
+        ok = "error" not in fit and np.isfinite(fit.get("t14_h", np.nan))
+        out.append({"label": f"TIC{r.tic}_{r.signal}", "tic": int(r.tic), "kind": "weak", "expected": None,
+                    "period": fit["period"] if ok else float(r.period),
+                    "t0": fit["t0_btjd"] if ok else float(r.t0_btjd),
+                    "t14": (fit["t14_h"] if ok else float(r.duration_h)) / 24,
+                    "depth": (fit["depth_ppm"] if ok else float(r.depth_ppm)) * 1e-6})
+    return out
+
+
+def signal_list(only=None, weak=False):
+    if weak:
+        out = weak_list()
+        return [s for s in out if s["tic"] in only] if only else out
     sig = pd.read_csv(RESULTS / "all_signals.csv")
     out = []
     for f in CANDIDATE_FILES:
@@ -325,9 +348,10 @@ if __name__ == "__main__":
     ap.add_argument("--only", type=int, nargs="*")
     ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--no-inject", action="store_true")
+    ap.add_argument("--weak", action="store_true", help="the weak candidates (separate summary file)")
     args = ap.parse_args()
     OUT.mkdir(parents=True, exist_ok=True)
-    sigs = signal_list(set(args.only) if args.only else None)
+    sigs = signal_list(set(args.only) if args.only else None, weak=args.weak)
     by_star = {}
     for s in sigs:
         by_star.setdefault(s["tic"], []).append(s)
@@ -339,13 +363,13 @@ if __name__ == "__main__":
                 rows.extend(f.result())
             except Exception:
                 print(f"TIC {futs[f]} failed:\n{traceback.format_exc()}", flush=True)
-    summ = OUT.parent / "localization_summary.csv"
+    summ = OUT.parent / ("localization_weak.csv" if args.weak else "localization_summary.csv")
     df = pd.DataFrame(rows)
     if summ.exists() and args.only:  # update those rows in the full summary
         old = pd.read_csv(summ)
         df = pd.concat([old[~old.label.isin(df.label)], df], ignore_index=True)
     df.to_csv(summ, index=False)
-    if not args.only:
+    if not args.only and not args.weak:
         calibrate_systematics(df)
     cols = [c for c in ["label", "kind", "offset_arcsec", "offset_err_arcsec", "target_sigma", "best_star_is_target",
                         "amplitude_ratio", "chi2_red", "expected_source_is_best", "recovered_correct",

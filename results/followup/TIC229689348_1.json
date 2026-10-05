@@ -3370,7 +3370,7 @@
     "could_be_source": true
    },
    {
-    "source_id": 1422141810046980096,
+    "source_id": 1422141810046979968,
     "sep_arcsec": 9.21517286745045,
     "delta_mag": 2.698011000000001,
     "needed_depth": 0.008550324320416589,
@@ -3391,7 +3391,7 @@
     "could_be_source": true
    },
    {
-    "source_id": 1422141805751675392,
+    "source_id": 1422141805751675264,
     "sep_arcsec": 22.598052598862008,
     "delta_mag": 6.911875,
     "needed_depth": 0.38327785718429735,

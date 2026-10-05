@@ -2,8 +2,8 @@
 
     .venv/bin/python scripts/09_report.py
 
-The only hand-written parts are the per-candidate assessments in NOTES, which
-summarise what I saw on each candidate's diagnostic sheet and follow-up page.
+The only hand-written parts are the per-candidate verdicts and assessments in
+tess_search/assessments.py (shared with the dossiers).
 """
 import json
 import sys
@@ -16,23 +16,9 @@ import pandas as pd
 
 from tess_search import DATA, ROOT, RESULTS, vetting
 
-NOTES = {
-    (32090583, 5): "A **third periodic signal on TOI-218**, a star with two known TESS candidates (0.438 d and 8.352 d), "
-                   "found after both were masked. Its period is not a simple ratio of either (4.90 and 3.89). Not in any "
-                   "TOI, CTOI or SPOC TCE list. Extra candidates in systems that already have planets are statistically "
-                   "much more likely to be real. ExoFOP lists two high-resolution imaging observations of this star.",
-    (229689348, 1): "An **11.2-hour orbit** with a crisp, flat-bottomed transit (SDE 15, 1,088 transits) and the "
-                    "cleanest vetting metrics of the set. Flagged by SPOC in three multi-sector runs (s14-50, s14-55, "
-                    "s14-86) but never made a TOI; nothing on ExoFOP.",
-    (198412174, 1): "Clean on every test and present in both halves, but cautions: the transit is short (impact parameter "
-                    "~0.93), SPOC's SNR for the same period fell as data were added (8.5, 6.0, 4.4 for s14-50, s14-78, "
-                    "s14-86) although this search finds ~10 on the same sectors, and a star 6 mag fainter sits 4.7\" away, "
-                    "unresolved by TESS (an 11%-deep eclipsing binary there would mimic the signal).",
-    (294053492, 1): "Not in any catalogue. Cautions: the dip is somewhat V-shaped, the depth in pre-PDC (SAP) flux is "
-                    "lower (833 vs 1,107 ppm), and the field is crowded (17 Gaia neighbours bright enough to mimic it).",
-    (149390648, 1): "Flagged by SPOC as a TCE but never a TOI. Weakest of the five: the first half of the data alone does not "
-                    "lock onto the period, and the field is very crowded (27 Gaia neighbours bright enough to mimic it).",
-}
+from tess_search.assessments import ASSESSMENT, VERDICT  # noqa: E402
+
+HARD = RESULTS / "hardening"
 
 
 def load_jsonl(name):
@@ -45,6 +31,55 @@ def reclassify(sig):
     if sig.get("vet"):
         return vetting.classify(sig["vet"])[0]
     return sig.get("verdict", "not vetted")
+
+
+def hardening_section(w, loc):
+    """Pixel localization, NASA cross-check and statistical validation, with their tests."""
+    syst = json.loads((HARD / "localization_systematics.json").read_text())
+    w("## Hardening\n")
+    w("### Is the light lost on the target? Pixel-level localization\n")
+    w("TESS pixels are 21\" wide, so a neighbouring eclipsing binary can leak a planet-sized dip into the target's "
+      "light curve. For every sector the images taken during transit are subtracted from those taken just before and "
+      "after; the result shows only the light that disappeared. All sectors are then fitted together with NASA's model "
+      "of how a point source spreads over the pixels (the SPOC PRF), calibrated per sector on the Gaia stars in the "
+      "image, to find where on the sky the light went missing (`tess_search/localize.py`). Pixel errors come from "
+      "~60 fake transits per sector; flares are removed first.\n")
+    pl = loc[loc.kind == "planet"].sort_values("label")
+    nb = loc[loc.kind == "neb"].sort_values("label")
+    w("| test | signal | source offset from target | target excluded at | reduced chi2 |")
+    w("|---|---|---|---|---|")
+    for _, r in pd.concat([pl, nb]).iterrows():
+        w(f"| {'confirmed planet' if r.kind == 'planet' else 'TFOP: nearby EB'} | {r.label} | {r.offset_arcsec:.1f} ± "
+          f"{r.offset_err_total_arcsec:.1f}\" | {r.target_sigma_total:.1f} sigma | {r.chi2_red:.2f} |")
+    inj = loc[loc.kind == "injection"]
+    rel = inj[inj.reliable == True]  # noqa: E712
+    rn = rel[rel.injected_on == "neighbour"]
+    w(f"\n{len(inj)} synthetic eclipses were planted in the real pixels (on the target, and on the neighbours that "
+      "could most easily mimic each signal, sized to reproduce its depth). "
+      f"{int(rel.recovered_correct.astype(str).eq('True').sum())} of {len(rel)} were traced to the right star; for "
+      f"{int((rn.target_sigma_total > 3).sum())} of {len(rn)} planted on neighbours (4.7-83\" away) the target was "
+      f"excluded at more than 3 sigma. {len(inj) - len(rel)} injections around TOI-6000 gave a poor fit (reduced chi2 "
+      "> 2): a variable star in that image happens to vary in step with the injected period, which breaks the "
+      "one-source assumption. Such fits are flagged unreliable; none of the candidates is affected (reduced chi2 "
+      "1.06-1.16).\n")
+    w(f"The position errors include a {syst['sys_arcsec_used']:.1f}\" systematic floor: the smallest floor for which 95% "
+      f"of the {syst['n_cases']} cases with a known source fall inside their 2-sigma region is "
+      f"{syst['sys_arcsec_95pct_coverage']:.1f}\".\n")
+    dv = pd.read_csv(HARD / "spoc_dv_summary.csv")
+    w("### NASA's own pipeline (SPOC) on the same signals\n")
+    w("Three candidates were SPOC Threshold Crossing Events that never became TOIs. SPOC's reported SNR fell as data "
+      "were added; folding this work's light curve at SPOC's period for each run reproduces the drop (the transit "
+      "smears by 1-4 hours over the baseline), so the signals did not fade. SPOC's difference-image centroids for "
+      f"these runs are listed in the dossiers; none of its {int(dv.diff_images_attempted.sum())} per-sector difference "
+      "images passed SPOC's own quality test, and the runs that offset TIC 229689348's source by 55\" used the "
+      "correct period but those failed images. The localization above, built at the correct period from all sectors, "
+      "places that source on the target.\n")
+    w("![SPOC period check](results/hardening/spoc_period_check.png)\n")
+    w("### Statistical validation (TRICERATOPS)\n")
+    w("TRICERATOPS (Giacalone et al. 2021) weighs a planet on the target against eclipsing binaries on the target, "
+      "unresolved companions, background stars and resolved neighbours, using the transit shape and the Gaia DR3 "
+      "field population (queried through VizieR). Each candidate was run 5 times with 10^6 draws. No high-resolution "
+      "imaging was used, so these FPPs are conservative; validation needs FPP < 0.015 and NFPP < 0.001 with imaging.\n")
 
 
 def pct(x):
@@ -103,30 +138,45 @@ def main():
       f"2-4 R_earth inside 15 days, {pct(inj_df[small].passed.mean())} for planets under 1.5 R_earth inside 5 days.")
     w(f"* **Reliability** (200 flipped light curves): **no false candidates** (95% upper limit "
       f"{pct(3 / len(inv))} of stars); false *weak* candidates on {pct(np.mean([c > 0 for c in inv_weak]))} of stars.")
-    w(f"* **{len(full)} candidates that are in no planet catalogue** passed every test and deeper follow-up "
-      f"({sum(full.novelty == 'new')} appear in no list at all, {sum(full.novelty != 'new')} were flagged by NASA's "
-      "pipeline but never promoted), all Earth-sized (about 1.0-1.3 R_earth) on orbits shorter than 3 days. "
-      f"{len(weak)} weaker signals are listed separately; most are expected to be false alarms.\n")
+    cs = pd.read_csv(RESULTS / "candidates" / "summary.csv")
+    loc = pd.read_csv(HARD / "localization_summary.csv")
+    on = cs[cs.verdict.str.startswith("Candidate")]
+    off = cs[~cs.verdict.str.startswith("Candidate")]
+    w(f"* **{len(full)} signals in no planet catalogue** passed every light-curve test. A second, deeper pass checked "
+      "each one in the pixels, statistically and against NASA's own pipeline (see *Hardening*): "
+      f"**{len(on)} remain candidates** ({', '.join(f'TIC {t}' + (f' ({n})' if isinstance(n, str) and n else '') for t, n in zip(on.tic, on.name))}; "
+      f"{on.rp_rearth.min():.2f}-{on.rp_rearth.max():.2f} R_earth, periods {on.period.min():.2f}-{on.period.max():.2f} d), "
+      + (f"and **{len(off)} is a nearby eclipsing binary** (TIC {', '.join(map(str, off.tic))}: the light loss is "
+         f"{off.loc_offset_arcsec.iloc[0]:.0f}\" from the target)." if len(off) else ""))
+    pl = loc[loc.kind == "planet"]
+    nb = loc[loc.kind == "neb"]
+    inj = loc[(loc.kind == "injection") & (loc.reliable == True)]  # noqa: E712
+    w(f"* The pixel-level localization was validated first: {len(pl)} confirmed planets come out on their own star "
+      f"(all within {pl.target_sigma_total.max():.1f} sigma), {len(nb)} TFOP-retired nearby eclipsing binaries come out off "
+      f"target, and {int(inj.recovered_correct.astype(str).eq('True').sum())} of {len(inj)} synthetic eclipses planted in "
+      "the real pixels are traced to the right star.")
+    w(f"* {len(weak)} weaker signals are listed separately; most are expected to be false alarms, and many sit at "
+      "36-40 d periods where noise produces them (see *Weak candidates*).\n")
 
     w("## Candidates\n")
-    w("Each was re-vetted from scratch, fitted with a physical transit model (batman, quadratic limb darkening fixed, "
-      "stellar-density prior), checked against Gaia DR3 neighbours, and searched for independently in each half of "
-      "the data. A candidate is a signal worth follow-up observations, **not a confirmed planet**.\n")
-    w("| TIC | period (d) | mid-transit (BJD) | depth (ppm) | radius (R_earth) | impact b | T14 (h) | SNR | both halves | RUWE | status |")
-    w("|---|---|---|---|---|---|---|---|---|---|---|")
-    for _, r in full.sort_values("snr_red", ascending=False).iterrows():
-        f = fits[(r.tic, r.signal)]["fit"]
-        status = "new (no list)" if r.novelty == "new" else "SPOC TCE, never a TOI"
-        w(f"| {r.tic} | {f['period']:.6f} | {f['t0_bjd']:.4f} | {f['depth_ppm']:.0f} | {f['rp_rearth']:.2f} ± "
-          f"{f['rp_rearth_err']:.2f} | {f['b']:.2f} | {f['t14_h']:.2f} | {r.snr_red:.1f} | "
-          f"{'yes' if r.in_both_halves else 'partly'} | {r.ruwe:.2f} | {status} |")
-    w("\n*Radius errors exclude the uncertainty of the stellar radius (TIC v8.2).*\n")
-    for _, r in full.sort_values("snr_red", ascending=False).iterrows():
-        w(f"**TIC {r.tic}.** {NOTES.get((r.tic, r.signal), '')} "
-          f"Dossier: `results/followup/TIC{r.tic}_{r.signal}.md`, sheet: `results/followup/TIC{r.tic}_{r.signal}.png`.\n")
-    w("What would settle each one: ground-based photometry during predicted transits (to see which star dims), "
-      "high-resolution imaging, and radial velocities or statistical validation. Each dossier has the ephemeris and "
-      "parameters a community-TOI (CTOI) submission to ExoFOP asks for.\n")
+    w("Each signal was re-vetted from scratch, fitted with an MCMC transit model (planet radius includes the stellar-radius "
+      "uncertainty), localized in the pixels, run through TRICERATOPS, and compared with NASA's SPOC pipeline where SPOC "
+      "had flagged it. A candidate is a signal worth follow-up observations, **not a confirmed planet**. Full dossiers: "
+      "`results/candidates/`.\n")
+    w("| TIC | verdict | period (d) | radius (R_earth) | T_eq (K) | SNR | source offset from target | FPP | NFPP |")
+    w("|---|---|---|---|---|---|---|---|---|")
+    for _, r in cs.iterrows():
+        name = f" ({r['name']})" if isinstance(r["name"], str) and r["name"] else ""
+        fpp = f"{r.fpp:.3f}" if np.isfinite(r.fpp) else "n/a"
+        nfpp = f"{r.nfpp:.4f}" if np.isfinite(r.nfpp) else "n/a"
+        w(f"| {r.tic}{name} | {r.verdict} | {r.period:.6f} | {r.rp_rearth:.2f} ± {r.rp_err:.2f} | {r.teq_k:.0f} | "
+          f"{r.snr:.1f} | {r.loc_offset_arcsec:.1f} ± {r.loc_err_arcsec:.1f}\" | {fpp} | {nfpp} |")
+    w("")
+    for _, r in cs.iterrows():
+        w(f"**TIC {r.tic}.** {ASSESSMENT.get(int(r.tic), '')} Dossier: `results/candidates/TIC{r.tic}.md`.\n")
+    w("The ExoFOP community-TOI upload is drafted in `results/hardening/exofop/params_planet_DRAFT.txt` "
+      "(not submitted; it needs the submitter's ExoFOP tag and a public URL).\n")
+    hardening_section(w, loc)
 
     # ------------------------------------------------------------ data
     w("## Data\n")
@@ -190,9 +240,20 @@ def main():
     w("\n![verdicts](results/figures/verdicts.png)\n")
 
     w("## Weak candidates\n")
+    long_p = weak[(weak.period > 36) & (weak.period < 41)]
+    inv_periods = [s["period"] for r in inv for s in r["signals"] if reclassify(s) == "weak candidate"]
     w(f"Passed the hard tests but with flags (usually modest red-noise SNR or uneven transit depths). The inversion test "
       f"predicts about {wr * summary['stars']:.0f} false weak candidates in this sample, so treat these as a list to "
-      "re-check with more data, not as candidates.\n")
+      f"re-check with more data, not as candidates. {len(long_p)} of the {len(weak)} have periods of 36-41 d, where a "
+      "signal rests on only a handful of transits; the inverted light curves, which contain no real planets, put "
+      f"{sum(36 < p < 41 for p in inv_periods)} of their {len(inv_periods)} false weak candidates there too.\n")
+    lw = HARD / "localization_weak.csv"
+    if lw.exists():
+        lwd = pd.read_csv(lw)
+        offt = lwd[(lwd.target_sigma_total > 3) & (lwd.reliable == True)]  # noqa: E712
+        w(f"Pixel localization of the weak signals ({len(lwd)} localized): {len(offt)} come from off target at more than "
+          "3 sigma (" + ", ".join(f"{r.label} {r.offset_arcsec:.0f}\"" for _, r in offt.iterrows()) + "). "
+          "The rest are consistent with the target. Full table: `results/hardening/localization_weak.csv`.\n")
     w("| TIC | period (d) | depth (ppm) | radius (R_earth) | SNR | both halves | RUWE | flags |")
     w("|---|---|---|---|---|---|---|---|")
     for _, r in weak.sort_values("snr_red", ascending=False).iterrows():

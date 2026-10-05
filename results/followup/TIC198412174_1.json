@@ -1770,21 +1770,21 @@
   "target_non_single_star": 0,
   "neighbours": [
    {
-    "source_id": 1437353759575869952,
+    "source_id": 1437353759575870080,
     "sep_arcsec": 50.157444532987356,
     "delta_mag": 2.8251599999999986,
     "needed_depth": 0.005830654822007481,
     "could_be_source": true
    },
    {
-    "source_id": 1437353828295869952,
+    "source_id": 1437353828295869824,
     "sep_arcsec": 4.7437681407518015,
     "delta_mag": 6.107443,
     "needed_depth": 0.11198011944843714,
     "could_be_source": true
    },
    {
-    "source_id": 1437353755280360448,
+    "source_id": 1437353755280360576,
     "sep_arcsec": 48.92836467734823,
     "delta_mag": 6.2310339999999975,
     "needed_depth": 0.1254323054819307,
@@ -1798,14 +1798,14 @@
     "could_be_source": true
    },
    {
-    "source_id": 1437353789640118784,
+    "source_id": 1437353789640118912,
     "sep_arcsec": 48.005658127649816,
     "delta_mag": 7.6150439999999975,
     "needed_depth": 0.44772211152928476,
     "could_be_source": true
    },
    {
-    "source_id": 1437353858359597056,
+    "source_id": 1437353858359596928,
     "sep_arcsec": 21.55077005890327,
     "delta_mag": 7.6667619999999985,
     "needed_depth": 0.46954539771231374,
@@ -1819,7 +1819,7 @@
     "could_be_source": true
    },
    {
-    "source_id": 1437353823999866368,
+    "source_id": 1437353823999866240,
     "sep_arcsec": 56.561703178383645,
     "delta_mag": 7.3961739999999985,
     "needed_depth": 0.3660561439983614,
