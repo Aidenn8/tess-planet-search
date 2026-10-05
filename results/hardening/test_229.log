@@ -1,0 +1,7 @@
+TIC 229689348: 1 signals in 18 s
+                                     label       kind  offset_arcsec  offset_err_arcsec  target_sigma best_star_is_target  amplitude_ratio  chi2_red recovered_correct  injected_sep_arcsec  injected_source_sigma
+0                             TIC229689348  candidate       3.162278           2.585441      1.183818                True         1.030196  0.945348               NaN                  NaN                    NaN
+1               TIC229689348_inject_target  injection       1.414214           2.763953      0.410767                 NaN              NaN  1.006708              True             0.455197               0.410767
+2  TIC229689348_inject_1422142630385191552  injection      83.934498           0.564190     37.000000                 NaN              NaN  1.048904              True            82.900249               0.000000
+3  TIC229689348_inject_1422141810046979968  injection       7.071068           2.585441      3.812300                 NaN              NaN  1.006619              True             9.215173               0.986145
+4  TIC229689348_inject_1422141741327502336  injection      47.853944           0.797885     37.000000                 NaN              NaN  1.009008              True            48.706804               0.000000

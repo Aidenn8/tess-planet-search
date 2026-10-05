@@ -27,7 +27,7 @@ HARD = RESULTS / "hardening"
 CANDIDATES = [(32090583, 5, "TOI-218"), (229689348, 1, None), (198412174, 1, None), (149390648, 1, None),
               (294053492, 1, None)]
 PREDICT_BJD = 2461557.5   # 2027 June 1: timing uncertainty quoted at this date
-from tess_search.assessments import ASSESSMENT, SUBMIT, VERDICT  # noqa: E402  hand-written verdicts
+from tess_search.assessments import SUBMIT, VERDICT, assessment  # noqa: E402  hand-written verdicts
 
 
 def load(path):
@@ -62,7 +62,7 @@ def fmt_err(v, e, digits=None):
     return f"{v:.{digits}f} ± {e:.{digits}f}"
 
 
-def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star):
+def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star, tri_c=None):
     p, p_err, t0, t0_err, sig_min = ephemeris(fu, mc)
     s = mc["prior"]
     fr = mc["free_density"]
@@ -70,8 +70,9 @@ def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star):
     g = fu.get("gaia", {})
     title = f"TIC {tic}" + (f" ({name})" if name else "")
     L = [f"# {title}: {VERDICT.get(tic, '')}", ""]
-    if tic in ASSESSMENT:
-        L += [ASSESSMENT[tic], ""]
+    text = assessment(tic)
+    if text:
+        L += [text, ""]
     L += ["## Ephemeris and transit parameters",
           "MCMC fit (emcee, batman; Rp/R*, b, stellar density with TIC prior, quadratic limb darkening with priors; "
           "1-min folded bins with red-noise-scaled errors). Planet radius includes the TIC stellar-radius error.", "",
@@ -148,10 +149,17 @@ def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star):
     if tri:
         top = ", ".join(f"{k.split(':')[0]} on TIC {k.split(':')[1]} {100 * v_:.1f}%" for k, v_ in tri["top_scenarios"][:4])
         L += ["## Statistical validation (TRICERATOPS)",
-              f"FPP = {tri['FPP_mean']:.3f} ± {tri['FPP_std']:.3f}, NFPP = {tri['NFPP_mean']:.4f} ± {tri['NFPP_std']:.4f} "
+              f"FPP = {tri['FPP_mean']:.3f} ± {tri['FPP_std']:.3f}, NFPP = {tri['NFPP_mean']:.5f} ± {tri['NFPP_std']:.5f} "
               f"({tri['n_runs']} runs of {tri['n_draws']:,} draws; sectors {tri['sectors']}; Gaia DR3 field population). "
               f"Most probable scenarios: {top}. No high-resolution imaging was used, so unresolved companions are "
               "limited only by Gaia; imaging would lower the FPP.", ""]
+        if tri_c:
+            cl = tri_c.get("cleared_by_localization", [])
+            L += [f"With the neighbours that the pixel localization excludes at more than 3 sigma treated as cleared "
+                  f"({len(cl)} stars: " + (", ".join(f"TIC {c['tic']} at {c['sep']:.1f}\" ({c['excluded_sigma']:.1f} sigma)"
+                                                  for c in cl[:4]) or "none") + (", ..." if len(cl) > 4 else "")
+                  + f"), FPP = {tri_c['FPP_mean']:.3f} ± {tri_c['FPP_std']:.3f} and NFPP = {tri_c['NFPP_mean']:.5f} ± "
+                  f"{tri_c['NFPP_std']:.5f}.", ""]
     L += ["## Files",
           f"* follow-up sheet and vetting: `results/followup/TIC{tic}_{sig}.png`, `.json`",
           f"* transit fit: `results/hardening/mcmc/TIC{tic}.png`, `.json`",
@@ -199,9 +207,10 @@ if __name__ == "__main__":
         loc = load(HARD / "localize" / f"TIC{tic}.json")
         mc = load(HARD / "mcmc" / f"TIC{tic}.json")
         tri = load(HARD / "triceratops" / f"TIC{tic}_result.json")
+        tri_c = load(HARD / "triceratops" / f"TIC{tic}_result_cleared.json")
         dv = dv_all[dv_all.tic == tic].sort_values("run") if len(dv_all) else None
         star = tic_tab.loc[tic].to_dict()
-        text, row = dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk_all.get(str(tic)), star)
+        text, row = dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk_all.get(str(tic)), star, tri_c)
         (OUT / f"TIC{tic}.md").write_text(text)
         s = mc["prior"]
         row.update(verdict=VERDICT.get(tic, ""), rp_rearth=s["rp_rearth"]["median"],
@@ -211,7 +220,8 @@ if __name__ == "__main__":
                    snr=fu["vet"].get("snr_red"), loc_offset_arcsec=loc["offset_arcsec"] if loc else None,
                    loc_err_arcsec=loc["offset_err_total_arcsec"] if loc else None,
                    loc_target_sigma=loc["target_sigma_total"] if loc else None,
-                   fpp=tri["FPP_mean"] if tri else None, nfpp=tri["NFPP_mean"] if tri else None)
+                   fpp=tri["FPP_mean"] if tri else None, nfpp=tri["NFPP_mean"] if tri else None,
+                   fpp_cleared=tri_c["FPP_mean"] if tri_c else None, nfpp_cleared=tri_c["NFPP_mean"] if tri_c else None)
         rows.append(row)
         if SUBMIT.get(tic):
             ctoi.append(ctoi_row(tic, sig, row, mc, loc, tri, SUBMIT[tic] if isinstance(SUBMIT[tic], str) else ""))

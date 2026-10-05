@@ -1,6 +1,6 @@
 {
  "n_cases": 46,
- "sys_arcsec_fit": 0.5770353762971706,
+ "sys_arcsec_fit": 0.591625496509646,
  "sys_arcsec_used": 1.5,
  "sys_arcsec_95pct_coverage": 1.4000000000000001,
  "flagged_unreliable": [
@@ -9,7 +9,7 @@
   "TOI-6000b_inject_2261062172654423936",
   "TOI-6000b_inject_2261056503297591552"
  ],
- "pull_rms_stat_only": 1.152560265642698,
+ "pull_rms_stat_only": 1.1582965711649456,
  "frac_within_2_sigma_total": 0.9565217391304348,
  "cases": [
   {
@@ -112,7 +112,7 @@
    "label": "TIC149390648_inject_target",
    "kind": "injection",
    "miss_arcsec": 5.830951894845301,
-   "offset_err_arcsec": 5.014626706796775
+   "offset_err_arcsec": 5.046265044040321
   },
   {
    "label": "TIC149390648_inject_4757656533594500352",
@@ -133,16 +133,10 @@
    "offset_err_arcsec": 0.7978845608028654
   },
   {
-   "label": "TOI-6000b",
-   "kind": "planet",
-   "miss_arcsec": 4.47213595499958,
-   "offset_err_arcsec": 1.8712051592547776
-  },
-  {
    "label": "TOI-5728b",
    "kind": "planet",
    "miss_arcsec": 1.4142135623730951,
-   "offset_err_arcsec": 2.256758334191025
+   "offset_err_arcsec": 2.326213245840639
   },
   {
    "label": "TOI-5728b_inject_target",
@@ -169,6 +163,30 @@
    "offset_err_arcsec": 3.6125759969217834
   },
   {
+   "label": "TOI-6000b",
+   "kind": "planet",
+   "miss_arcsec": 4.47213595499958,
+   "offset_err_arcsec": 1.7841241161527712
+  },
+  {
+   "label": "TOI-1756b",
+   "kind": "planet",
+   "miss_arcsec": 3.1622776601683795,
+   "offset_err_arcsec": 1.4927053303604616
+  },
+  {
+   "label": "TOI-1756b_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 1.4142135623730951,
+   "offset_err_arcsec": 1.7841241161527712
+  },
+  {
+   "label": "TOI-1756b_inject_2290553715914294144",
+   "kind": "injection",
+   "miss_arcsec": 0.5659509247668865,
+   "offset_err_arcsec": 0.7978845608028654
+  },
+  {
    "label": "TOI-700c",
    "kind": "planet",
    "miss_arcsec": 0.0,
@@ -191,24 +209,6 @@
    "kind": "planet",
    "miss_arcsec": 1.0,
    "offset_err_arcsec": 2.4592453796829674
-  },
-  {
-   "label": "TOI-1756b",
-   "kind": "planet",
-   "miss_arcsec": 3.1622776601683795,
-   "offset_err_arcsec": 1.4927053303604616
-  },
-  {
-   "label": "TOI-1756b_inject_target",
-   "kind": "injection",
-   "miss_arcsec": 1.4142135623730951,
-   "offset_err_arcsec": 1.7841241161527712
-  },
-  {
-   "label": "TOI-1756b_inject_2290553715914294144",
-   "kind": "injection",
-   "miss_arcsec": 0.5659509247668865,
-   "offset_err_arcsec": 0.7978845608028654
   },
   {
    "label": "TOI-2094b",

@@ -1,0 +1,42 @@
+The chain is shorter than 50 times the integrated autocorrelation time for 1 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 80;
+tau: [67.87625847 68.28698121 61.79149345 67.51443882 85.84128737 77.72036628]
+The chain is shorter than 50 times the integrated autocorrelation time for 1 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 440;
+tau: [143.59438341 393.56252292 360.77519645 456.96356298 137.47584424
+ 130.58271369]
+TIC229689348: Rp 1.23 +0.07 -0.07  b 0.81  converged True  free-density rho/rho_TIC 3.03 +1.51 -2.06
+The chain is shorter than 50 times the integrated autocorrelation time for 3 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 440;
+tau: [ 421.30466135 1699.62748959 1828.91666018 2056.06611974  282.23051532
+  310.4317148 ]
+TIC198412174: Rp 1.33 +0.12 -0.11  b 0.93  converged True  free-density rho/rho_TIC 3.33 +12.63 -3.21
+The chain is shorter than 50 times the integrated autocorrelation time for 3 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 440;
+tau: [279.04225135 797.51602026 705.104276   926.73695005 191.12717313
+ 217.15624812]
+TIC32090583: Rp 1.02 +0.07 -0.06  b 0.55  converged True  free-density rho/rho_TIC 1.14 +0.68 -0.84
+The chain is shorter than 50 times the integrated autocorrelation time for 3 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 440;
+tau: [ 417.63877442 1274.74744195 1327.4966341  1540.71652151  205.33573642
+  198.46393794]
+TIC294053492: Rp 1.22 +0.09 -0.09  b 0.41  converged True  free-density rho/rho_TIC 0.50 +0.82 -0.48
+The chain is shorter than 50 times the integrated autocorrelation time for 2 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 440;
+tau: [226.72754719 638.34766571 439.53307143 667.51626398 169.41104959
+ 157.04182442]
+TIC149390648: Rp 0.98 +0.07 -0.07  b 0.53  converged True  free-density rho/rho_TIC 1.10 +0.74 -0.85
+The chain is shorter than 50 times the integrated autocorrelation time for 3 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 80;
+tau: [ 69.82639486 122.29382918 133.56962467 126.95529543  70.29785219
+  78.24683628]
+The chain is shorter than 50 times the integrated autocorrelation time for 3 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 440;
+tau: [187.56810479 891.10948181 976.72713644 904.98316395 291.15679308
+ 259.47248138]
+L98-59c: Rp 1.29 +0.04 -0.04  b 0.42  converged False  free-density rho/rho_TIC 0.39 +0.18 -0.08  published 1.385
+The chain is shorter than 50 times the integrated autocorrelation time for 1 parameter(s). Use this estimate with caution and run a longer chain!
+N/50 = 440;
+tau: [136.88656083 407.98333522 428.048398   536.52983277 147.20639011
+ 138.73553817]
+TOI-700d: Rp 1.00 +0.05 -0.05  b 0.42  converged True  free-density rho/rho_TIC 1.05 +0.37 -0.66  published 1.073

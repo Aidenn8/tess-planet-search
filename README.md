@@ -41,6 +41,14 @@ and measured completeness and false-alarm rates.
 | 7 | `scripts/07_figures.py` | figures for the report |
 | 8 | `scripts/08_followup.py` | for each surviving candidate: fresh vetting, physical transit fit, Gaia DR3 neighbours, half-data searches, dossier |
 | 9 | `scripts/09_report.py` | writes `REPORT.md` from the result files |
+| 10 | `scripts/10_download_tpfs.py` | target pixel files for the candidates, the test stars and the weak signals |
+| 11 | `scripts/11_spoc_period_check.py` | SNR of this light curve at each SPOC TCE period (why SPOC's SNR fell) |
+| 12 | `scripts/12_localize.py` | pixel-level source localization, with its validation (confirmed planets, TFOP nearby EBs, injected eclipses); `--weak` for the weak signals |
+| 13 | `scripts/13_triceratops_inputs.py`, `13_triceratops_run.py` | TRICERATOPS false-positive probabilities (separate environment); `--cleared` treats neighbours excluded by step 12 as cleared |
+| 14 | `scripts/14_mcmc.py` | MCMC transit fits (transits masked in the detrending, stellar-density prior, stellar-radius error propagated), checked on TOI-700 d and L 98-59 c |
+| 15 | `scripts/15_dossiers.py` | final dossiers (`results/candidates/`) and the draft ExoFOP upload |
+| 16 | `scripts/16_weak_recheck.py` | do the weak signals' dips appear in the pixels? |
+| paper | `paper/make_figure.py`, `paper/make_note.py` | figure and draft Research Note of the AAS |
 
 Step 3 (`scripts/03_catalogs.py`) downloads the TOI, CTOI, confirmed-planet, SPOC TCE and
 eclipsing-binary catalogues used for crossmatching.
@@ -67,6 +75,19 @@ TESS noise is correlated, so flux tests use noise measured at the transit timesc
 centroid/background tests are **calibrated against fake transit epochs** rather than
 assumed error bars.
 
+### Hardening: pixels, statistics and NASA's own pipeline
+* **Pixel-level localization** (`tess_search/localize.py`): for every sector, the images taken during
+  transit are subtracted from those just before and after (difference images; per-pixel errors from ~60
+  fake transits per sector, flares removed). All sectors are fitted together with the SPOC pixel response
+  function, calibrated per sector on the Gaia DR3 stars in the stamp (proper motions applied), to find
+  where on the sky the light went missing. Errors include a 1.5" systematic floor measured on 46 sources of
+  known position. A second test asks whether the target loses, in the pixels, the light the light-curve
+  depth predicts (confirmed planets: 0.85-1.29).
+* **TRICERATOPS** (Giacalone et al. 2021) false-positive probabilities with the Gaia DR3 field population
+  (queried through VizieR), with and without the neighbours the localization excludes.
+* **NASA SPOC Data Validation reports** for the candidates SPOC flagged (`tess_search/spoc_dv.py`).
+* **MCMC transit fits** (`tess_search/mcmc.py`).
+
 ### Crossmatch (`tess_search/crossmatch.py`)
 TOIs, community TOIs, confirmed planets (NASA Exoplanet Archive), the TESS eclipsing-binary
 catalogue, and **every SPOC Threshold Crossing Event** (132 single- and multi-sector
@@ -77,15 +98,15 @@ Across the searched stars the pipeline independently recovers 25 of the 26 confi
 transiting planets with periods of 0.4-40 days (the miss is TOI-1752 c at 32.7 d), including
 all four TOI-700 planets (TOI-700 d and e are Earth-sized, in or near the habitable zone)
 and L 98-59 b, c and d. Its vetting passes them while rejecting signals the TESS team had
-already classified as false positives. The transit fit reproduces published radii (TOI-700 d:
-1.02 ± 0.04 vs 1.07 R_earth; L 98-59 c: 1.34 vs 1.39 R_earth). See `REPORT.md`.
+already classified as false positives. The MCMC transit fit gives TOI-700 d 1.18 ± 0.05 R_earth
+(published 1.07 ± 0.06, Gilbert et al. 2023) and L 98-59 c 1.34 ± 0.04 R_earth (published 1.39 ± 0.09,
+Demangeon et al. 2021). See `REPORT.md`.
 
 ## Running it
 
 ```bash
-uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python \
-  numpy scipy astropy astroquery pandas matplotlib wotan transitleastsquares numba \
-  pytest requests tqdm pyarrow lightkurve setuptools
+uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements.txt
+uv venv --python 3.12 .venv-tri && uv pip install --python .venv-tri/bin/python -r requirements-triceratops.txt
 # MAST per-sector lists (light; ~350 MB):
 mkdir -p data/scripts && seq 1 107 | xargs -P 6 -I{} curl -s -f -o data/scripts/tesscurl_sector_{}_lc.sh \
   https://archive.stsci.edu/missions/tess/download_scripts/sector/tesscurl_sector_{}_lc.sh
@@ -99,6 +120,15 @@ caffeinate -i -s tools/thermal/daemon.sh &
 .venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/05_reliability.py invert --n 200
 .venv/bin/python scripts/06_summarize.py && .venv/bin/python scripts/check_known.py
 .venv/bin/python scripts/08_followup.py && .venv/bin/python scripts/07_figures.py && .venv/bin/python scripts/09_report.py
+# hardening (pixel files ~20 GB for the candidates and test stars, ~28 GB more for the weak signals)
+.venv/bin/python scripts/10_download_tpfs.py && .venv/bin/python scripts/11_spoc_period_check.py
+.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/12_localize.py --workers 3
+.venv/bin/python scripts/13_triceratops_inputs.py
+.venv/bin/python tools/thermal/guarded_run.py -- .venv-tri/bin/python scripts/13_triceratops_run.py
+.venv/bin/python tools/thermal/guarded_run.py -- .venv-tri/bin/python scripts/13_triceratops_run.py --cleared
+.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/14_mcmc.py
+.venv/bin/python scripts/15_dossiers.py && .venv/bin/python scripts/09_report.py
+.venv/bin/python paper/make_figure.py && .venv/bin/python paper/make_note.py
 .venv/bin/python -m pytest tests/
 ```
 
@@ -124,7 +154,12 @@ their own process group so the guard can control them.
   and checked with injection-recovery and inverted light curves; they are not the TESS
   team's thresholds. Some rules were refined while the search ran; every stored result
   is re-classified with the final rules (`06_summarize.py`), so all stars are judged alike.
-* Centroid tests use the flux-weighted centroids in the light-curve files, not
-  difference images, so they catch only fairly distant contaminating stars; a faint star
-  within one TESS pixel (21") cannot be excluded from TESS data alone.
-* Planet radii use TIC v8.2 stellar radii; their uncertainty is not propagated.
+* The light-curve centroid test is weak for dips this shallow; the pixel-level localization
+  replaces it for the candidates, but it cannot separate sources closer than ~5" (TIC 198412174's
+  4.7" neighbour) and it assumes one variable source per image (a variable star whose period is
+  commensurate with the signal breaks this; such fits are flagged by their poor reduced chi2).
+* Planet radii use TIC v8.2 stellar parameters (radius error propagated). The detrending choice
+  moves radii by 2-4% for the candidates' short transits and by up to ~10% for long ones
+  (TOI-700 d: 1.18 ± 0.05 R_earth with transits masked vs 1.07 published).
+* TRICERATOPS was run without high-resolution imaging, so its FPPs are upper-end values; no
+  candidate is statistically validated.

@@ -46,7 +46,7 @@ GAIA_EPOCH = 2016.0
 # ---------------------------------------------------------------- stars
 
 
-def gaia_stars(ra, dec, radius_arcsec=150.0, gmag_max=19.5):
+def gaia_stars(ra, dec, radius_arcsec=150.0, gmag_max=21.0):
     """Gaia DR3 stars around (ra, dec) with TESS magnitudes estimated from Gaia colours.
 
     Source IDs stay int64 end to end (a float conversion would round 19-digit IDs).
@@ -424,7 +424,8 @@ def localize(tic, cals, stars, target_idx, period, t0, t14, depth, half_width=10
         f = star_flux(stars.tmag.values[k]) * med_scale
         rows.append({"source_id": int(stars.source_id.values[k]), "sep_arcsec": sep,
                      "east": float((sra[k] - tra[0]) * cosd * 3600), "north": float((sdec[k] - tdec[0]) * 3600),
-                     "tmag": float(stars.tmag.values[k]), "is_target": k == target_idx,
+                     "tmag": float(stars.tmag.values[k]), "gmag": float(stars.gmag.values[k]),
+                     "is_target": k == target_idx,
                      "dchi2": float(dchi2), "excluded_sigma": sigma_from_dchi2(dchi2),
                      "amplitude": float(a), "implied_eclipse_depth": float(a / f) if f > 0 else np.nan})
     t_row = next(r for r in rows if r["is_target"])

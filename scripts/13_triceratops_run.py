@@ -7,6 +7,11 @@ or a resolved neighbouring star (NTP/NEB), each with priors from the field's
 star population and a fit to the transit shape. It reports
   FPP  = probability the signal is NOT a planet on the target
   NFPP = probability it comes from a resolved neighbour.
+With --cleared, neighbours that the pixel-level localization (scripts/12_localize.py)
+excludes as the source at more than 3 sigma are treated as cleared, the way stars cleared by
+ground-based photometry are: their required depth is set to zero so TRICERATOPS no longer
+considers them, and the result goes to <label>_result_cleared.json.
+
 Giacalone et al. call a candidate statistically validated at FPP < 0.015 and
 NFPP < 0.001 (with high-resolution imaging), likely planet at FPP < 0.5 and
 NFPP < 0.001. No imaging contrast curves are used here, so unresolved companions
@@ -88,15 +93,46 @@ OUT = ROOT / "results" / "hardening" / "triceratops"
 CACHE = ROOT / "data" / "tess_cache"
 N_RUNS = int(os.environ.get("TRI_RUNS", 5))  # run-to-run FPP scatter is ~1%, so 5 runs suffice
 N_DRAWS = 1_000_000
+LOC_DIR = ROOT / "results" / "hardening" / "localize"
+CLEAR_SIGMA = 3.0
+
+
+def clear_neighbours(target, tic):
+    """Zero the required depth of TRICERATOPS stars that the pixel localization excludes.
+
+    TRICERATOPS stars are TIC entries (offsets from the target from their TIC positions);
+    localization stars are Gaia DR3 sources. Match by sky offset (within 4") and brightness."""
+    loc = json.loads((LOC_DIR / f"TIC{tic}.json").read_text())
+    gstars = [s_ for s_ in loc["stars"] if not s_["is_target"]]
+    st = target.stars
+    cleared = []
+    for i in range(1, len(st)):
+        if st["tdepth"].iloc[i] <= 0:
+            continue
+        sep, pa = float(st["sep (arcsec)"].iloc[i]), float(st["PA (E of N)"].iloc[i])
+        e, n = sep * np.sin(np.radians(pa)), sep * np.cos(np.radians(pa))
+        best = min(gstars, key=lambda g: np.hypot(g["east"] - e, g["north"] - n), default=None)
+        if best is None or np.hypot(best["east"] - e, best["north"] - n) > 4.0:
+            continue
+        if abs(best["tmag"] - float(st["Tmag"].iloc[i])) > 1.5:
+            continue
+        if best["excluded_sigma_total"] > CLEAR_SIGMA:
+            cleared.append({"tic": int(st["ID"].iloc[i]), "gaia": best["source_id"], "sep": sep,
+                            "tmag": float(st["Tmag"].iloc[i]), "excluded_sigma": best["excluded_sigma_total"]})
+            target.stars.iloc[i, target.stars.columns.get_loc("tdepth")] = 0.0
+    return cleared
 
 if __name__ == "__main__":
-    only = {int(a) for a in sys.argv[1:]}
+    cleared_mode = "--cleared" in sys.argv
+    order = [int(a) for a in sys.argv[1:] if a != "--cleared"]  # optional: TIC IDs to run, in this order
     CACHE.mkdir(parents=True, exist_ok=True)
-    for path in sorted(OUT.glob("*_input.json")):
+    paths = sorted(OUT.glob("*_input.json"))
+    if order:
+        by_tic = {json.loads(p.read_text())["tic"]: p for p in paths}
+        paths = [by_tic[t] for t in order if t in by_tic]
+    for path in paths:
         d = json.loads(path.read_text())
-        if only and d["tic"] not in only:
-            continue
-        out_path = OUT / f"{d['label']}_result.json"
+        out_path = OUT / f"{d['label']}_result{'_cleared' if cleared_mode else ''}.json"
         if out_path.exists():
             print(f"{d['label']}: done already", flush=True)
             continue
@@ -108,6 +144,9 @@ if __name__ == "__main__":
             target = tr.target(ID=d["tic"], sectors=sectors, search_radius=10,
                                lightkurve_cache_dir=str(CACHE), trilegal_fname=bg)
             target.calc_depths(tdepth=d["depth"], all_ap_pixels=aps)
+            cleared = clear_neighbours(target, d["tic"]) if cleared_mode else []
+            if cleared_mode:
+                print(f"{d['label']}: cleared by pixel localization: {cleared}", flush=True)
             runs = []
             for i in range(N_RUNS):
                 target.calc_probs(time=np.array(d["time"]), flux_0=np.array(d["flux"]), flux_err_0=d["flux_err"],
@@ -116,7 +155,6 @@ if __name__ == "__main__":
                              "degenerate": bool(getattr(target, "FPP_degenerate", False)),
                              "probs": target.probs[["ID", "scenario", "prob"]].to_dict("records")})
                 print(f"{d['label']} run {i + 1}: FPP {target.FPP:.4f} NFPP {target.NFPP:.5f}", flush=True)
-            stars = target.stars[["ID", "Tmag", "sep (arcsec)", "PA (deg)", "fluxratio", "tdepth"]].copy()
             fpp = np.array([r["FPP"] for r in runs])
             nfpp = np.array([r["NFPP"] for r in runs])
             # scenario probabilities averaged over runs
@@ -130,9 +168,17 @@ if __name__ == "__main__":
                    "FPP_mean": float(fpp.mean()), "FPP_std": float(fpp.std(ddof=1)),
                    "NFPP_mean": float(nfpp.mean()), "NFPP_std": float(nfpp.std(ddof=1)),
                    "top_scenarios": top, "runs": [{k: v for k, v in r.items() if k != "probs"} for r in runs],
-                   "stars": json.loads(stars.to_json(orient="records")),
-                   "background_population": str(target.trilegal_fname), "runtime_s": round(time.time() - t_start)}
-            out_path.write_text(json.dumps(res, indent=1))
+                   "stars": [],
+                   "background_population": str(target.trilegal_fname), "runtime_s": round(time.time() - t_start),
+                   "cleared_by_localization": cleared}
+            out_path.write_text(json.dumps(res, indent=1))  # save before anything else can fail
+            try:
+                cols = [c for c in ("ID", "Tmag", "sep (arcsec)", "PA (E of N)", "fluxratio", "tdepth")
+                        if c in target.stars.columns]
+                res["stars"] = json.loads(target.stars[cols].to_json(orient="records"))
+                out_path.write_text(json.dumps(res, indent=1))
+            except Exception:
+                print(f"{d['label']}: star table not saved:\n{traceback.format_exc()}", flush=True)
             print(f"{d['label']}: FPP {fpp.mean():.4f} +- {fpp.std(ddof=1):.4f}, NFPP {nfpp.mean():.5f} "
                   f"({time.time() - t_start:.0f} s)", flush=True)
         except Exception:

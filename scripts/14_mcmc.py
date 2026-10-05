@@ -90,6 +90,13 @@ def run(job, scale=1):
     star = {"rad": float(tic_row.rad), "e_rad": float(tic_row.e_rad), "mass": float(tic_row.mass),
             "teff": float(tic_row.Teff), "e_teff": float(tic_row.e_Teff)}
     lc = lightcurve.prepare(job["tic"])
+    if "published_rp" in job:
+        # validation planets start from the search's box-fit period, good to a few minutes over the
+        # baseline; refine period and epoch with the least-squares transit fit the candidates had,
+        # otherwise the folded ingress is blurred and the fit drifts towards grazing geometries
+        from tess_search import followup
+        f = followup.fit_transit(lc, job["period"], job["t0"], job["t14"], job["depth"], star["rad"], star["mass"])
+        job = dict(job, period=f["period"], t0=f["t0_btjd"], t14=f["t14_h"] / 24)
     res = {"label": job["label"], "tic": job["tic"], "period": job["period"], "star": star}
     s1, chain, data, post = mcmc.fit(lc, job["period"], job["t0"], job["t14"], job["depth"], star, density_prior=True,
                                      nsteps=6000 * scale, burn=2000 * scale)

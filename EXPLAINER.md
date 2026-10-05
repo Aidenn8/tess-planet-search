@@ -54,18 +54,49 @@ dims it by about 0.1%, ten times easier to see. That is why this search targets 
   searched again. Anything found in flipped data is fake by construction. Not one flipped
   star produced a "candidate", so the candidates below are unlikely to be noise.
 
-## What it found
-Five signals that passed every test, are about the size of Earth, orbit in less than
-three days, and are not on any list of known planets or candidates:
+## The second, deeper check
+The first pass found five Earth-sized signals that passed every test on the light curves.
+A light curve, though, is just one number per moment: the total light in a small box of
+pixels. TESS pixels are big (21 arcseconds), so several stars can share that box. If one of
+the *other* stars is a pair of stars eclipsing each other, its dips leak into the box and
+look like a small planet. So the second pass went back to the raw images:
 
-* **TOI-218, a third signal.** This star already has two candidate planets; the search
-  found both, then a third repeating dip every 2.15 days from something about Earth's
-  size. A star that already has planets is more likely to have more.
-* **TIC 229689348**, a dip every **11.2 hours**: an Earth-sized object whipping around its
-  star in less than half a day. NASA's own pipeline noticed it but never promoted it.
-* **TIC 198412174, TIC 294053492 and TIC 149390648**: also Earth-sized, each with a
-  specific reason for caution written down in the report (a faint neighbouring star that
-  could be the real source, a slightly V-shaped dip, a crowded patch of sky).
+* **Where does the light go missing?** For every observing month, the images taken during
+  the dips are subtracted from the images just before and after. What is left shows only
+  the light that disappeared. Fitting all months together with NASA's model of how a star
+  spreads over the pixels gives the position on the sky where the light went missing.
+  Before trusting it on the candidates, it was tested on known cases: confirmed planets
+  come out on their own star, signals the TESS team had already traced to neighbouring
+  stars come out on those neighbours, and fake eclipses planted into the real images on
+  nearby stars were traced back to the right star 34 times out of 35.
+* **How likely is each alternative?** A tool called TRICERATOPS, used by the TESS team,
+  weighs "planet on this star" against every way the dip could be faked (a binary star
+  behind it, an unseen companion, a neighbour) and gives a probability.
+* **What did NASA's own pipeline see?** Three of the signals had been flagged by NASA's
+  pipeline but never promoted. Its reports showed why its confidence seemed to drop over
+  time: its estimate of the orbital period was slightly off, which blurs a short dip when
+  years of data are stacked. At the right period the signals are as strong as ever.
+* **Better sizes.** A careful fit (MCMC) that includes the uncertainty in each star's
+  own size, checked on two well-studied planets.
+
+## What it found
+* **One of the five was not a planet.** For TIC 294053492 the light goes missing about
+  22 arcseconds away from the star, on a faint background star that is almost certainly
+  an eclipsing binary. This is exactly the kind of mistake the second pass exists to catch.
+* **Four remain candidates**, all on their own star:
+  * **TOI-218, a third signal** (every 2.15 days, about Earth's size). TOI-218 turned out
+    to be one of a pair of twin red dwarfs orbiting each other far apart; the image check
+    shows the new signal, and the two already-known ones, come from TOI-218 itself and not
+    from its twin.
+  * **TIC 229689348**, a dip every **11.2 hours** (1.25 Earth sizes, about 1,100 K). NASA's
+    pipeline thought the source might be a star 55 arcseconds away; the image check, done at
+    the correct period with all the data, puts it on the target.
+  * **TIC 149390648** (Earth-sized, 2.84 days) in a crowded patch of sky.
+  * **TIC 198412174** (1.35 Earth sizes, 1.39 days): a faint star only 4.7 arcseconds away
+    is too close to rule out, and the dip's shape also fits a planet around a small unseen
+    companion star. A sharp ground-based image would settle it.
+* None is "statistically validated" (that needs a very low false-positive probability plus
+  sharp images from a large telescope). They are documented candidates, ready for that step.
 
 ## What a "candidate" means (and does not mean)
 A candidate passed every automated test and is not in any catalogue. It is *not* a
@@ -84,3 +115,6 @@ database as a "community TOI".
   statistics; the vetting measures it directly instead of assuming it away.
 * **False positive:** a signal that looks like a planet but is something else.
 * **TOI:** TESS Object of Interest, NASA's official list of planet candidates.
+* **Difference image:** an image of only the light that disappeared during a dip.
+* **FPP (false-positive probability):** the chance a signal is not a planet on the target star.
+* **Eclipsing binary:** two stars orbiting each other that take turns blocking each other's light.

@@ -16,7 +16,7 @@ import pandas as pd
 
 from tess_search import DATA, ROOT, RESULTS, vetting
 
-from tess_search.assessments import ASSESSMENT, VERDICT  # noqa: E402
+from tess_search.assessments import assessment  # noqa: E402
 
 HARD = RESULTS / "hardening"
 
@@ -78,8 +78,11 @@ def hardening_section(w, loc):
     w("### Statistical validation (TRICERATOPS)\n")
     w("TRICERATOPS (Giacalone et al. 2021) weighs a planet on the target against eclipsing binaries on the target, "
       "unresolved companions, background stars and resolved neighbours, using the transit shape and the Gaia DR3 "
-      "field population (queried through VizieR). Each candidate was run 5 times with 10^6 draws. No high-resolution "
-      "imaging was used, so these FPPs are conservative; validation needs FPP < 0.015 and NFPP < 0.001 with imaging.\n")
+      "field population (queried through VizieR). Each candidate was run 5 times with 10^6 draws. TRICERATOPS uses "
+      "only brightness ratios and the transit shape; it is run a second time with the neighbours that the pixel "
+      "localization excludes at more than 3 sigma treated as cleared (as stars cleared by ground-based photometry "
+      "are). No high-resolution imaging was used, so these FPPs are conservative; validation needs FPP < 0.015 and "
+      "NFPP < 0.001 with imaging. Values are in the candidate table above.\n")
 
 
 def pct(x):
@@ -163,17 +166,18 @@ def main():
       "uncertainty), localized in the pixels, run through TRICERATOPS, and compared with NASA's SPOC pipeline where SPOC "
       "had flagged it. A candidate is a signal worth follow-up observations, **not a confirmed planet**. Full dossiers: "
       "`results/candidates/`.\n")
-    w("| TIC | verdict | period (d) | radius (R_earth) | T_eq (K) | SNR | source offset from target | FPP | NFPP |")
+    w("| TIC | verdict | period (d) | radius (R_earth) | T_eq (K) | SNR | source offset from target | FPP / NFPP (TESS only) | FPP / NFPP (localization-cleared) |")
     w("|---|---|---|---|---|---|---|---|---|")
     for _, r in cs.iterrows():
         name = f" ({r['name']})" if isinstance(r["name"], str) and r["name"] else ""
-        fpp = f"{r.fpp:.3f}" if np.isfinite(r.fpp) else "n/a"
-        nfpp = f"{r.nfpp:.4f}" if np.isfinite(r.nfpp) else "n/a"
+        def pair(a, b):
+            return f"{a:.3f} / {b:.4f}" if np.isfinite(a) and np.isfinite(b) else "n/a"
         w(f"| {r.tic}{name} | {r.verdict} | {r.period:.6f} | {r.rp_rearth:.2f} ± {r.rp_err:.2f} | {r.teq_k:.0f} | "
-          f"{r.snr:.1f} | {r.loc_offset_arcsec:.1f} ± {r.loc_err_arcsec:.1f}\" | {fpp} | {nfpp} |")
+          f"{r.snr:.1f} | {r.loc_offset_arcsec:.1f} ± {r.loc_err_arcsec:.1f}\" | {pair(r.fpp, r.nfpp)} | "
+          f"{pair(r.get('fpp_cleared', np.nan), r.get('nfpp_cleared', np.nan))} |")
     w("")
     for _, r in cs.iterrows():
-        w(f"**TIC {r.tic}.** {ASSESSMENT.get(int(r.tic), '')} Dossier: `results/candidates/TIC{r.tic}.md`.\n")
+        w(f"**TIC {r.tic}.** {assessment(int(r.tic))} Dossier: `results/candidates/TIC{r.tic}.md`.\n")
     w("The ExoFOP community-TOI upload is drafted in `results/hardening/exofop/params_planet_DRAFT.txt` "
       "(not submitted; it needs the submitter's ExoFOP tag and a public URL).\n")
     hardening_section(w, loc)
@@ -247,13 +251,19 @@ def main():
       f"re-check with more data, not as candidates. {len(long_p)} of the {len(weak)} have periods of 36-41 d, where a "
       "signal rests on only a handful of transits; the inverted light curves, which contain no real planets, put "
       f"{sum(36 < p < 41 for p in inv_periods)} of their {len(inv_periods)} false weak candidates there too.\n")
-    lw = HARD / "localization_weak.csv"
-    if lw.exists():
-        lwd = pd.read_csv(lw)
-        offt = lwd[(lwd.target_sigma_total > 3) & (lwd.reliable == True)]  # noqa: E712
-        w(f"Pixel localization of the weak signals ({len(lwd)} localized): {len(offt)} come from off target at more than "
-          "3 sigma (" + ", ".join(f"{r.label} {r.offset_arcsec:.0f}\"" for _, r in offt.iterrows()) + "). "
-          "The rest are consistent with the target. Full table: `results/hardening/localization_weak.csv`.\n")
+    wr_path = HARD / "weak_recheck.csv"
+    if wr_path.exists():
+        wrc = pd.read_csv(wr_path)
+        n = wrc["class"].value_counts()
+        cons = wrc[wrc["class"] == "consistent"]
+        w(f"**Re-checked in the pixels** (`scripts/16_weak_recheck.py`): does the target lose, in the difference "
+          "images, the light the light-curve depth predicts? For confirmed planets the ratio is 0.85-1.29. For the "
+          f"weak signals, {n.get('not in pixels', 0)} are **not reproduced in the pixels** (ratio more than 3 sigma "
+          f"below 1: most likely light-curve artefacts), {n.get('marginal', 0)} are marginal and "
+          f"{n.get('consistent', 0)} are consistent with a dip on the target ("
+          + ", ".join(f"TIC {r.tic} at {r.period:.2f} d" for _, r in cons.iterrows())
+          + "), although only at 3.5-4 sigma in the pixels. None is localized off target with confidence. "
+          "Table: `results/hardening/weak_recheck.csv`.\n")
     w("| TIC | period (d) | depth (ppm) | radius (R_earth) | SNR | both halves | RUWE | flags |")
     w("|---|---|---|---|---|---|---|---|")
     for _, r in weak.sort_values("snr_red", ascending=False).iterrows():
