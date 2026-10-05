@@ -2,7 +2,7 @@
 
     .venv/bin/python paper/make_note.py      ->  paper/rnaas_note.tex
 
-Author, affiliation and the data-availability URL are placeholders for the author.
+Author and affiliation are placeholders for the author.
 Every number is read from results/, so the note cannot drift from the dossiers.
 """
 import json
@@ -109,7 +109,7 @@ favors a planet around an unresolved companion ({f198['stp']:.0f}\%) about equal
 With the neighbours that the pixels exclude treated as cleared, all four meet the TRICERATOPS ``likely planet''
 criteria (FPP\,$<$\,0.5, NFPP\,$<$\,0.001; Table~\ref{{tab:cands}}); the residual FPP is mostly unresolved bound
 companions. All four are suited to seeing-limited photometry and high-resolution imaging. Code, light-curve products
-and per-candidate dossiers are available at DATA URL.
+and per-candidate dossiers are available at \url{{https://github.com/Aidenn8/tess-planet-search}}.
 
 \begin{{deluxetable*}}{{lccccccccc}}
 \tablecaption{{Candidates (MCMC medians and 68\% intervals)\label{{tab:cands}}}}

@@ -8,8 +8,8 @@ Pulls together, for each of the five candidates:
   results/hardening/spoc_*   SPOC DV cross-check and period-drift test (scripts/11_*.py)
 
 Writes results/candidates/TIC<tic>.md, results/candidates/summary.csv and
-results/hardening/exofop/params_planet_DRAFT.txt (NOT submitted: the tag and paper
-fields are placeholders that need the submitter's ExoFOP username and a public URL).
+results/hardening/exofop/params_planet_DRAFT.txt (NOT submitted: the tag field is a placeholder that
+needs the submitter's ExoFOP username; the paper field points to this repository).
 """
 import json
 import sys
@@ -195,7 +195,7 @@ def ctoi_row(tic, sig, row, mc, loc, tri, notes):
          f"{b:.3f}", f"{b_e:.3f}", f"{k:.4f}", f"{k_e:.4f}", f"{ar:.2f}", f"{ar_e:.2f}", f"{rp:.3f}", f"{rp_e:.3f}",
          "", "", f"{teq:.0f}", f"{teq_e:.0f}", f"{ins:.1f}", f"{ins_e:.1f}", f"{rho:.2f}", f"{rho_e:.2f}",
          f"{a:.5f}", f"{a_e:.5f}", "", "", "", "", "", "", "", "",
-         "YYYYMMDD_EXOFOPUSERNAME_mdwarfdeepsearch_00001", "", "0", "REQUIRED_PUBLIC_URL", notes[:120]]
+         "YYYYMMDD_EXOFOPUSERNAME_mdwarfdeepsearch_00001", "", "0", "https://github.com/Aidenn8/tess-planet-search", notes[:120]]
     return "|".join(f)
 
 
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     template = (HARD / "exofop" / "exofop_template_params_planet.txt").read_text().splitlines()
     header = next(line for line in template if line.startswith("target|"))
     (HARD / "exofop" / "params_planet_DRAFT.txt").write_text(
-        "\\ DRAFT - NOT SUBMITTED. Fill in the tag (your ExoFOP username) and paper (a public URL), check the next\n"
+        "\\ DRAFT - NOT SUBMITTED. Fill in the tag (the submitter's ExoFOP username), check the next\n"
         "\\ free TIC<id>.NN candidate number on each target's ExoFOP overview page, then rename to\n"
         "\\ params_planet_YYYYMMDD_001.txt before uploading. Format: ExoFOP planet-parameter bulk upload template.\n"
         + header + "\n" + "\n".join(ctoi) + "\n")

@@ -1,7 +1,7 @@
 """Hand-written verdicts on the five candidates, shared by the dossiers (scripts/15_dossiers.py)
 and the report (scripts/09_report.py).
 
-The judgement is mine; the numbers are not typed in: each text has {placeholders} that
+The judgement is hand-written; the numbers are not typed in: each text has {placeholders} that
 facts(tic) fills from the result files, so prose and tables cannot disagree.
 """
 import json
@@ -98,7 +98,7 @@ ASSESSMENT = {
 SUBMIT = {
     32090583: "3rd signal on TOI-218; pixel-localized to target, not 13.5in binary companion; flaring host",
     229689348: "USP 11.2h; SPOC TCE never TOI; pixel-localized on target (SPOC DV 55in offset not reproduced)",
-    149390648: "SPOC TCE never TOI; on target in pixel localization; crowded field, NFPP above 0.001",
+    149390648: "SPOC TCE never TOI; on target in pixel localization; crowded field; FPP 0.09 with pixel-cleared neighbours",
     198412174: "SPOC TCE never TOI; grazing; T=18.2 star 4.7in away not excluded; needs imaging",
 }
 

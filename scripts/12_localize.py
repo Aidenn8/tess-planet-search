@@ -78,7 +78,10 @@ def weak_list():
     for _, r in w.iterrows():
         d = json.loads((RESULTS / "followup" / f"TIC{r.tic}_{r.signal}.json").read_text())
         fit = d.get("fit", {})
-        ok = "error" not in fit and np.isfinite(fit.get("t14_h", np.nan))
+        # use the follow-up fit unless it failed or wandered off (grazing b > 1, or a depth far from the
+        # vetting measurement): then fall back to the search's own ephemeris and depth
+        ok = ("error" not in fit and np.isfinite(fit.get("t14_h", np.nan)) and fit.get("b", 0) <= 1.0
+              and abs(fit.get("depth_ppm", 0) / r.depth_ppm - 1) < 0.5)
         out.append({"label": f"TIC{r.tic}_{r.signal}", "tic": int(r.tic), "kind": "weak", "expected": None,
                     "period": fit["period"] if ok else float(r.period),
                     "t0": fit["t0_btjd"] if ok else float(r.t0_btjd),

@@ -1,177 +1,106 @@
 # TESS M-dwarf deep search
 
-A search for transiting planets around the **1,279 bright M dwarfs that NASA's TESS
-telescope has watched the longest** (20 to 44 sectors of 2-minute data each, through
-sector 107), with automated vetting, comparison against every public catalogue,
-and measured completeness and false-alarm rates.
+A transit search of the **1,279 M dwarfs that NASA's TESS has observed the longest** (20–44 sectors of
+2-minute photometry each, Sectors 1–107), with every candidate checked in the light curve, in the pixels,
+statistically, and against NASA's own pipeline.
 
-> **Results** (full report: [`REPORT.md`](REPORT.md); dossiers: [`results/candidates/`](results/candidates/);
-> plain-language version: [`EXPLAINER.md`](EXPLAINER.md)):
->
-> * **4 Earth-sized planet candidates in no catalogue** (1.00-1.35 R_earth, 0.47-2.84 d), each checked in the
->   pixels, statistically and against NASA's own pipeline:
->   * a **third signal in the TOI-218 system** (2.147 d, 1.05 R_earth); all three TOI-218 signals come from
->     TOI-218 itself, not its equal-brightness wide-binary companion 13.5" away;
->   * an **11.2-hour orbit** around TIC 229689348 (1.25 R_earth), which NASA's pipeline flagged but never
->     promoted; its 55" source offset came from difference images that failed NASA's own quality test;
->   * TIC 149390648 (1.00 R_earth) and TIC 198412174 (1.35 R_earth, near-grazing; a 4.7" neighbour cannot be
->     excluded).
->
->   With the neighbours the pixels exclude treated as cleared, all four meet TRICERATOPS's *likely planet*
->   criteria (FPP 0.08-0.48, NFPP < 0.001); none is statistically validated without imaging.
-> * **One first-pass candidate was a nearby eclipsing binary**: TIC 294053492's light loss sits 22" away,
->   on a G = 19.8 background star (target excluded at 7.7 sigma).
-> * The pixel-level localization was validated first: 11 confirmed planets on their own star, 3 TFOP-retired
->   nearby eclipsing binaries off target, 34 of 35 reliably fitted injected eclipses traced to the right star.
-> * Recovers **25 of 26 confirmed transiting planets** in range, including all four of TOI-700.
-> * **Completeness:** 74% of 300 injected planets found and kept (89% for 2-4 R_earth inside 15 days).
->   **Reliability:** no false candidates in 200 flipped light curves.
-> * A draft ExoFOP community-TOI upload (`results/hardening/exofop/params_planet_DRAFT.txt`) and a draft
->   Research Note of the AAS (`paper/rnaas_note.tex`) are prepared, **not submitted**.
->
-> Candidates are signals worth follow-up observations, not confirmed planets.
+**Result: four Earth-sized planet candidates in no existing catalogue**, including a third transiting
+signal in the TOI-218 system and an 11-hour orbit around TIC 229689348, plus one first-pass candidate
+traced to a nearby eclipsing binary.
 
-## Why these stars
+![Folded transits of the four candidates](docs/figures/fig07_transits.png)
 
-* **M dwarfs are small**, so an Earth-sized planet blocks ~0.1% of their light, which is
-  10x more than the same planet in front of the Sun. That is the easiest place to find
-  small planets, including temperate ones.
-* **Many sectors of data** means many transits even for long orbits, so smaller and
-  longer-period planets rise above the noise.
-* **New data**: NASA's latest combined multi-sector search (SPOC, sectors 1-96, June
-  2026) predates sectors 97-107. This search uses all of them.
+## Candidates
 
-## Pipeline
+| | period | radius | T_eq | SNR | source offset | FPP | status before this work |
+|---|---|---|---|---|---|---|---|
+| **TOI-218** (TIC 32090583), new signal | 2.1468 d | 1.05 ± 0.06 R⊕ | 578 K | 11.1 | 2.2 ± 3.0″ | 0.08 | in no list |
+| **TIC 229689348** | 0.4654 d (11.2 h) | 1.25 ± 0.08 R⊕ | 1130 K | 10.4 | 3.6 ± 3.3″ | 0.20 | SPOC TCE, never a TOI |
+| **TIC 149390648** | 2.8369 d | 1.00 ± 0.07 R⊕ | 581 K | 9.1 | 4.2 ± 3.6″ | 0.09 | SPOC TCE, never a TOI |
+| **TIC 198412174** | 1.3902 d | 1.35 ± 0.11 R⊕ | 954 K | 9.7 | 2.2 ± 3.5″ | 0.48 | SPOC TCE, never a TOI |
+| TIC 294053492 | 1.0853 d | – | – | 7.9 | **21.6 ± 3.1″** | – | nearby eclipsing binary |
 
-| step | script | what it does |
-|---|---|---|
-| 1 | `scripts/01_select_targets.py` | parse MAST's per-sector download lists (1.7 M light curves), count sectors per star, query the TESS Input Catalog, keep M dwarfs (Teff <= 3900 K, R <= 0.65 R_sun, Tmag <= 13.5, >= 20 sectors, low contamination) |
-| 2 | `scripts/02_download.py` | download SPOC 2-min light curves, keep the needed columns in one compressed file per star |
-| 4 | `scripts/04_search.py` | clean, detrend, search, vet, crossmatch and plot every star |
-| 5 | `scripts/05_reliability.py` | injection-recovery (completeness) and inverted light curves (false alarms) |
-| 6 | `scripts/06_summarize.py` | candidate tables and counts |
-| 7 | `scripts/07_figures.py` | figures for the report |
-| 8 | `scripts/08_followup.py` | for each surviving candidate: fresh vetting, physical transit fit, Gaia DR3 neighbours, half-data searches, dossier |
-| 9 | `scripts/09_report.py` | writes `REPORT.md` from the result files |
-| 10 | `scripts/10_download_tpfs.py` | target pixel files for the candidates, the test stars and the weak signals |
-| 11 | `scripts/11_spoc_period_check.py` | SNR of this light curve at each SPOC TCE period (why SPOC's SNR fell) |
-| 12 | `scripts/12_localize.py` | pixel-level source localization, with its validation (confirmed planets, TFOP nearby EBs, injected eclipses); `--weak` for the weak signals |
-| 13 | `scripts/13_triceratops_inputs.py`, `13_triceratops_run.py` | TRICERATOPS false-positive probabilities (separate environment); `--cleared` treats neighbours excluded by step 12 as cleared |
-| 14 | `scripts/14_mcmc.py` | MCMC transit fits (transits masked in the detrending, stellar-density prior, stellar-radius error propagated), checked on TOI-700 d and L 98-59 c |
-| 15 | `scripts/15_dossiers.py` | final dossiers (`results/candidates/`) and the draft ExoFOP upload |
-| 16 | `scripts/16_weak_recheck.py` | do the weak signals' dips appear in the pixels? |
-| paper | `paper/make_figure.py`, `paper/make_note.py` | figure and draft Research Note of the AAS |
+*Radius includes the stellar-radius uncertainty. Source offset: where the light goes missing, relative to
+the target (pixel-level localization). FPP: TRICERATOPS false-positive probability with neighbours
+excluded by the pixels cleared; no high-resolution imaging used.*
 
-Step 3 (`scripts/03_catalogs.py`) downloads the TOI, CTOI, confirmed-planet, SPOC TCE and
-eclipsing-binary catalogues used for crossmatching.
+All four candidates meet the TRICERATOPS *likely planet* criteria (FPP < 0.5, NFPP < 0.001). None is
+statistically validated or confirmed; each needs ground-based photometry and high-resolution imaging.
+Full dossiers: [`results/candidates/`](results/candidates/).
 
-### Cleaning and detrending (`tess_search/lightcurve.py`)
-Good-quality cadences only (QUALITY = 0), each sector normalised, flares removed (two or
-more consecutive cadences above 3 sigma, or one above 5 sigma, plus a short decay tail),
-then a robust biweight filter (wotan) with a 0.5-day window, shortened for strongly
-spotted fast rotators so rotation does not leak into the search.
+## How the candidates were tested
 
-### Search (`tess_search/search.py`)
-Eight years of data with big gaps would need millions of trial periods for a single
-coherent search. Instead each **season** (a run of sectors without long gaps) is searched
-separately with box least squares on a shared, physically motivated period grid
-(Ofir 2014; 0.4 to 40 days), the season log-likelihoods are **added**, and each peak is
-then refit coherently on all data. The search repeats after masking each signal (up to
-5 per star) to find multi-planet systems.
+1. **Search.** Each star's light curve was cleaned of flares, detrended, and searched for periodic dips
+   from 0.4 to 40 days with box least squares run per observing season and stacked across seasons.
+   1,560 signals were found. [Chapter 1](docs/01-data-and-search.md)
+2. **Light-curve vetting.** Eighteen tests for eclipsing binaries, contamination, artefacts and stellar
+   variability, with noise measured at the transit timescale and centroid statistics calibrated against
+   fake transit epochs. 73 signals passed; 26 matched no known planet, TOI or community TOI (3 had been
+   SPOC detections never promoted), 5 of them at full candidate strength. [Chapter 2](docs/02-vetting.md)
+3. **Sensitivity and reliability.** The pipeline recovers 25 of 26 confirmed transiting planets in range,
+   keeps 74% of 300 planets injected into real light curves (89% of 2–4 R⊕ planets inside 15 days), and
+   produces no false candidates from 200 inverted light curves. [Chapter 3](docs/03-sensitivity-and-reliability.md)
+4. **Pixel-level localization.** Difference images from every sector, fitted jointly with NASA's pixel
+   response function, locate where the light goes missing. Validated on 11 confirmed planets (all on
+   target), 3 known nearby eclipsing binaries (all off target) and 39 eclipses planted in the real pixels
+   (34 of 35 reliable fits traced to the right star). [Chapter 4](docs/04-pixel-level-localization.md)
+5. **Transit fits and statistical validation.** MCMC transit fits checked against TOI-700 d and
+   L 98-59 c; NASA pipeline reports re-analysed; false-positive probabilities from TRICERATOPS.
+   [Chapter 5](docs/05-transit-fits-and-false-positive-probabilities.md)
 
-### Vetting (`tess_search/vetting.py`)
-Odd/even depths, secondary eclipses, transit shape, implied radius, duration versus the
-star's density, per-transit consistency, single-event dominance, data-gap pile-up,
-spacecraft-orbit and stellar-rotation periods, centroid motion and background changes.
-TESS noise is correlated, so flux tests use noise measured at the transit timescale, and
-centroid/background tests are **calibrated against fake transit epochs** rather than
-assumed error bars.
+![Where the light goes missing](docs/figures/fig06_localization_maps.png)
 
-### Hardening: pixels, statistics and NASA's own pipeline
-* **Pixel-level localization** (`tess_search/localize.py`): for every sector, the images taken during
-  transit are subtracted from those just before and after (difference images; per-pixel errors from ~60
-  fake transits per sector, flares removed). All sectors are fitted together with the SPOC pixel response
-  function, calibrated per sector on the Gaia DR3 stars in the stamp (proper motions applied), to find
-  where on the sky the light went missing. Errors include a 1.5" systematic floor measured on 46 sources of
-  known position. A second test asks whether the target loses, in the pixels, the light the light-curve
-  depth predicts (confirmed planets: 0.85-1.29).
-* **TRICERATOPS** (Giacalone et al. 2021) false-positive probabilities with the Gaia DR3 field population
-  (queried through VizieR), with and without the neighbours the localization excludes.
-* **NASA SPOC Data Validation reports** for the candidates SPOC flagged (`tess_search/spoc_dv.py`).
-* **MCMC transit fits** (`tess_search/mcmc.py`).
+## Notable findings
 
-### Crossmatch (`tess_search/crossmatch.py`)
-TOIs, community TOIs, confirmed planets (NASA Exoplanet Archive), the TESS eclipsing-binary
-catalogue, and **every SPOC Threshold Crossing Event** (132 single- and multi-sector
-runs), including signals NASA's pipeline found but never promoted.
+* **TOI-218 is one star of a wide binary.** A near-twin M dwarf with the same parallax and proper motion
+  sits 13.5″ away and is blended with it in TESS. All three TOI-218 signals, including the new one, come
+  from TOI-218 itself; the companion is excluded at 4.5–8.7σ.
+* **NASA's pipeline saw three of the candidates.** Its reported SNR fell as data accumulated because its
+  period estimates drifted, not because the signals faded. The 55″ source offset it reported for
+  TIC 229689348 came from difference images that failed its own quality metric.
+* **One first-pass candidate is a nearby eclipsing binary.** TIC 294053492 passed every light-curve test;
+  its light loss lies on a G = 19.8 background star 22″ away, with the target excluded at 7.7σ.
+* **Most weak signals are noise.** 21 weaker signals cluster where few transits are observed; 6 of them
+  are not reproduced in the pixels at all. [Chapter 7](docs/07-weak-signals.md)
 
-## Validation on known planets
-Across the searched stars the pipeline independently recovers 25 of the 26 confirmed
-transiting planets with periods of 0.4-40 days (the miss is TOI-1752 c at 32.7 d), including
-all four TOI-700 planets (TOI-700 d and e are Earth-sized, in or near the habitable zone)
-and L 98-59 b, c and d. Its vetting passes them while rejecting signals the TESS team had
-already classified as false positives. The MCMC transit fit gives TOI-700 d 1.18 ± 0.05 R_earth
-(published 1.07 ± 0.06, Gilbert et al. 2023) and L 98-59 c 1.34 ± 0.04 R_earth (published 1.39 ± 0.09,
-Demangeon et al. 2021). See `REPORT.md`.
+## Documentation
 
-## Running it
+| | |
+|---|---|
+| [`docs/`](docs/) | full technical write-up in eight chapters, with figures |
+| [`results/candidates/`](results/candidates/) | one dossier per signal |
+| [`REPORT.md`](REPORT.md) | generated summary of every number |
+| [`EXPLAINER.md`](EXPLAINER.md) | plain-language summary |
+| [`paper/`](paper/) | draft Research Note of the AAS |
+| [`results/hardening/exofop/`](results/hardening/exofop/) | draft ExoFOP community-TOI upload (not submitted) |
+
+## Reproducing
 
 ```bash
 uv venv --python 3.12 .venv && uv pip install --python .venv/bin/python -r requirements.txt
 uv venv --python 3.12 .venv-tri && uv pip install --python .venv-tri/bin/python -r requirements-triceratops.txt
-# MAST per-sector lists (light; ~350 MB):
-mkdir -p data/scripts && seq 1 107 | xargs -P 6 -I{} curl -s -f -o data/scripts/tesscurl_sector_{}_lc.sh \
-  https://archive.stsci.edu/missions/tess/download_scripts/sector/tesscurl_sector_{}_lc.sh
-.venv/bin/python scripts/01_select_targets.py
-.venv/bin/python scripts/03_catalogs.py   # TOI/CTOI/confirmed/TCE/EB catalogues
-# heavy steps under the thermal guard (see tools/thermal/):
-caffeinate -i -s tools/thermal/daemon.sh &
-.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/02_download.py
-.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/04_search.py --workers 3
-.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/05_reliability.py inject --n 300
-.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/05_reliability.py invert --n 200
-.venv/bin/python scripts/06_summarize.py && .venv/bin/python scripts/check_known.py
-.venv/bin/python scripts/08_followup.py && .venv/bin/python scripts/07_figures.py && .venv/bin/python scripts/09_report.py
-# hardening (pixel files ~20 GB for the candidates and test stars, ~28 GB more for the weak signals)
-.venv/bin/python scripts/10_download_tpfs.py && .venv/bin/python scripts/11_spoc_period_check.py
-.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/12_localize.py --workers 3
-.venv/bin/python scripts/13_triceratops_inputs.py
-.venv/bin/python tools/thermal/guarded_run.py -- .venv-tri/bin/python scripts/13_triceratops_run.py
-.venv/bin/python tools/thermal/guarded_run.py -- .venv-tri/bin/python scripts/13_triceratops_run.py --cleared
-.venv/bin/python tools/thermal/guarded_run.py -- .venv/bin/python scripts/14_mcmc.py
-.venv/bin/python scripts/15_dossiers.py && .venv/bin/python scripts/09_report.py
-.venv/bin/python paper/make_figure.py && .venv/bin/python paper/make_note.py
 .venv/bin/python -m pytest tests/
 ```
 
-The full run downloads ~12 GB (compressed light curves) and took about 6 hours of
-computing on a fanless MacBook Air M2 (search ~4.5 h with 3-4 workers, reliability tests
-alongside). The bulk diagnostic sheets (`results/plots/`, ~200 MB) are not in git;
-`04_search.py` regenerates them.
+The full pipeline (`scripts/01`–`16`) downloads about 56 GB from MAST and ran on a fanless MacBook Air
+under a thermal guard; the complete sequence of commands, compute times and seeds are in
+[Chapter 8](docs/08-limitations-and-reproducibility.md).
 
-### Thermal guard
-This was developed on a fanless MacBook Air. `tools/thermal/daemon.sh` reads macOS's
-own thermal-pressure level and the battery temperature every 20 s, freezes heavy jobs
-(SIGSTOP) at "serious" pressure or 40 C, resumes them when cool, and terminates them
-at "critical" or 45 C. Jobs started through `guarded_run.py` run at low priority in
-their own process group so the guard can control them.
+| path | contents |
+|---|---|
+| `tess_search/` | library: selection, download, cleaning, search, vetting, crossmatch, injection, localization, MCMC |
+| `scripts/` | numbered pipeline steps |
+| `results/` | all outputs, from per-star search records to candidate dossiers |
+| `docs/` | technical write-up and figures |
+| `tools/thermal/` | thermal guard for long jobs on a fanless laptop |
+| `tests/` | unit tests |
 
-## Honest limitations
-* A "candidate" here passed automated tests on TESS data alone. Confirming a planet
-  needs follow-up (ground-based photometry to rule out nearby eclipsing binaries,
-  high-resolution imaging, radial velocities or statistical validation).
-* Only 2-minute-cadence stars with >= 20 sectors were searched, and only periods
-  0.4-40 days with at least 3 transits.
-* Vetting thresholds were tuned on a small validation set (11 stars with known planets)
-  and checked with injection-recovery and inverted light curves; they are not the TESS
-  team's thresholds. Some rules were refined while the search ran; every stored result
-  is re-classified with the final rules (`06_summarize.py`), so all stars are judged alike.
-* The light-curve centroid test is weak for dips this shallow; the pixel-level localization
-  replaces it for the candidates, but it cannot separate sources closer than ~5" (TIC 198412174's
-  4.7" neighbour) and it assumes one variable source per image (a variable star whose period is
-  commensurate with the signal breaks this; such fits are flagged by their poor reduced chi2).
-* Planet radii use TIC v8.2 stellar parameters (radius error propagated). The detrending choice
-  moves radii by 2-4% for the candidates' short transits and by up to ~10% for long ones
-  (TOI-700 d: 1.18 ± 0.05 R_earth with transits masked vs 1.07 published).
-* TRICERATOPS was run without high-resolution imaging, so its FPPs are upper-end values; no
-  candidate is statistically validated.
+## Data
+
+TESS light curves, target pixel files and SPOC Data Validation products from MAST; TESS Input Catalog
+v8.2; Gaia DR3 via VizieR; TOI, CTOI and confirmed-planet lists from ExoFOP and the NASA Exoplanet
+Archive. Raw data are not stored here and are re-downloaded by the scripts.
+
+## License
+
+Code is released under the [MIT License](LICENSE).
