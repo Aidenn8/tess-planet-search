@@ -1,0 +1,867 @@
+{
+ "tic": 229689348,
+ "label": "TIC229689348",
+ "sectors": [
+  15,
+  23,
+  49,
+  86
+ ],
+ "n_runs": 3,
+ "n_draws": 1000000,
+ "FPP_mean": 0.19706031381227937,
+ "FPP_std": 0.0040243809975694525,
+ "NFPP_mean": 0.0,
+ "NFPP_std": 0.0,
+ "top_scenarios": [
+  [
+   "TP:229689348",
+   0.6761792452432092
+  ],
+  [
+   "STP:229689348",
+   0.19691333693599072
+  ],
+  [
+   "PTP:229689348",
+   0.12489126826573316
+  ],
+  [
+   "DTP:229689348",
+   0.0018691726787782993
+  ],
+  [
+   "BTP:229689348",
+   9.103920811396774e-05
+  ],
+  [
+   "SEBx2P:229689348",
+   1.7759161320999555e-05
+  ],
+  [
+   "BEBx2P:229689348",
+   1.6105115599255716e-05
+  ],
+  [
+   "PEBx2P:229689348",
+   1.120440636986565e-05
+  ]
+ ],
+ "runs": [
+  {
+   "FPP": 0.19933517097389042,
+   "NFPP": 0.0,
+   "degenerate": false
+  },
+  {
+   "FPP": 0.1994320747510493,
+   "NFPP": 0.0,
+   "degenerate": false
+  },
+  {
+   "FPP": 0.19241369571189837,
+   "NFPP": 0.0,
+   "degenerate": false
+  }
+ ],
+ "stars": [
+  {
+   "ID": "229689348",
+   "Tmag": 12.9865,
+   "sep (arcsec)": 0.0,
+   "PA (E of N)": 0.0,
+   "fluxratio": 0.8907716015,
+   "tdepth": 0.000689378
+  },
+  {
+   "ID": "229689347",
+   "Tmag": 15.8681,
+   "sep (arcsec)": 9.116,
+   "PA (E of N)": 51.663,
+   "fluxratio": 0.0578839539,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797420",
+   "Tmag": 20.2242,
+   "sep (arcsec)": 22.63,
+   "PA (E of N)": 148.947,
+   "fluxratio": 0.0007628715,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689349",
+   "Tmag": 17.7467,
+   "sep (arcsec)": 25.358,
+   "PA (E of N)": 264.6,
+   "fluxratio": 0.0064308017,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797421",
+   "Tmag": 20.1189,
+   "sep (arcsec)": 39.184,
+   "PA (E of N)": 77.598,
+   "fluxratio": 0.0003389245,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689355",
+   "Tmag": 13.7762,
+   "sep (arcsec)": 48.625,
+   "PA (E of N)": 154.384,
+   "fluxratio": 0.0415904011,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689356",
+   "Tmag": 15.5307,
+   "sep (arcsec)": 67.869,
+   "PA (E of N)": 135.85,
+   "fluxratio": 0.0006374471,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797444",
+   "Tmag": 18.3144,
+   "sep (arcsec)": 75.457,
+   "PA (E of N)": 15.543,
+   "fluxratio": 3.0916e-06,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689340",
+   "Tmag": 15.7155,
+   "sep (arcsec)": 76.391,
+   "PA (E of N)": 345.061,
+   "fluxratio": 5.00411e-05,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797440",
+   "Tmag": 17.8128,
+   "sep (arcsec)": 79.733,
+   "PA (E of N)": 26.587,
+   "fluxratio": 2.0012e-06,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689358",
+   "Tmag": 14.4998,
+   "sep (arcsec)": 81.405,
+   "PA (E of N)": 184.033,
+   "fluxratio": 0.0001172262,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689338",
+   "Tmag": 9.6454,
+   "sep (arcsec)": 82.977,
+   "PA (E of N)": 15.481,
+   "fluxratio": 0.0014057199,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797419",
+   "Tmag": 19.8449,
+   "sep (arcsec)": 83.981,
+   "PA (E of N)": 102.484,
+   "fluxratio": 8.093e-07,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797442",
+   "Tmag": 18.716,
+   "sep (arcsec)": 85.162,
+   "PA (E of N)": 358.769,
+   "fluxratio": 2.44e-07,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689346",
+   "Tmag": 17.1932,
+   "sep (arcsec)": 87.207,
+   "PA (E of N)": 82.421,
+   "fluxratio": 4.2804e-06,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797441",
+   "Tmag": 19.638,
+   "sep (arcsec)": 88.618,
+   "PA (E of N)": 44.003,
+   "fluxratio": 9.82e-08,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797418",
+   "Tmag": 18.3629,
+   "sep (arcsec)": 91.272,
+   "PA (E of N)": 207.215,
+   "fluxratio": 2.984e-07,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797447",
+   "Tmag": 18.9394,
+   "sep (arcsec)": 92.457,
+   "PA (E of N)": 298.273,
+   "fluxratio": 1.15e-07,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797453",
+   "Tmag": 19.9633,
+   "sep (arcsec)": 93.676,
+   "PA (E of N)": 342.805,
+   "fluxratio": 1.34e-08,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797438",
+   "Tmag": 18.7754,
+   "sep (arcsec)": 97.66,
+   "PA (E of N)": 280.794,
+   "fluxratio": 1.73e-08,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797448",
+   "Tmag": 19.5728,
+   "sep (arcsec)": 99.648,
+   "PA (E of N)": 317.997,
+   "fluxratio": 9.1e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797454",
+   "Tmag": 18.372,
+   "sep (arcsec)": 100.163,
+   "PA (E of N)": 341.9,
+   "fluxratio": 8.7e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797439",
+   "Tmag": 19.5986,
+   "sep (arcsec)": 100.973,
+   "PA (E of N)": 274.709,
+   "fluxratio": 2.4e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797443",
+   "Tmag": 18.4443,
+   "sep (arcsec)": 101.521,
+   "PA (E of N)": 14.382,
+   "fluxratio": 1.7e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689335",
+   "Tmag": 16.4093,
+   "sep (arcsec)": 102.452,
+   "PA (E of N)": 19.968,
+   "fluxratio": 7.9e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689350",
+   "Tmag": 16.7651,
+   "sep (arcsec)": 111.092,
+   "PA (E of N)": 268.663,
+   "fluxratio": 1.1e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689362",
+   "Tmag": 15.4226,
+   "sep (arcsec)": 111.806,
+   "PA (E of N)": 166.703,
+   "fluxratio": 6.7e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797437",
+   "Tmag": 18.5858,
+   "sep (arcsec)": 113.882,
+   "PA (E of N)": 265.682,
+   "fluxratio": 1e-10,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689361",
+   "Tmag": 15.2444,
+   "sep (arcsec)": 114.071,
+   "PA (E of N)": 205.073,
+   "fluxratio": 4.5e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689357",
+   "Tmag": 17.316,
+   "sep (arcsec)": 117.452,
+   "PA (E of N)": 122.89,
+   "fluxratio": 5e-10,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689351",
+   "Tmag": 16.7859,
+   "sep (arcsec)": 120.068,
+   "PA (E of N)": 262.738,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797449",
+   "Tmag": 18.8659,
+   "sep (arcsec)": 120.859,
+   "PA (E of N)": 334.332,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689353",
+   "Tmag": 15.7554,
+   "sep (arcsec)": 123.134,
+   "PA (E of N)": 254.026,
+   "fluxratio": 1e-10,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797414",
+   "Tmag": 19.2223,
+   "sep (arcsec)": 126.456,
+   "PA (E of N)": 199.658,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689359",
+   "Tmag": 15.4362,
+   "sep (arcsec)": 128.204,
+   "PA (E of N)": 131.782,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797417",
+   "Tmag": 18.8515,
+   "sep (arcsec)": 128.669,
+   "PA (E of N)": 145.598,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689336",
+   "Tmag": 15.1178,
+   "sep (arcsec)": 131.769,
+   "PA (E of N)": 47.532,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797446",
+   "Tmag": 18.2675,
+   "sep (arcsec)": 133.564,
+   "PA (E of N)": 21.035,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689364",
+   "Tmag": 17.1128,
+   "sep (arcsec)": 133.642,
+   "PA (E of N)": 176.344,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689363",
+   "Tmag": 17.6707,
+   "sep (arcsec)": 136.547,
+   "PA (E of N)": 151.261,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797422",
+   "Tmag": 20.4392,
+   "sep (arcsec)": 137.581,
+   "PA (E of N)": 118.712,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797457",
+   "Tmag": 18.2435,
+   "sep (arcsec)": 138.56,
+   "PA (E of N)": 346.859,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689352",
+   "Tmag": 18.145,
+   "sep (arcsec)": 139.044,
+   "PA (E of N)": 100.501,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797455",
+   "Tmag": 19.2478,
+   "sep (arcsec)": 140.84,
+   "PA (E of N)": 0.171,
+   "fluxratio": 9.836542306e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797415",
+   "Tmag": 18.4032,
+   "sep (arcsec)": 141.761,
+   "PA (E of N)": 189.194,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797321",
+   "Tmag": 19.1109,
+   "sep (arcsec)": 142.248,
+   "PA (E of N)": 144.897,
+   "fluxratio": 7.281528479e-16,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689365",
+   "Tmag": 16.0848,
+   "sep (arcsec)": 142.544,
+   "PA (E of N)": 188.92,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689354",
+   "Tmag": 15.9412,
+   "sep (arcsec)": 143.385,
+   "PA (E of N)": 107.645,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689341",
+   "Tmag": 17.4064,
+   "sep (arcsec)": 144.333,
+   "PA (E of N)": 68.61,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689334",
+   "Tmag": 17.1396,
+   "sep (arcsec)": 144.578,
+   "PA (E of N)": 34.174,
+   "fluxratio": 2.587726118e-16,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797445",
+   "Tmag": 19.0213,
+   "sep (arcsec)": 144.911,
+   "PA (E of N)": 29.101,
+   "fluxratio": 1.770969938e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797452",
+   "Tmag": 19.7802,
+   "sep (arcsec)": 145.831,
+   "PA (E of N)": 307.581,
+   "fluxratio": 2.327429428e-16,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689366",
+   "Tmag": 14.9809,
+   "sep (arcsec)": 146.983,
+   "PA (E of N)": 171.127,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689333",
+   "Tmag": 17.6477,
+   "sep (arcsec)": 147.651,
+   "PA (E of N)": 324.197,
+   "fluxratio": 4.491866961e-16,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797436",
+   "Tmag": 19.5705,
+   "sep (arcsec)": 149.872,
+   "PA (E of N)": 242.982,
+   "fluxratio": 7.465237896e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797320",
+   "Tmag": 19.3696,
+   "sep (arcsec)": 149.898,
+   "PA (E of N)": 140.518,
+   "fluxratio": 2.12671684e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797416",
+   "Tmag": 19.3944,
+   "sep (arcsec)": 153.26,
+   "PA (E of N)": 169.972,
+   "fluxratio": 4.765251936e-18,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689343",
+   "Tmag": 17.142,
+   "sep (arcsec)": 153.295,
+   "PA (E of N)": 77.512,
+   "fluxratio": 1.77171868e-16,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797319",
+   "Tmag": 19.7148,
+   "sep (arcsec)": 153.298,
+   "PA (E of N)": 151.679,
+   "fluxratio": 1.507803071e-18,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797450",
+   "Tmag": 19.9913,
+   "sep (arcsec)": 153.483,
+   "PA (E of N)": 293.343,
+   "fluxratio": 3.246783921e-18,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797451",
+   "Tmag": 19.433,
+   "sep (arcsec)": 154.981,
+   "PA (E of N)": 298.373,
+   "fluxratio": 3.264183074e-18,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229687602",
+   "Tmag": 15.3267,
+   "sep (arcsec)": 155.874,
+   "PA (E of N)": 281.555,
+   "fluxratio": 2.508625906e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797456",
+   "Tmag": 20.0453,
+   "sep (arcsec)": 155.957,
+   "PA (E of N)": 19.532,
+   "fluxratio": 7.858708451e-21,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797435",
+   "Tmag": 19.5786,
+   "sep (arcsec)": 157.843,
+   "PA (E of N)": 236.925,
+   "fluxratio": 1.714985619e-18,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689329",
+   "Tmag": 17.3693,
+   "sep (arcsec)": 158.051,
+   "PA (E of N)": 26.592,
+   "fluxratio": 5.340393712e-20,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689327",
+   "Tmag": 18.1523,
+   "sep (arcsec)": 162.863,
+   "PA (E of N)": 6.402,
+   "fluxratio": 1.36997934e-21,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797337",
+   "Tmag": 20.4197,
+   "sep (arcsec)": 162.924,
+   "PA (E of N)": 122.966,
+   "fluxratio": 5.00026637e-20,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797318",
+   "Tmag": 18.335,
+   "sep (arcsec)": 164.532,
+   "PA (E of N)": 151.06,
+   "fluxratio": 1.300906325e-20,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689331",
+   "Tmag": 17.8688,
+   "sep (arcsec)": 165.519,
+   "PA (E of N)": 39.27,
+   "fluxratio": 4.472900792e-21,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797336",
+   "Tmag": 18.6361,
+   "sep (arcsec)": 166.483,
+   "PA (E of N)": 132.768,
+   "fluxratio": 1.699766889e-20,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689332",
+   "Tmag": 16.2869,
+   "sep (arcsec)": 167.105,
+   "PA (E of N)": 41.127,
+   "fluxratio": 1.101826184e-20,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797412",
+   "Tmag": 20.1353,
+   "sep (arcsec)": 167.906,
+   "PA (E of N)": 188.769,
+   "fluxratio": 1.589168169e-22,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797396",
+   "Tmag": 19.6354,
+   "sep (arcsec)": 168.753,
+   "PA (E of N)": 253.087,
+   "fluxratio": 1.306862146e-21,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400802072",
+   "Tmag": 19.2944,
+   "sep (arcsec)": 173.551,
+   "PA (E of N)": 345.978,
+   "fluxratio": 6.346205719e-24,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689360",
+   "Tmag": 18.0113,
+   "sep (arcsec)": 174.434,
+   "PA (E of N)": 124.429,
+   "fluxratio": 7.119230427e-22,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689345",
+   "Tmag": 18.0915,
+   "sep (arcsec)": 174.86,
+   "PA (E of N)": 83.355,
+   "fluxratio": 6.364845576e-22,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689342",
+   "Tmag": 15.4828,
+   "sep (arcsec)": 179.461,
+   "PA (E of N)": 74.24,
+   "fluxratio": 4.579964072e-22,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797394",
+   "Tmag": 20.0303,
+   "sep (arcsec)": 180.768,
+   "PA (E of N)": 238.714,
+   "fluxratio": 3.222752765e-24,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797333",
+   "Tmag": 19.0906,
+   "sep (arcsec)": 180.965,
+   "PA (E of N)": 132.77,
+   "fluxratio": 2.45905271e-24,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689324",
+   "Tmag": 18.7134,
+   "sep (arcsec)": 181.923,
+   "PA (E of N)": 10.657,
+   "fluxratio": 5.911772581e-28,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689326",
+   "Tmag": 18.6747,
+   "sep (arcsec)": 184.293,
+   "PA (E of N)": 25.977,
+   "fluxratio": 5.138225636e-28,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797411",
+   "Tmag": 20.042,
+   "sep (arcsec)": 184.3,
+   "PA (E of N)": 186.733,
+   "fluxratio": 5.894262497e-27,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400802069",
+   "Tmag": 19.1216,
+   "sep (arcsec)": 184.599,
+   "PA (E of N)": 309.314,
+   "fluxratio": 1.567977707e-25,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797409",
+   "Tmag": 20.0712,
+   "sep (arcsec)": 185.139,
+   "PA (E of N)": 284.915,
+   "fluxratio": 3.457333117e-30,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797338",
+   "Tmag": 18.3841,
+   "sep (arcsec)": 185.54,
+   "PA (E of N)": 111.118,
+   "fluxratio": 8.73662018e-25,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797408",
+   "Tmag": 20.7093,
+   "sep (arcsec)": 186.014,
+   "PA (E of N)": 278.152,
+   "fluxratio": 6.568695692e-30,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229687596",
+   "Tmag": 16.7811,
+   "sep (arcsec)": 188.342,
+   "PA (E of N)": 257.808,
+   "fluxratio": 4.536485607e-26,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "229689344",
+   "Tmag": 16.8656,
+   "sep (arcsec)": 190.149,
+   "PA (E of N)": 81.208,
+   "fluxratio": 1.629647963e-25,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797317",
+   "Tmag": 20.7688,
+   "sep (arcsec)": 191.733,
+   "PA (E of N)": 178.576,
+   "fluxratio": 1.092849288e-29,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797335",
+   "Tmag": 20.6474,
+   "sep (arcsec)": 192.489,
+   "PA (E of N)": 123.063,
+   "fluxratio": 1.061233067e-27,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797334",
+   "Tmag": 19.844,
+   "sep (arcsec)": 192.718,
+   "PA (E of N)": 141.708,
+   "fluxratio": 1.777280177e-28,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797458",
+   "Tmag": 17.9111,
+   "sep (arcsec)": 194.184,
+   "PA (E of N)": 5.875,
+   "fluxratio": 3.981035119e-31,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797375",
+   "Tmag": 19.4019,
+   "sep (arcsec)": 197.6,
+   "PA (E of N)": 235.317,
+   "fluxratio": 1.491217579e-28,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "1400797315",
+   "Tmag": 19.5163,
+   "sep (arcsec)": 202.188,
+   "PA (E of N)": 185.798,
+   "fluxratio": 3.530760598e-32,
+   "tdepth": 0.0
+  }
+ ],
+ "background_population": "results/hardening/triceratops/background/229689348_gaia_background.csv",
+ "runtime_s": 180,
+ "cleared_by_localization": [
+  {
+   "tic": 229689347,
+   "gaia": 1422141810046979968,
+   "sep": 9.116,
+   "tmag": 15.8681,
+   "excluded_sigma": 4.592430686250253
+  },
+  {
+   "tic": 1400797420,
+   "gaia": 1422141805751675264,
+   "sep": 22.63,
+   "tmag": 20.2242,
+   "excluded_sigma": 6.747007352046162
+  },
+  {
+   "tic": 229689349,
+   "gaia": 1422142462882048000,
+   "sep": 25.358,
+   "tmag": 17.7467,
+   "excluded_sigma": 7.213435299869318
+  },
+  {
+   "tic": 229689355,
+   "gaia": 1422141741327502336,
+   "sep": 48.625,
+   "tmag": 13.7762,
+   "excluded_sigma": 8.028393440257744
+  },
+  {
+   "tic": 229689356,
+   "gaia": 1422141569528810880,
+   "sep": 67.869,
+   "tmag": 15.5307,
+   "excluded_sigma": 8.027399391930475
+  },
+  {
+   "tic": 229689338,
+   "gaia": 1422142630385191552,
+   "sep": 82.977,
+   "tmag": 9.6454,
+   "excluded_sigma": 8.006815785822777
+  }
+ ]
+}

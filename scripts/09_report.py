@@ -56,7 +56,8 @@ def hardening_section(w, loc):
     rn = rel[rel.injected_on == "neighbour"]
     w(f"\n{len(inj)} synthetic eclipses were planted in the real pixels (on the target, and on the neighbours that "
       "could most easily mimic each signal, sized to reproduce its depth). "
-      f"{int(rel.recovered_correct.astype(str).eq('True').sum())} of {len(rel)} were traced to the right star; for "
+      f"Of the {len(rel)} with a reliable fit, {int(rel.recovered_correct.astype(str).eq('True').sum())} were traced "
+      "to the right star (the exception is a target/neighbour pair 4.7\" apart, below the method's resolution); for "
       f"{int((rn.target_sigma_total > 3).sum())} of {len(rn)} planted on neighbours (4.7-83\" away) the target was "
       f"excluded at more than 3 sigma. {len(inj) - len(rel)} injections around TOI-6000 gave a poor fit (reduced chi2 "
       "> 2): a variable star in that image happens to vary in step with the injected period, which breaks the "
@@ -71,9 +72,9 @@ def hardening_section(w, loc):
       "were added; folding this work's light curve at SPOC's period for each run reproduces the drop (the transit "
       "smears by 1-4 hours over the baseline), so the signals did not fade. SPOC's difference-image centroids for "
       f"these runs are listed in the dossiers; none of its {int(dv.diff_images_attempted.sum())} per-sector difference "
-      "images passed SPOC's own quality test, and the runs that offset TIC 229689348's source by 55\" used the "
-      "correct period but those failed images. The localization above, built at the correct period from all sectors, "
-      "places that source on the target.\n")
+      "images passed SPOC's own quality test. The run that put TIC 229689348's source 55\" away (s14-s55) used the "
+      "correct period, but its difference images were among those that failed; the localization above, built at the "
+      "correct period from all sectors, places that source on the target.\n")
     w("![SPOC period check](results/hardening/spoc_period_check.png)\n")
     w("### Statistical validation (TRICERATOPS)\n")
     w("TRICERATOPS (Giacalone et al. 2021) weighs a planet on the target against eclipsing binaries on the target, "
@@ -158,6 +159,12 @@ def main():
       f"(all within {pl.target_sigma_total.max():.1f} sigma), {len(nb)} TFOP-retired nearby eclipsing binaries come out off "
       f"target, and {int(inj.recovered_correct.astype(str).eq('True').sum())} of {len(inj)} synthetic eclipses planted in "
       "the real pixels are traced to the right star.")
+    likely = on[(on.fpp_cleared < 0.5) & (on.nfpp_cleared < 1e-3)]
+    w(f"* **Statistical validation (TRICERATOPS, no imaging):** with the neighbours that the pixels exclude treated as "
+      f"cleared, {len(likely)} of {len(on)} candidates meet TRICERATOPS's *likely planet* criteria (FPP < 0.5, "
+      f"NFPP < 0.001): " + ", ".join(f"TIC {r.tic} FPP {r.fpp_cleared:.2f}" for _, r in likely.sort_values("fpp_cleared").iterrows())
+      + ". None is validated (FPP < 0.015 with high-resolution imaging); the remaining FPP is mostly unresolved "
+      "bound companions, which imaging tests directly.")
     w(f"* {len(weak)} weaker signals are listed separately; most are expected to be false alarms, and many sit at "
       "36-40 d periods where noise produces them (see *Weak candidates*).\n")
 

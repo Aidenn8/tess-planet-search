@@ -223,7 +223,7 @@ def run_star(tic, sigs, inject=True):
         if sig["kind"] == "candidate":
             rec["split_halves"] = split_halves(tic, cals, stars, target_idx, sig)
         (OUT / f"{sig['label']}.json").write_text(json.dumps(
-            dict(rec, stars=loc.stars[:40], grid=loc.grid), default=float, indent=1))
+            dict(rec, stars=loc.stars, grid=loc.grid), default=float, indent=1))
         plot(loc, items, stars, target_idx, sig, OUT / f"{sig['label']}.png",
              f"{sig['label']} (TIC {tic}), P = {sig['period']:.5f} d, depth {sig['depth'] * 1e6:.0f} ppm [{sig['kind']}]")
         out.append(rec)

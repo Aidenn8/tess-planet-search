@@ -1,17 +1,17 @@
-TIC 229689348: 1 signals in 131 s
-TIC 198412174: 1 signals in 159 s
-TIC 32090583: 3 signals in 214 s
-TIC 294053492: 1 signals in 91 s
-TIC 149390648: 1 signals in 174 s
-TIC 219875976: 1 signals in 79 s
-TIC 259233660: 1 signals in 132 s
-TIC 364074068: 1 signals in 57 s
-TIC 150428135: 3 signals in 120 s
-TIC 356016119: 1 signals in 100 s
-TIC 279251651: 1 signals in 22 s
-TIC 307210830: 3 signals in 51 s
-TIC 198211976: 1 signals in 26 s
-TIC 441738827: 2 signals in 90 s
+TIC 229689348: 1 signals in 26 s
+TIC 198412174: 1 signals in 34 s
+TIC 32090583: 3 signals in 50 s
+TIC 294053492: 1 signals in 24 s
+TIC 149390648: 1 signals in 46 s
+TIC 219875976: 1 signals in 20 s
+TIC 259233660: 1 signals in 30 s
+TIC 364074068: 1 signals in 12 s
+TIC 150428135: 3 signals in 25 s
+TIC 356016119: 1 signals in 21 s
+TIC 279251651: 1 signals in 9 s
+TIC 307210830: 3 signals in 20 s
+TIC 198211976: 1 signals in 11 s
+TIC 441738827: 2 signals in 31 s
 systematic floor: fitted 0.59", 95% coverage needs 1.4000000000000001" from 46 known cases (used 1.50"); flagged unreliable: ['TOI-6000b_inject_target', 'TOI-6000b_inject_2261062378812853888', 'TOI-6000b_inject_2261062172654423936', 'TOI-6000b_inject_2261056503297591552']
                                       label       kind  offset_arcsec  offset_err_arcsec  target_sigma best_star_is_target  amplitude_ratio  chi2_red expected_source_is_best recovered_correct  injected_sep_arcsec  injected_source_sigma
 0                              TIC229689348  candidate       3.605551           2.393654      1.204734                True         1.018648  1.124883                     NaN               NaN                  NaN                    NaN

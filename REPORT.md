@@ -8,33 +8,71 @@
 * The pipeline independently recovers **25 of 26 confirmed transiting planets** in that range (and 82 of 89 catalogued signals that can transit), including all four planets of TOI-700, and passes them through vetting.
 * **Completeness** (300 injected planets): 79.7% detected, 74.0% detected and passed vetting; 88.6% for planets of 2-4 R_earth inside 15 days, 55.3% for planets under 1.5 R_earth inside 5 days.
 * **Reliability** (200 flipped light curves): **no false candidates** (95% upper limit 1.5% of stars); false *weak* candidates on 3.0% of stars.
-* **5 candidates that are in no planet catalogue** passed every test and deeper follow-up (2 appear in no list at all, 3 were flagged by NASA's pipeline but never promoted), all Earth-sized (about 1.0-1.3 R_earth) on orbits shorter than 3 days. 21 weaker signals are listed separately; most are expected to be false alarms.
+* **5 signals in no planet catalogue** passed every light-curve test. A second, deeper pass checked each one in the pixels, statistically and against NASA's own pipeline (see *Hardening*): **4 remain candidates** (TIC 32090583 (TOI-218), TIC 229689348, TIC 198412174, TIC 149390648; 1.00-1.35 R_earth, periods 0.47-2.84 d), and **1 is a nearby eclipsing binary** (TIC 294053492: the light loss is 22" from the target).
+* The pixel-level localization was validated first: 11 confirmed planets come out on their own star (all within 1.5 sigma), 3 TFOP-retired nearby eclipsing binaries come out off target, and 34 of 35 synthetic eclipses planted in the real pixels are traced to the right star.
+* **Statistical validation (TRICERATOPS, no imaging):** with the neighbours that the pixels exclude treated as cleared, 4 of 4 candidates meet TRICERATOPS's *likely planet* criteria (FPP < 0.5, NFPP < 0.001): TIC 32090583 FPP 0.08, TIC 149390648 FPP 0.09, TIC 229689348 FPP 0.20, TIC 198412174 FPP 0.48. None is validated (FPP < 0.015 with high-resolution imaging); the remaining FPP is mostly unresolved bound companions, which imaging tests directly.
+* 21 weaker signals are listed separately; most are expected to be false alarms, and many sit at 36-40 d periods where noise produces them (see *Weak candidates*).
 
 ## Candidates
 
-Each was re-vetted from scratch, fitted with a physical transit model (batman, quadratic limb darkening fixed, stellar-density prior), checked against Gaia DR3 neighbours, and searched for independently in each half of the data. A candidate is a signal worth follow-up observations, **not a confirmed planet**.
+Each signal was re-vetted from scratch, fitted with an MCMC transit model (planet radius includes the stellar-radius uncertainty), localized in the pixels, run through TRICERATOPS, and compared with NASA's SPOC pipeline where SPOC had flagged it. A candidate is a signal worth follow-up observations, **not a confirmed planet**. Full dossiers: `results/candidates/`.
 
-| TIC | period (d) | mid-transit (BJD) | depth (ppm) | radius (R_earth) | impact b | T14 (h) | SNR | both halves | RUWE | status |
-|---|---|---|---|---|---|---|---|---|---|---|
-| 32090583 | 2.146798 | 2459318.6968 | 1088 | 1.02 ± 0.05 | 0.55 | 0.91 | 11.1 | yes | 1.12 | new (no list) |
-| 229689348 | 0.465377 | 2459027.6289 | 689 | 1.23 ± 0.07 | 0.80 | 0.52 | 10.4 | yes | 1.02 | SPOC TCE, never a TOI |
-| 198412174 | 1.390160 | 2459644.3195 | 448 | 1.32 ± 0.08 | 0.93 | 0.60 | 9.7 | yes | 1.21 | SPOC TCE, never a TOI |
-| 149390648 | 2.836887 | 2459180.6346 | 667 | 0.97 ± 0.06 | 0.49 | 1.16 | 9.1 | partly | 1.23 | SPOC TCE, never a TOI |
-| 294053492 | 1.085265 | 2458619.0077 | 729 | 1.26 ± 0.08 | 0.48 | 0.96 | 7.9 | yes | 1.08 | new (no list) |
+| TIC | verdict | period (d) | radius (R_earth) | T_eq (K) | SNR | source offset from target | FPP / NFPP (TESS only) | FPP / NFPP (localization-cleared) |
+|---|---|---|---|---|---|---|---|---|
+| 32090583 (TOI-218) | Candidate (strongest) | 2.146798 | 1.05 ± 0.06 | 578 | 11.1 | 2.2 ± 3.0" | 0.414 / 0.3588 | 0.082 / 0.0003 |
+| 229689348 | Candidate | 0.465377 | 1.25 ± 0.08 | 1131 | 10.4 | 3.6 ± 3.3" | 0.199 / 0.0010 | 0.197 / 0.0000 |
+| 198412174 | Candidate (ambiguous host) | 1.390160 | 1.35 ± 0.11 | 954 | 9.7 | 2.2 ± 3.5" | 0.461 / 0.0007 | 0.478 / 0.0000 |
+| 149390648 | Candidate | 2.836887 | 1.00 ± 0.07 | 581 | 9.1 | 4.2 ± 3.6" | 0.092 / 0.0047 | 0.088 / 0.0009 |
+| 294053492 | False positive: nearby eclipsing binary | 1.085265 | 1.29 ± 0.09 | 852 | 7.9 | 21.6 ± 3.1" | 0.340 / 0.2998 | n/a |
 
-*Radius errors exclude the uncertainty of the stellar radius (TIC v8.2).*
+**TIC 32090583.** A **third transiting signal in the TOI-218 system**, found after the two known TOIs were masked: 1.05 ± 0.06 R_earth on a 2.1468-d orbit (T_eq ~578 K), not in any TOI, CTOI or SPOC TCE list. TOI-218 is one star of a wide binary: a near-twin M dwarf (same parallax and proper motion) sits 13.5" away and is blended with it in TESS. The pixel localization puts the new signal on the target (2.2 ± 3.0") and excludes the companion at 4.4 sigma; the two known TOI-218 signals also come from the target (8.7 and 6.8 sigma against the companion). The pixels lose 1.25 ± 0.18 times the light the light-curve depth predicts, and both halves of the data recover it (SNR 11.0 and 8.4). From TESS photometry alone TRICERATOPS gives FPP = 0.41 and NFPP = 0.36, almost all of it the scenario that the planet orbits the equal-brightness companion, which TRICERATOPS cannot tell apart without pixel information; with the companion and the other neighbours the localization excludes treated as cleared, FPP = 0.082 and NFPP = 0.0003. TFOP notes call the host an eruptive (flaring) variable and suspect TOI-218.01 is stellar variability; flares are removed here and the new signal is a flat-bottomed, periodic, ~0.9-h dip seen in 400+ transits, unlike spot or flare activity. Extra candidates in systems that already have candidates are more often real. Next step: ground-based photometry that resolves the binary, an independent check of which star hosts each of the three signals. Dossier: `results/candidates/TIC32090583.md`.
 
-**TIC 32090583.** A **third periodic signal on TOI-218**, a star with two known TESS candidates (0.438 d and 8.352 d), found after both were masked. Its period is not a simple ratio of either (4.90 and 3.89). Not in any TOI, CTOI or SPOC TCE list. Extra candidates in systems that already have planets are statistically much more likely to be real. ExoFOP lists two high-resolution imaging observations of this star. Dossier: `results/followup/TIC32090583_5.md`, sheet: `results/followup/TIC32090583_5.png`.
+**TIC 229689348.** An **ultra-short-period candidate: 1.25 ± 0.08 R_earth on an 11.2-hour orbit** (T_eq ~1131 K, ~272x Earth's insolation), flat-bottomed, in 1088 transits and in both halves of the data. NASA's pipeline flagged it in three multi-sector runs but never promoted it; its reported SNR (5.8, 18.4, 3.8) tracks how far its period estimate was from the true one, not a fading signal. SPOC's difference images put the source 55" away in its best run, but none of them passed SPOC's own quality test; the joint PRF localization here, at the correct period with all 25 sectors, puts it on the target (3.6 ± 3.3"), excludes the bright 48.7" neighbour SPOC's offset pointed towards at 8.0 sigma and the 9.2" neighbour at 4.6 sigma, and synthetic eclipses planted on those neighbours are correctly traced to them. Pixel/light-curve depth ratio 1.02 ± 0.15. TRICERATOPS: FPP = 0.199, NFPP = 0.0010; the planet-on-target scenario carries 68% and the rest is almost all unresolved-companion scenarios (20% a planet on a bound companion), which high-resolution imaging would test; with the neighbours the localization excludes treated as cleared the neighbour scenarios vanish (NFPP = 0.00000, FPP = 0.197). The transit is short for this star (b ~ 0.80), and the transit shape alone prefers a denser star (density 3.1 +1.4 -2.0 x the TIC value), which TRICERATOPS reads as some weight on a companion host. Dossier: `results/candidates/TIC229689348.md`.
 
-**TIC 229689348.** An **11.2-hour orbit** with a crisp, flat-bottomed transit (SDE 15, 1,088 transits) and the cleanest vetting metrics of the set. Flagged by SPOC in three multi-sector runs (s14-50, s14-55, s14-86) but never made a TOI; nothing on ExoFOP. Dossier: `results/followup/TIC229689348_1.md`, sheet: `results/followup/TIC229689348_1.png`.
+**TIC 198412174.** **1.35 ± 0.11 R_earth on a 1.3902-d orbit**, nearly grazing (b ~ 0.93). SPOC flagged it in three runs; as for TIC 229689348 the falling SPOC SNR follows SPOC's period error. The pixels put the source on or very near the target (2.2 ± 3.5") but **cannot separate the target from a T = 18.2 star 4.7" away** (excluded at only 1.3 sigma; it would need a ~11% eclipse); the planted-eclipse test shows that this pair is below the method's resolution. TRICERATOPS: FPP = 0.461 (NFPP 0.0007), dominated by a planet transiting an unresolved bound companion (46%) rather than the target (45%), because the transit is short for this star; clearing the neighbours the localization excludes gives FPP = 0.478, NFPP = 0.00001. High-resolution imaging (to find or exclude a companion and the 4.7" star) is the decisive next step. Dossier: `results/candidates/TIC198412174.md`.
 
-**TIC 198412174.** Clean on every test and present in both halves, but cautions: the transit is short (impact parameter ~0.93), SPOC's SNR for the same period fell as data were added (8.5, 6.0, 4.4 for s14-50, s14-78, s14-86) although this search finds ~10 on the same sectors, and a star 6 mag fainter sits 4.7" away, unresolved by TESS (an 11%-deep eclipsing binary there would mimic the signal). Dossier: `results/followup/TIC198412174_1.md`, sheet: `results/followup/TIC198412174_1.png`.
+**TIC 149390648.** **1.00 ± 0.07 R_earth on a 2.8369-d orbit** (T_eq ~581 K) in a crowded southern field. SPOC flagged it once (s1-s96, SNR 8.5) and its difference-image offset was 2.2 ± 3.3", consistent with the target; this localization agrees (4.2 ± 3.6", every neighbour excluded at 3 sigma). The first half of the data alone does not lock onto the period (SNR 5.4 at a different period; second half 7.6 at this one), and the pixels lose 1.47 ± 0.23 times the expected light, the highest ratio in the set, which in a crowded field can mean the PDC crowding correction is imperfect. TRICERATOPS: FPP = 0.092, NFPP = 0.0047 from TESS photometry alone, the NFPP coming from many faint neighbours; with those the localization excludes treated as cleared, FPP = 0.088 and NFPP = 0.00093. The last neighbour scenario left is TIC 149390646, a TIC entry with T = 17.0 and no Gaia counterpart; Gaia DR3 sees only a G = 21.6 source there, far too faint to make the dip. Ground-based photometry would settle it. Dossier: `results/candidates/TIC149390648.md`.
 
-**TIC 149390648.** Flagged by SPOC as a TCE but never a TOI. Weakest of the five: the first half of the data alone does not lock onto the period, and the field is very crowded (27 Gaia neighbours bright enough to mimic it). Dossier: `results/followup/TIC149390648_1.md`, sheet: `results/followup/TIC149390648_1.png`.
+**TIC 294053492.** **Not a planet candidate on this star.** The light-curve signal (1.0853 d, depth ~856 ppm) passed every light-curve test, but the pixels place the light loss 21.6 ± 3.1" north-east of the target, excluding the target at 7.7 sigma; odd and even sectors each give the same off-target position on their own. The best-matching Gaia DR3 source is 5486535775331400832 (G = 19.8, 22.7" from the target and 2.1" from the best-fit position), which would need a ~16% eclipse: an ordinary eclipsing binary. More light goes missing than the target could lose for this depth (1.76x). TRICERATOPS, which has no pixel information, also flags a neighbour (NFPP = 0.30) but blames the bright star 22.6" to the north-west, which the pixels exclude at 8.3 sigma; the faint true source carries little prior weight there. This is what the hardening pass is for; the earlier write-up listed it as one of five candidates. Dossier: `results/candidates/TIC294053492.md`.
 
-**TIC 294053492.** Not in any catalogue. Cautions: the dip is somewhat V-shaped, the depth in pre-PDC (SAP) flux is lower (833 vs 1,107 ppm), and the field is crowded (17 Gaia neighbours bright enough to mimic it). Dossier: `results/followup/TIC294053492_1.md`, sheet: `results/followup/TIC294053492_1.png`.
+The ExoFOP community-TOI upload is drafted in `results/hardening/exofop/params_planet_DRAFT.txt` (not submitted; it needs the submitter's ExoFOP tag and a public URL).
 
-What would settle each one: ground-based photometry during predicted transits (to see which star dims), high-resolution imaging, and radial velocities or statistical validation. Each dossier has the ephemeris and parameters a community-TOI (CTOI) submission to ExoFOP asks for.
+## Hardening
+
+### Is the light lost on the target? Pixel-level localization
+
+TESS pixels are 21" wide, so a neighbouring eclipsing binary can leak a planet-sized dip into the target's light curve. For every sector the images taken during transit are subtracted from those taken just before and after; the result shows only the light that disappeared. All sectors are then fitted together with NASA's model of how a point source spreads over the pixels (the SPOC PRF), calibrated per sector on the Gaia stars in the image, to find where on the sky the light went missing (`tess_search/localize.py`). Pixel errors come from ~60 fake transits per sector; flares are removed first.
+
+| test | signal | source offset from target | target excluded at | reduced chi2 |
+|---|---|---|---|---|
+| confirmed planet | L98-59b | 1.0 ± 2.3" | 0.2 sigma | 1.28 |
+| confirmed planet | L98-59c | 0.0 ± 2.3" | 0.0 sigma | 1.19 |
+| confirmed planet | L98-59d | 0.0 ± 2.3" | 0.0 sigma | 1.15 |
+| confirmed planet | TOI-1756b | 3.2 ± 2.7" | 1.2 sigma | 1.20 |
+| confirmed planet | TOI-2084b | 1.0 ± 2.7" | 0.2 sigma | 1.11 |
+| confirmed planet | TOI-2094b | 0.0 ± 2.9" | 0.0 sigma | 1.03 |
+| confirmed planet | TOI-5728b | 1.4 ± 3.3" | 0.3 sigma | 1.21 |
+| confirmed planet | TOI-6000b | 4.5 ± 2.9" | 1.5 sigma | 1.01 |
+| confirmed planet | TOI-700b | 4.1 ± 3.3" | 1.1 sigma | 1.28 |
+| confirmed planet | TOI-700c | 0.0 ± 2.3" | 0.0 sigma | 1.20 |
+| confirmed planet | TOI-700d | 1.0 ± 3.3" | 0.1 sigma | 1.26 |
+| TFOP: nearby EB | TOI-2084.02 | 13.0 ± 2.5" | 7.4 sigma | 1.12 |
+| TFOP: nearby EB | TOI-2283.01 | 28.5 ± 6.2" | 3.5 sigma | 1.39 |
+| TFOP: nearby EB | TOI-419.01 | 26.8 ± 2.3" | 37.0 sigma | 1.52 |
+
+39 synthetic eclipses were planted in the real pixels (on the target, and on the neighbours that could most easily mimic each signal, sized to reproduce its depth). Of the 35 with a reliable fit, 34 were traced to the right star (the exception is a target/neighbour pair 4.7" apart, below the method's resolution); for 22 of 24 planted on neighbours (4.7-83" away) the target was excluded at more than 3 sigma. 4 injections around TOI-6000 gave a poor fit (reduced chi2 > 2): a variable star in that image happens to vary in step with the injected period, which breaks the one-source assumption. Such fits are flagged unreliable; none of the candidates is affected (reduced chi2 1.06-1.16).
+
+The position errors include a 1.5" systematic floor: the smallest floor for which 95% of the 46 cases with a known source fall inside their 2-sigma region is 1.4".
+
+### NASA's own pipeline (SPOC) on the same signals
+
+Three candidates were SPOC Threshold Crossing Events that never became TOIs. SPOC's reported SNR fell as data were added; folding this work's light curve at SPOC's period for each run reproduces the drop (the transit smears by 1-4 hours over the baseline), so the signals did not fade. SPOC's difference-image centroids for these runs are listed in the dossiers; none of its 135 per-sector difference images passed SPOC's own quality test. The run that put TIC 229689348's source 55" away (s14-s55) used the correct period, but its difference images were among those that failed; the localization above, built at the correct period from all sectors, places that source on the target.
+
+![SPOC period check](results/hardening/spoc_period_check.png)
+
+### Statistical validation (TRICERATOPS)
+
+TRICERATOPS (Giacalone et al. 2021) weighs a planet on the target against eclipsing binaries on the target, unresolved companions, background stars and resolved neighbours, using the transit shape and the Gaia DR3 field population (queried through VizieR). Each candidate was run 5 times with 10^6 draws. TRICERATOPS uses only brightness ratios and the transit shape; it is run a second time with the neighbours that the pixel localization excludes at more than 3 sigma treated as cleared (as stars cleared by ground-based photometry are). No high-resolution imaging was used, so these FPPs are conservative; validation needs FPP < 0.015 and NFPP < 0.001 with imaging. Values are in the candidate table above.
 
 ## Data
 
@@ -108,7 +146,9 @@ Most common reasons for rejection (a signal can have several):
 
 ## Weak candidates
 
-Passed the hard tests but with flags (usually modest red-noise SNR or uneven transit depths). The inversion test predicts about 38 false weak candidates in this sample, so treat these as a list to re-check with more data, not as candidates.
+Passed the hard tests but with flags (usually modest red-noise SNR or uneven transit depths). The inversion test predicts about 38 false weak candidates in this sample, so treat these as a list to re-check with more data, not as candidates. 9 of the 21 have periods of 36-41 d, where a signal rests on only a handful of transits; the inverted light curves, which contain no real planets, put 2 of their 6 false weak candidates there too.
+
+**Re-checked in the pixels** (`scripts/16_weak_recheck.py`): does the target lose, in the difference images, the light the light-curve depth predicts? For confirmed planets the ratio is 0.85-1.29. For the weak signals, 7 are **not reproduced in the pixels** (ratio more than 3 sigma below 1: most likely light-curve artefacts), 8 are marginal and 6 are consistent with a dip on the target (TIC 55450839 at 0.81 d, TIC 259039250 at 31.30 d, TIC 359482441 at 21.07 d, TIC 38709037 at 39.80 d, TIC 260241701 at 39.35 d, TIC 260658693 at 26.41 d), although only at 3.5-4 sigma in the pixels. None is localized off target with confidence. Table: `results/hardening/weak_recheck.csv`.
 
 | TIC | period (d) | depth (ppm) | radius (R_earth) | SNR | both halves | RUWE | flags |
 |---|---|---|---|---|---|---|---|

@@ -75,7 +75,10 @@ def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star, tri_c=None):
         L += [text, ""]
     L += ["## Ephemeris and transit parameters",
           "MCMC fit (emcee, batman; Rp/R*, b, stellar density with TIC prior, quadratic limb darkening with priors; "
-          "1-min folded bins with red-noise-scaled errors). Planet radius includes the TIC stellar-radius error.", "",
+          "1-min folded bins with red-noise-scaled errors). Planet radius includes the TIC stellar-radius error."
+          + (" **These values assume the target hosts the signal; the pixels show it does not, so the planet "
+             "radius, temperature and insolation below do not describe a real object.**"
+             if VERDICT.get(tic, "").startswith("False positive") else ""), "",
           "| parameter | value |", "|---|---|",
           f"| period (d) | {fmt_err(p, p_err)} |",
           f"| mid-transit (BJD_TDB) | {fmt_err(t0, t0_err, 5)} |",

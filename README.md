@@ -5,17 +5,29 @@ telescope has watched the longest** (20 to 44 sectors of 2-minute data each, thr
 sector 107), with automated vetting, comparison against every public catalogue,
 and measured completeness and false-alarm rates.
 
-> **Results** (full report: [`REPORT.md`](REPORT.md); plain-language version:
-> [`EXPLAINER.md`](EXPLAINER.md)):
+> **Results** (full report: [`REPORT.md`](REPORT.md); dossiers: [`results/candidates/`](results/candidates/);
+> plain-language version: [`EXPLAINER.md`](EXPLAINER.md)):
 >
-> * **5 Earth-sized candidates in no planet catalogue** passed every test and a deeper
->   follow-up (physical transit fit, Gaia neighbours, independent half-data searches),
->   including a **third signal in the TOI-218 system** (2.147 d, 1.0 R_earth) and an
->   **11-hour orbit** around TIC 229689348 (1.2 R_earth). Each has a dossier in
->   `results/followup/` with what a community-TOI submission needs.
+> * **4 Earth-sized planet candidates in no catalogue** (1.00-1.35 R_earth, 0.47-2.84 d), each checked in the
+>   pixels, statistically and against NASA's own pipeline:
+>   * a **third signal in the TOI-218 system** (2.147 d, 1.05 R_earth); all three TOI-218 signals come from
+>     TOI-218 itself, not its equal-brightness wide-binary companion 13.5" away;
+>   * an **11.2-hour orbit** around TIC 229689348 (1.25 R_earth), which NASA's pipeline flagged but never
+>     promoted; its 55" source offset came from difference images that failed NASA's own quality test;
+>   * TIC 149390648 (1.00 R_earth) and TIC 198412174 (1.35 R_earth, near-grazing; a 4.7" neighbour cannot be
+>     excluded).
+>
+>   With the neighbours the pixels exclude treated as cleared, all four meet TRICERATOPS's *likely planet*
+>   criteria (FPP 0.08-0.48, NFPP < 0.001); none is statistically validated without imaging.
+> * **One first-pass candidate was a nearby eclipsing binary**: TIC 294053492's light loss sits 22" away,
+>   on a G = 19.8 background star (target excluded at 7.7 sigma).
+> * The pixel-level localization was validated first: 11 confirmed planets on their own star, 3 TFOP-retired
+>   nearby eclipsing binaries off target, 34 of 35 reliably fitted injected eclipses traced to the right star.
 > * Recovers **25 of 26 confirmed transiting planets** in range, including all four of TOI-700.
-> * **Completeness:** 74% of 300 injected planets found and kept (89% for 2-4 R_earth
->   inside 15 days). **Reliability:** no false candidates in 200 flipped light curves.
+> * **Completeness:** 74% of 300 injected planets found and kept (89% for 2-4 R_earth inside 15 days).
+>   **Reliability:** no false candidates in 200 flipped light curves.
+> * A draft ExoFOP community-TOI upload (`results/hardening/exofop/params_planet_DRAFT.txt`) and a draft
+>   Research Note of the AAS (`paper/rnaas_note.tex`) are prepared, **not submitted**.
 >
 > Candidates are signals worth follow-up observations, not confirmed planets.
 

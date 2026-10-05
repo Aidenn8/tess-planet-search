@@ -44,7 +44,7 @@ def main():
         rows.append(f"{r.tic}{(' (' + name + ')') if name else ''} & ${r.period:.6f}$ & ${r.t0_bjd - 2450000:.4f}$ & "
                     f"{pm(m['depth_ppm'], '{:.0f}')} & {pm(m['t14_h'])} & {pm(m['rp_rearth'])} & "
                     f"${m['teq_k']['median']:.0f}$ & ${r.loc_offset_arcsec:.1f}\\pm{r.loc_err_arcsec:.1f}$ & "
-                    f"${r.fpp:.2f}$ \\\\")
+                    f"${r.fpp:.2f}$ & ${r.fpp_cleared:.3f}$ \\\\")
     f218 = facts(32090583)
     f229 = facts(229689348)
     f198 = facts(198412174)
@@ -78,7 +78,7 @@ pixel response function, calibrated per sector on Gaia DR3 stars \citep{{gaia202
 {syst['sys_arcsec_used']:.1f}$''$ systematic floor set by {syst['n_cases']} sources of known position. The
 method places all {len(pl)} confirmed planets tested on their host (within {pl.target_sigma_total.max():.1f}$\sigma$),
 places {len(nb)} TFOP-retired nearby eclipsing binaries off target, and traces {n_inj_ok} of {len(inj)}
-eclipses injected into the real pixels to the correct star. We fitted each transit with \texttt{{batman}}
+reliably fitted eclipses injected into the real pixels to the correct star. We fitted each transit with \texttt{{batman}}
 \citep{{kreidberg2015}} and \texttt{{emcee}} \citep{{foreman2013}} (stellar-density prior from the TIC,
 \citealt{{stassun2019}}) and computed false-positive probabilities with TRICERATOPS \citep{{giacalone2021}}
 using the Gaia DR3 field population, without high-resolution imaging.
@@ -91,8 +91,9 @@ and even sectors), {f294['src_dbest']:.1f}$''$ from Gaia DR3 {f294['src_id']}. T
 
 \textit{{TOI-218}} (TIC~32090583), one component of a 13.5$''$ wide binary of near-equal M dwarfs, shows a third
 signal at {f218['period']:.4f}\,d ({f218['rp']}\,$R_\oplus$) beside TOI-218.01 and .02. All three signals
-localize to TIC~32090583; the new one excludes the companion at {f218['comp_sig']:.1f}$\sigma$
-(FPP\,=\,{f218['fpp']:.3f}).
+localize to TIC~32090583; the new one excludes the companion at {f218['comp_sig']:.1f}$\sigma$.
+TRICERATOPS alone, blind to the pixels, gives FPP\,=\,{f218['fpp']:.2f}, almost all from the companion as host;
+with the neighbours the localization excludes treated as cleared, FPP\,=\,{f218['fpp_c']:.3f}.
 
 \textit{{TIC~229689348}} hosts an 11.2-hour, {f229['rp']}\,$R_\oplus$ candidate ($T_{{\rm eq}}\approx
 {f229['teq']:.0f}$\,K). SPOC flagged it in three runs; its falling SNR follows SPOC's period error, and its
@@ -105,19 +106,22 @@ the source on the target and excludes the 9$''$ and 49$''$ neighbours at {f229['
 favors a planet around an unresolved companion ({f198['stp']:.0f}\%) about equally with the target
 ({f198['tp']:.0f}\%).
 
-All four are suited to seeing-limited photometry and high-resolution imaging. Code, light-curve products
+With the neighbours that the pixels exclude treated as cleared, all four meet the TRICERATOPS ``likely planet''
+criteria (FPP\,$<$\,0.5, NFPP\,$<$\,0.001; Table~\ref{{tab:cands}}); the residual FPP is mostly unresolved bound
+companions. All four are suited to seeing-limited photometry and high-resolution imaging. Code, light-curve products
 and per-candidate dossiers are available at DATA URL.
 
-\begin{{deluxetable*}}{{lcccccccc}}
+\begin{{deluxetable*}}{{lccccccccc}}
 \tablecaption{{Candidates (MCMC medians and 68\% intervals)\label{{tab:cands}}}}
 \tablehead{{\colhead{{TIC}} & \colhead{{$P$ (d)}} & \colhead{{$T_0$ (BJD$-$2450000)}} & \colhead{{Depth (ppm)}} &
 \colhead{{$T_{{14}}$ (h)}} & \colhead{{$R_p$ ($R_\oplus$)}} & \colhead{{$T_{{\rm eq}}$ (K)}} &
-\colhead{{Offset ($''$)}} & \colhead{{FPP}}}}
+\colhead{{Offset ($''$)}} & \colhead{{FPP}} & \colhead{{FPP$_{{\rm cl}}$}}}}
 \startdata
 {chr(10).join(rows)}
 \enddata
 \tablecomments{{$R_p$ includes the TIC stellar-radius uncertainty. Offset: localized source position relative
-to the target. FPP from TRICERATOPS without imaging constraints.}}
+to the target. FPP from TRICERATOPS without imaging constraints; FPP$_{{\rm cl}}$ with the neighbours that the
+pixel localization excludes at $>3\sigma$ treated as cleared.}}
 \end{{deluxetable*}}
 
 \begin{{thebibliography}}{{}}
@@ -132,6 +136,7 @@ to the target. FPP from TRICERATOPS without imaging constraints.}}
 \end{{thebibliography}}
 \end{{document}}
 """
+    tex = tex.replace("±", "$\\pm$")
     out = HERE / "rnaas_note.tex"
     out.write_text(tex)
     body = tex.split(r"\section{Search}")[1].split(r"\begin{deluxetable*}")[0]

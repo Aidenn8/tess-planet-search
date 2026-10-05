@@ -1,0 +1,560 @@
+{
+ "tic": 32090583,
+ "label": "TIC32090583",
+ "sectors": [
+  1,
+  28,
+  64,
+  98
+ ],
+ "n_runs": 3,
+ "n_draws": 1000000,
+ "FPP_mean": 0.0819843104965315,
+ "FPP_std": 0.0023163301212044594,
+ "NFPP_mean": 0.0003420541071040395,
+ "NFPP_std": 3.1027186326238075e-05,
+ "top_scenarios": [
+  [
+   "TP:32090583",
+   0.7971920084905362
+  ],
+  [
+   "PTP:32090583",
+   0.11901196304377479
+  ],
+  [
+   "STP:32090583",
+   0.08156369982404442
+  ],
+  [
+   "DTP:32090583",
+   0.001811717969157689
+  ],
+  [
+   "NEB:32090584",
+   0.0003135324071596736
+  ],
+  [
+   "BTP:32090583",
+   5.679164900237938e-05
+  ],
+  [
+   "NEBx2P:32072123",
+   1.3680116564028403e-05
+  ],
+  [
+   "NEBx2P:32090584",
+   1.343339486179953e-05
+  ]
+ ],
+ "runs": [
+  {
+   "FPP": 0.08233129741241707,
+   "NFPP": 0.00035004631316447657,
+   "degenerate": false
+  },
+  {
+   "FPP": 0.08410757242185274,
+   "NFPP": 0.000307812677607758,
+   "degenerate": false
+  },
+  {
+   "FPP": 0.07951406165532471,
+   "NFPP": 0.000368303330539884,
+   "degenerate": false
+  }
+ ],
+ "stars": [
+  {
+   "ID": "32090583",
+   "Tmag": 13.3292,
+   "sep (arcsec)": 0.0,
+   "PA (E of N)": 0.0,
+   "fluxratio": 0.6206875248,
+   "tdepth": 0.0010878338
+  },
+  {
+   "ID": "32090581",
+   "Tmag": 13.5064,
+   "sep (arcsec)": 13.536,
+   "PA (E of N)": 226.114,
+   "fluxratio": 0.3680315003,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353552",
+   "Tmag": 19.8705,
+   "sep (arcsec)": 34.535,
+   "PA (E of N)": 151.5,
+   "fluxratio": 0.0003935029,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353553",
+   "Tmag": 19.0667,
+   "sep (arcsec)": 35.6,
+   "PA (E of N)": 251.203,
+   "fluxratio": 0.0005056412,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090584",
+   "Tmag": 16.9684,
+   "sep (arcsec)": 39.97,
+   "PA (E of N)": 61.822,
+   "fluxratio": 0.0079284698,
+   "tdepth": 0.0851620668
+  },
+  {
+   "ID": "650353551",
+   "Tmag": 18.3466,
+   "sep (arcsec)": 51.682,
+   "PA (E of N)": 125.893,
+   "fluxratio": 0.000419489,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072123",
+   "Tmag": 15.5892,
+   "sep (arcsec)": 53.62,
+   "PA (E of N)": 283.76,
+   "fluxratio": 0.0019028651,
+   "tdepth": 0.3548359215
+  },
+  {
+   "ID": "650353555",
+   "Tmag": 19.9569,
+   "sep (arcsec)": 62.546,
+   "PA (E of N)": 40.243,
+   "fluxratio": 5.24542e-05,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353556",
+   "Tmag": 18.7165,
+   "sep (arcsec)": 68.046,
+   "PA (E of N)": 42.204,
+   "fluxratio": 7.35162e-05,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353557",
+   "Tmag": 18.7401,
+   "sep (arcsec)": 82.565,
+   "PA (E of N)": 14.824,
+   "fluxratio": 4.9268e-06,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090573",
+   "Tmag": 18.02,
+   "sep (arcsec)": 89.077,
+   "PA (E of N)": 167.778,
+   "fluxratio": 8.87e-08,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072130",
+   "Tmag": 17.2808,
+   "sep (arcsec)": 97.403,
+   "PA (E of N)": 251.265,
+   "fluxratio": 5.1e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353558",
+   "Tmag": 20.0396,
+   "sep (arcsec)": 104.438,
+   "PA (E of N)": 32.504,
+   "fluxratio": 8.5e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072131",
+   "Tmag": 17.0754,
+   "sep (arcsec)": 107.126,
+   "PA (E of N)": 248.851,
+   "fluxratio": 2e-10,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353562",
+   "Tmag": 16.9177,
+   "sep (arcsec)": 110.011,
+   "PA (E of N)": 298.36,
+   "fluxratio": 1.5e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072119",
+   "Tmag": 16.9177,
+   "sep (arcsec)": 110.011,
+   "PA (E of N)": 298.36,
+   "fluxratio": 1.5e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353561",
+   "Tmag": 17.781,
+   "sep (arcsec)": 110.617,
+   "PA (E of N)": 298.094,
+   "fluxratio": 5e-10,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090577",
+   "Tmag": 15.4732,
+   "sep (arcsec)": 117.044,
+   "PA (E of N)": 113.298,
+   "fluxratio": 1.8e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353554",
+   "Tmag": 20.6194,
+   "sep (arcsec)": 118.381,
+   "PA (E of N)": 68.0,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072121",
+   "Tmag": 15.8636,
+   "sep (arcsec)": 121.214,
+   "PA (E of N)": 282.438,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090580",
+   "Tmag": 13.8497,
+   "sep (arcsec)": 123.849,
+   "PA (E of N)": 95.356,
+   "fluxratio": 1.6e-09,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353563",
+   "Tmag": 20.5755,
+   "sep (arcsec)": 125.469,
+   "PA (E of N)": 59.058,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072136",
+   "Tmag": 16.7302,
+   "sep (arcsec)": 126.715,
+   "PA (E of N)": 204.629,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072126",
+   "Tmag": 16.4036,
+   "sep (arcsec)": 127.923,
+   "PA (E of N)": 267.938,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353560",
+   "Tmag": 19.2624,
+   "sep (arcsec)": 128.299,
+   "PA (E of N)": 301.178,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353431",
+   "Tmag": 19.6447,
+   "sep (arcsec)": 134.803,
+   "PA (E of N)": 265.788,
+   "fluxratio": 1.057358933e-16,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353559",
+   "Tmag": 19.1756,
+   "sep (arcsec)": 137.032,
+   "PA (E of N)": 293.53,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353430",
+   "Tmag": 18.543,
+   "sep (arcsec)": 137.411,
+   "PA (E of N)": 248.75,
+   "fluxratio": 6.441141035e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072134",
+   "Tmag": 16.3796,
+   "sep (arcsec)": 139.815,
+   "PA (E of N)": 222.448,
+   "fluxratio": 2.792452069e-16,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090590",
+   "Tmag": 17.4011,
+   "sep (arcsec)": 141.804,
+   "PA (E of N)": 350.844,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353341",
+   "Tmag": 17.9475,
+   "sep (arcsec)": 142.398,
+   "PA (E of N)": 165.247,
+   "fluxratio": 9.052685907e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353502",
+   "Tmag": 19.5935,
+   "sep (arcsec)": 144.036,
+   "PA (E of N)": 95.512,
+   "fluxratio": 0.0,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353432",
+   "Tmag": 18.988,
+   "sep (arcsec)": 146.588,
+   "PA (E of N)": 271.446,
+   "fluxratio": 5.491041697e-19,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353498",
+   "Tmag": 17.7591,
+   "sep (arcsec)": 148.182,
+   "PA (E of N)": 134.191,
+   "fluxratio": 6.338560951e-17,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072122",
+   "Tmag": 17.569,
+   "sep (arcsec)": 148.892,
+   "PA (E of N)": 279.182,
+   "fluxratio": 1.732515501e-18,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353499",
+   "Tmag": 20.6029,
+   "sep (arcsec)": 149.829,
+   "PA (E of N)": 158.409,
+   "fluxratio": 2.757739355e-19,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090570",
+   "Tmag": 16.5925,
+   "sep (arcsec)": 153.002,
+   "PA (E of N)": 194.54,
+   "fluxratio": 3.461247221e-19,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090582",
+   "Tmag": 15.9809,
+   "sep (arcsec)": 161.172,
+   "PA (E of N)": 92.46,
+   "fluxratio": 6.146787466e-18,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353421",
+   "Tmag": 20.402,
+   "sep (arcsec)": 161.911,
+   "PA (E of N)": 196.54,
+   "fluxratio": 6.145844101e-23,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353422",
+   "Tmag": 18.4528,
+   "sep (arcsec)": 162.339,
+   "PA (E of N)": 196.298,
+   "fluxratio": 2.908254866e-22,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072133",
+   "Tmag": 15.6796,
+   "sep (arcsec)": 162.484,
+   "PA (E of N)": 237.119,
+   "fluxratio": 5.112746527e-22,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090569",
+   "Tmag": 18.4891,
+   "sep (arcsec)": 163.16,
+   "PA (E of N)": 195.845,
+   "fluxratio": 1.767335446e-22,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072127",
+   "Tmag": 17.2728,
+   "sep (arcsec)": 172.885,
+   "PA (E of N)": 267.277,
+   "fluxratio": 3.044872453e-26,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353429",
+   "Tmag": 18.9753,
+   "sep (arcsec)": 173.949,
+   "PA (E of N)": 248.282,
+   "fluxratio": 1.06292713e-29,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353447",
+   "Tmag": 18.7658,
+   "sep (arcsec)": 177.328,
+   "PA (E of N)": 281.546,
+   "fluxratio": 3.620705071e-26,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353446",
+   "Tmag": 18.9056,
+   "sep (arcsec)": 179.375,
+   "PA (E of N)": 279.816,
+   "fluxratio": 4.926418214e-27,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353496",
+   "Tmag": 19.655,
+   "sep (arcsec)": 182.661,
+   "PA (E of N)": 151.884,
+   "fluxratio": 4.489074648e-27,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353501",
+   "Tmag": 18.7773,
+   "sep (arcsec)": 182.752,
+   "PA (E of N)": 118.918,
+   "fluxratio": 1.287990329e-25,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353420",
+   "Tmag": 18.8894,
+   "sep (arcsec)": 186.601,
+   "PA (E of N)": 188.085,
+   "fluxratio": 5.905145398e-29,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353445",
+   "Tmag": 19.7786,
+   "sep (arcsec)": 187.349,
+   "PA (E of N)": 277.521,
+   "fluxratio": 4.570071728e-30,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072124",
+   "Tmag": 13.4559,
+   "sep (arcsec)": 188.0,
+   "PA (E of N)": 271.649,
+   "fluxratio": 1.323932362e-28,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353424",
+   "Tmag": 20.1406,
+   "sep (arcsec)": 188.548,
+   "PA (E of N)": 229.884,
+   "fluxratio": 9.568611574e-35,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353500",
+   "Tmag": 19.038,
+   "sep (arcsec)": 188.556,
+   "PA (E of N)": 123.181,
+   "fluxratio": 1.423054532e-27,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090579",
+   "Tmag": 17.1006,
+   "sep (arcsec)": 190.862,
+   "PA (E of N)": 97.486,
+   "fluxratio": 1.467501079e-26,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353509",
+   "Tmag": 20.7525,
+   "sep (arcsec)": 191.022,
+   "PA (E of N)": 83.346,
+   "fluxratio": 1.13000343e-27,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353497",
+   "Tmag": 18.5509,
+   "sep (arcsec)": 193.909,
+   "PA (E of N)": 128.956,
+   "fluxratio": 3.530380328e-29,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353423",
+   "Tmag": 20.6001,
+   "sep (arcsec)": 194.847,
+   "PA (E of N)": 187.209,
+   "fluxratio": 3.9294276e-32,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32072128",
+   "Tmag": 14.8627,
+   "sep (arcsec)": 195.901,
+   "PA (E of N)": 262.04,
+   "fluxratio": 3.064846854e-33,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "32090594",
+   "Tmag": 15.626,
+   "sep (arcsec)": 198.522,
+   "PA (E of N)": 348.676,
+   "fluxratio": 4.977379294e-27,
+   "tdepth": 0.0
+  },
+  {
+   "ID": "650353495",
+   "Tmag": 19.0738,
+   "sep (arcsec)": 201.11,
+   "PA (E of N)": 148.588,
+   "fluxratio": 2.893113335e-32,
+   "tdepth": 0.0
+  }
+ ],
+ "background_population": "results/hardening/triceratops/background/32090583_gaia_background.csv",
+ "runtime_s": 298,
+ "cleared_by_localization": [
+  {
+   "tic": 32090581,
+   "gaia": 4667466549703138304,
+   "sep": 13.536,
+   "tmag": 13.5064,
+   "excluded_sigma": 4.447116763846366
+  }
+ ]
+}

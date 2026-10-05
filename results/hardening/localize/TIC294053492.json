@@ -824,6 +824,20 @@
    "amplitude": -0.0019489200782125211,
    "implied_eclipse_depth": -0.0003092300110532451,
    "excluded_sigma_total": 9.054031452341642
+  },
+  {
+   "source_id": 5486535947129760256,
+   "sep_arcsec": 54.07579490639543,
+   "east": -53.25481861330811,
+   "north": -3.5278575520209188,
+   "tmag": 18.664446684751702,
+   "gmag": 19.471735,
+   "is_target": false,
+   "dchi2": 195.2838129609247,
+   "excluded_sigma": 13.768697131647187,
+   "amplitude": 0.0013192464955855926,
+   "implied_eclipse_depth": 0.0002362785872374575,
+   "excluded_sigma_total": 9.054057264700106
   }
  ],
  "grid": {

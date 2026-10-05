@@ -29,13 +29,16 @@ ASSESSMENT = {
         "away and is blended with it in TESS. The pixel localization puts the new signal on the target "
         "({loc_off:.1f} ± {loc_err:.1f}\") and excludes the companion at {comp_sig:.1f} sigma; the two known "
         "TOI-218 signals also come from the target ({toi218_01:.1f} and {toi218_02:.1f} sigma against the companion). "
-        "The pixels lose {ratio:.2f} ± {ratio_err:.2f} times the light the light-curve depth predicts, "
-        "TRICERATOPS gives FPP = {fpp:.3f} and NFPP = {nfpp:.4f}, and both halves of the data recover it "
-        "(SNR 11.0 and 8.4). TFOP notes call the host an eruptive (flaring) variable and suspect TOI-218.01 is "
+        "The pixels lose {ratio:.2f} ± {ratio_err:.2f} times the light the light-curve depth predicts, and both "
+        "halves of the data recover it (SNR 11.0 and 8.4). From TESS photometry alone TRICERATOPS gives "
+        "FPP = {fpp:.2f} and NFPP = {nfpp:.2f}, almost all of it the scenario that the planet orbits the "
+        "equal-brightness companion, which TRICERATOPS cannot tell apart without pixel information; with the "
+        "companion and the other neighbours the localization excludes treated as cleared, FPP = {fpp_c:.3f} and "
+        "NFPP = {nfpp_c:.4f}. TFOP notes call the host an eruptive (flaring) variable and suspect TOI-218.01 is "
         "stellar variability; flares are removed here and the new signal is a flat-bottomed, periodic, ~0.9-h dip "
         "seen in 400+ transits, unlike spot or flare activity. Extra candidates in systems that already have "
-        "candidates are more often real. Next step: ground-based photometry resolving the binary, which also "
-        "settles which star hosts TOI-218.02."
+        "candidates are more often real. Next step: ground-based photometry that resolves the binary, an "
+        "independent check of which star hosts each of the three signals."
     ),
     229689348: (
         "An **ultra-short-period candidate: {rp} R_earth on an 11.2-hour orbit** (T_eq ~{teq:.0f} K, "
@@ -49,7 +52,8 @@ ASSESSMENT = {
         "those neighbours are correctly traced to them. Pixel/light-curve depth ratio {ratio:.2f} ± {ratio_err:.2f}. "
         "TRICERATOPS: FPP = {fpp:.3f}, NFPP = {nfpp:.4f}; the planet-on-target scenario carries {tp:.0f}% and "
         "the rest is almost all unresolved-companion scenarios ({stp:.0f}% a planet on a bound companion), which "
-        "high-resolution imaging would test. The transit is short for this star (b ~ {b:.2f}), and the transit "
+        "high-resolution imaging would test; with the neighbours the localization excludes treated as cleared the "
+        "neighbour scenarios vanish (NFPP = {nfpp_c:.5f}, FPP = {fpp_c:.3f}). The transit is short for this star (b ~ {b:.2f}), and the transit "
         "shape alone prefers a denser star ({rho_free}), which TRICERATOPS reads as some weight on a companion host."
     ),
     149390648: (
@@ -59,8 +63,11 @@ ASSESSMENT = {
         "excluded at 3 sigma). The first half of the data alone does not lock onto the period (SNR 5.4 at a "
         "different period; second half 7.6 at this one), and the pixels lose {ratio:.2f} ± {ratio_err:.2f} times "
         "the expected light, the highest ratio in the set, which in a crowded field can mean the PDC crowding "
-        "correction is imperfect. TRICERATOPS: FPP = {fpp:.3f}, NFPP = {nfpp:.4f}; the NFPP is above the "
-        "0.001 validation limit because of the many faint neighbours. Ground-based photometry would settle it."
+        "correction is imperfect. TRICERATOPS: FPP = {fpp:.3f}, NFPP = {nfpp:.4f} from TESS photometry alone, "
+        "the NFPP coming from many faint neighbours; with those the localization excludes treated as cleared, "
+        "FPP = {fpp_c:.3f} and NFPP = {nfpp_c:.5f}. The last neighbour scenario left is TIC 149390646, a TIC entry "
+        "with T = 17.0 and no Gaia counterpart; Gaia DR3 sees only a G = 21.6 source there, far too faint to make "
+        "the dip. Ground-based photometry would settle it."
     ),
     198412174: (
         "**{rp} R_earth on a {period:.4f}-d orbit**, nearly grazing (b ~ {b:.2f}). SPOC flagged it in three runs; as "
@@ -69,7 +76,8 @@ ASSESSMENT = {
         "4.7\" away** (excluded at only {near_sig:.1f} sigma; it would need a ~{near_depth:.0f}% eclipse); the planted-eclipse test shows that this pair is below "
         "the method's resolution. TRICERATOPS: FPP = {fpp:.3f} (NFPP {nfpp:.4f}), dominated by a planet "
         "transiting an unresolved bound companion ({stp:.0f}%) rather than the target ({tp:.0f}%), because the "
-        "transit is short for this star. High-resolution imaging (to find or exclude a companion and the 4.7\" "
+        "transit is short for this star; clearing the neighbours the localization excludes gives FPP = {fpp_c:.3f}, "
+        "NFPP = {nfpp_c:.5f}. High-resolution imaging (to find or exclude a companion and the 4.7\" "
         "star) is the decisive next step."
     ),
     294053492: (
@@ -79,7 +87,9 @@ ASSESSMENT = {
         "give the same off-target position on their own. The best-matching Gaia DR3 source is {src_id} "
         "(G = {src_g:.1f}, {src_sep:.1f}\" from the target and {src_dbest:.1f}\" from the best-fit position), which "
         "would need a ~{src_depth:.0f}% eclipse: an ordinary eclipsing binary. More light goes missing than the "
-        "target could lose for this depth ({amp_ratio_best:.2f}x). This is what the hardening pass is for; the "
+        "target could lose for this depth ({amp_ratio_best:.2f}x). TRICERATOPS, which has no pixel information, "
+        "also flags a neighbour (NFPP = {nfpp:.2f}) but blames the bright star 22.6\" to the north-west, which the "
+        "pixels exclude at {nw_sig:.1f} sigma; the faint true source carries little prior weight there. This is what the hardening pass is for; the "
         "earlier write-up listed it as one of five candidates."
     ),
 }
@@ -134,6 +144,8 @@ def facts(tic):
                  src_g=src.get("gmag", float("nan")),
                  src_dbest=float(np.hypot(src["east"] - loc["offset_east"], src["north"] - loc["offset_north"])))
     f["amp_ratio_best"] = loc["amplitude_ratio"]
+    nw = [x for x in loc["stars"] if not x["is_target"] and 21 < x["sep_arcsec"] < 24 and x["tmag"] < 14.5]
+    f["nw_sig"] = nw[0]["excluded_sigma_total"] if nw else float("nan")
     if tri:
         tops = dict((k.split(":")[0], v) for k, v in tri["top_scenarios"] if k.split(":")[1] == str(tic))
         f["stp"], f["tp"] = 100 * tops.get("STP", 0.0), 100 * tops.get("TP", 0.0)

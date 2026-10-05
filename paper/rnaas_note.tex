@@ -1,0 +1,88 @@
+\documentclass[RNAAS]{aastex631}
+\begin{document}
+\title{Four Earth-sized Transit Candidates Around Long-observed TESS M Dwarfs, Including a Third Signal in the TOI-218 System}
+\author{AUTHOR NAME}
+\affiliation{AFFILIATION}
+\keywords{Exoplanet detection methods (489) --- Transit photometry (1709) --- M dwarf stars (982)}
+
+\section{Search}
+M dwarfs near the TESS continuous viewing zones now have years of 2-minute photometry, enough to reach
+Earth-sized planets. We searched the 1,279 M dwarfs ($T_{\rm eff}\le3900$\,K, $T\le13.5$) with at
+least 20 sectors of SPOC 2-minute light curves through Sector 107 (median 26 sectors), for periods of
+0.4--40\,d. Light curves were cleaned of flares and detrended with a biweight filter \citep{hippke2019}; each
+observing season was searched with box least squares \citep{kovacs2002} on a common period grid
+\citep{ofir2014} and the seasons' likelihoods summed. Signals were vetted with red-noise-calibrated tests
+(odd/even depths, secondary eclipses, duration versus stellar density, single-event dominance, spacecraft
+and rotation periods) and crossmatched with TOIs, CTOIs, confirmed planets, the TESS eclipsing-binary
+catalog and every SPOC multi-sector Threshold Crossing Event. The pipeline recovers 25 of 26 confirmed
+transiting planets in range; 74\% of 300 injected planets are recovered and kept, and 200 flipped light
+curves produce no false candidates. Five Earth-sized signals in no catalog passed; three had been SPOC TCEs
+but never TOIs.
+
+\section{Vetting in the pixels}
+To test where each transit originates we built difference images (out-minus-in transit) for every sector,
+with per-pixel errors from $\sim$60 null events per sector, and fitted all sectors jointly with the SPOC
+pixel response function, calibrated per sector on Gaia DR3 stars \citep{gaia2023}. Position errors include a
+1.5$''$ systematic floor set by 46 sources of known position. The
+method places all 11 confirmed planets tested on their host (within 1.5$\sigma$),
+places 3 TFOP-retired nearby eclipsing binaries off target, and traces 34 of 35
+reliably fitted eclipses injected into the real pixels to the correct star. We fitted each transit with \texttt{batman}
+\citep{kreidberg2015} and \texttt{emcee} \citep{foreman2013} (stellar-density prior from the TIC,
+\citealt{stassun2019}) and computed false-positive probabilities with TRICERATOPS \citep{giacalone2021}
+using the Gaia DR3 field population, without high-resolution imaging.
+
+\section{Results}
+TIC~294053492 ($P=1.0853$\,d) is a nearby eclipsing binary: its light loss lies
+22$''$ from the target, excluded at 7.7$\sigma$ (independently in odd
+and even sectors), 2.1$''$ from Gaia DR3 5486535775331400832. The other four remain candidates
+(Table~\ref{tab:cands}):
+
+\textit{TOI-218} (TIC~32090583), one component of a 13.5$''$ wide binary of near-equal M dwarfs, shows a third
+signal at 2.1468\,d (1.05 $\pm$ 0.06\,$R_\oplus$) beside TOI-218.01 and .02. All three signals
+localize to TIC~32090583; the new one excludes the companion at 4.4$\sigma$.
+TRICERATOPS alone, blind to the pixels, gives FPP\,=\,0.41, almost all from the companion as host;
+with the neighbours the localization excludes treated as cleared, FPP\,=\,0.082.
+
+\textit{TIC~229689348} hosts an 11.2-hour, 1.25 $\pm$ 0.08\,$R_\oplus$ candidate ($T_{\rm eq}\approx
+1131$\,K). SPOC flagged it in three runs; its falling SNR follows SPOC's period error, and its
+55$''$ difference-image offset came from images that failed SPOC's quality metric. Our localization places
+the source on the target and excludes the 9$''$ and 49$''$ neighbours at 4.6 and
+8.0$\sigma$.
+
+\textit{TIC~149390648} lies in a crowded field (NFPP\,=\,0.0047).
+\textit{TIC~198412174} is near-grazing; a $T=18.2$ star 4.7$''$ away cannot be excluded, and TRICERATOPS
+favors a planet around an unresolved companion (46\%) about equally with the target
+(45\%).
+
+With the neighbours that the pixels exclude treated as cleared, all four meet the TRICERATOPS ``likely planet''
+criteria (FPP\,$<$\,0.5, NFPP\,$<$\,0.001; Table~\ref{tab:cands}); the residual FPP is mostly unresolved bound
+companions. All four are suited to seeing-limited photometry and high-resolution imaging. Code, light-curve products
+and per-candidate dossiers are available at DATA URL.
+
+\begin{deluxetable*}{lccccccccc}
+\tablecaption{Candidates (MCMC medians and 68\% intervals)\label{tab:cands}}
+\tablehead{\colhead{TIC} & \colhead{$P$ (d)} & \colhead{$T_0$ (BJD$-$2450000)} & \colhead{Depth (ppm)} &
+\colhead{$T_{14}$ (h)} & \colhead{$R_p$ ($R_\oplus$)} & \colhead{$T_{\rm eq}$ (K)} &
+\colhead{Offset ($''$)} & \colhead{FPP} & \colhead{FPP$_{\rm cl}$}}
+\startdata
+32090583 (TOI-218) & $2.146798$ & $9318.6971$ & $1273\pm106$ & $0.93\pm0.05$ & $1.05\pm0.06$ & $578$ & $2.2\pm3.0$ & $0.41$ & $0.082$ \\
+229689348 & $0.465377$ & $9027.6289$ & $693\pm65$ & $0.53\pm0.02$ & $1.25\pm0.08$ & $1131$ & $3.6\pm3.3$ & $0.20$ & $0.197$ \\
+198412174 & $1.390160$ & $9644.3198$ & $382\pm43$ & $0.61\pm0.04$ & $1.35\pm0.11$ & $954$ & $2.2\pm3.5$ & $0.46$ & $0.478$ \\
+149390648 & $2.836887$ & $9180.6342$ & $798\pm88$ & $1.14\pm0.08$ & $1.00\pm0.07$ & $581$ & $4.2\pm3.6$ & $0.09$ & $0.088$ \\
+\enddata
+\tablecomments{$R_p$ includes the TIC stellar-radius uncertainty. Offset: localized source position relative
+to the target. FPP from TRICERATOPS without imaging constraints; FPP$_{\rm cl}$ with the neighbours that the
+pixel localization excludes at $>3\sigma$ treated as cleared.}
+\end{deluxetable*}
+
+\begin{thebibliography}{}
+\bibitem[Foreman-Mackey et al.(2013)]{foreman2013} Foreman-Mackey, D., Hogg, D.~W., Lang, D., \& Goodman, J. 2013, PASP, 125, 306
+\bibitem[Gaia Collaboration et al.(2023)]{gaia2023} Gaia Collaboration, Vallenari, A., et al. 2023, A\&A, 674, A1
+\bibitem[Giacalone et al.(2021)]{giacalone2021} Giacalone, S., Dressing, C.~D., Jensen, E.~L.~N., et al. 2021, AJ, 161, 24
+\bibitem[Hippke et al.(2019)]{hippke2019} Hippke, M., David, T.~J., Mulders, G.~D., \& Heller, R. 2019, AJ, 158, 143
+\bibitem[Kov{\'a}cs et al.(2002)]{kovacs2002} Kov{\'a}cs, G., Zucker, S., \& Mazeh, T. 2002, A\&A, 391, 369
+\bibitem[Kreidberg(2015)]{kreidberg2015} Kreidberg, L. 2015, PASP, 127, 1161
+\bibitem[Ofir(2014)]{ofir2014} Ofir, A. 2014, A\&A, 561, A138
+\bibitem[Stassun et al.(2019)]{stassun2019} Stassun, K.~G., Oelkers, R.~J., Paegert, M., et al. 2019, AJ, 158, 138
+\end{thebibliography}
+\end{document}

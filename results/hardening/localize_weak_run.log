@@ -1,23 +1,23 @@
-TIC 165471200: 1 signals in 24 s
-TIC 258776466: 1 signals in 26 s
-TIC 306574570: 1 signals in 15 s
-TIC 232629466: 2 signals in 14 s
-TIC 359482441: 1 signals in 20 s
-TIC 260658693: 1 signals in 26 s
-TIC 359388713: 1 signals in 27 s
-TIC 356786247: 1 signals in 25 s
-TIC 350433316: 1 signals in 30 s
-TIC 349830417: 1 signals in 39 s
-TIC 167087044: 1 signals in 135 s
-TIC 311235628: 1 signals in 24 s
-TIC 260241701: 1 signals in 45 s
-TIC 260369411: 1 signals in 35 s
-TIC 441728165: 1 signals in 21 s
-TIC 259039250: 1 signals in 26 s
-TIC 55450839: 1 signals in 23 s
-TIC 38709037: 1 signals in 25 s
-TIC 258923893: 1 signals in 20 s
-TIC 232649744: 1 signals in 32 s
+TIC 165471200: 1 signals in 10 s
+TIC 258776466: 1 signals in 12 s
+TIC 306574570: 1 signals in 8 s
+TIC 232629466: 2 signals in 7 s
+TIC 359482441: 1 signals in 9 s
+TIC 260658693: 1 signals in 9 s
+TIC 359388713: 1 signals in 7 s
+TIC 356786247: 1 signals in 8 s
+TIC 350433316: 1 signals in 8 s
+TIC 349830417: 1 signals in 9 s
+TIC 167087044: 1 signals in 46 s
+TIC 311235628: 1 signals in 5 s
+TIC 260241701: 1 signals in 10 s
+TIC 260369411: 1 signals in 8 s
+TIC 441728165: 1 signals in 6 s
+TIC 259039250: 1 signals in 9 s
+TIC 55450839: 1 signals in 8 s
+TIC 38709037: 1 signals in 12 s
+TIC 258923893: 1 signals in 8 s
+TIC 232649744: 1 signals in 13 s
              label  kind  offset_arcsec  offset_err_arcsec  target_sigma  best_star_is_target  amplitude_ratio  chi2_red
 0   TIC165471200_3  weak     117.413798           8.406235      1.938820                 True        -0.798071  1.467071
 1   TIC258776466_2  weak      13.152946           7.978846      1.485148                 True         0.600354  1.230996
