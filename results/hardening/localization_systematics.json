@@ -1,0 +1,292 @@
+{
+ "n_cases": 46,
+ "sys_arcsec_fit": 0.5770353762971706,
+ "sys_arcsec_used": 1.5,
+ "sys_arcsec_95pct_coverage": 1.4000000000000001,
+ "flagged_unreliable": [
+  "TOI-6000b_inject_target",
+  "TOI-6000b_inject_2261062378812853888",
+  "TOI-6000b_inject_2261062172654423936",
+  "TOI-6000b_inject_2261056503297591552"
+ ],
+ "pull_rms_stat_only": 1.152560265642698,
+ "frac_within_2_sigma_total": 0.9565217391304348,
+ "cases": [
+  {
+   "label": "TIC229689348_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 2.23606797749979,
+   "offset_err_arcsec": 2.6462837142006137
+  },
+  {
+   "label": "TIC229689348_inject_1422142630385191552",
+   "kind": "injection",
+   "miss_arcsec": 0.5477421852552348,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TIC229689348_inject_1422141810046979968",
+   "kind": "injection",
+   "miss_arcsec": 1.3892135674928412,
+   "offset_err_arcsec": 2.5854414729132054
+  },
+  {
+   "label": "TIC229689348_inject_1422141741327502336",
+   "kind": "injection",
+   "miss_arcsec": 0.41417599454518955,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TIC198412174_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 5.830951894845301,
+   "offset_err_arcsec": 3.2410224072142872
+  },
+  {
+   "label": "TIC198412174_inject_1437353003661625600",
+   "kind": "injection",
+   "miss_arcsec": 0.27327210703016197,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TIC198412174_inject_1437353759575870080",
+   "kind": "injection",
+   "miss_arcsec": 0.22149519790285369,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TIC198412174_inject_1437353828295869824",
+   "kind": "injection",
+   "miss_arcsec": 6.188165216608288,
+   "offset_err_arcsec": 2.985410660720923
+  },
+  {
+   "label": "TIC32090583_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 5.0990195135927845,
+   "offset_err_arcsec": 4.3336224206596095
+  },
+  {
+   "label": "TIC32090583_inject_4667466549703138304",
+   "kind": "injection",
+   "miss_arcsec": 7.230586349862425,
+   "offset_err_arcsec": 2.6462837142006137
+  },
+  {
+   "label": "TIC32090583_inject_4667466652782354176",
+   "kind": "injection",
+   "miss_arcsec": 0.30949372189800745,
+   "offset_err_arcsec": 0.9772050238058398
+  },
+  {
+   "label": "TIC32090583_inject_4667466721501827456",
+   "kind": "injection",
+   "miss_arcsec": 0.531357954171914,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TIC294053492_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 4.123105625617661,
+   "offset_err_arcsec": 4.259537945889915
+  },
+  {
+   "label": "TIC294053492_inject_5486535779627127680",
+   "kind": "injection",
+   "miss_arcsec": 1.5026745213113755,
+   "offset_err_arcsec": 3.431831258788849
+  },
+  {
+   "label": "TIC294053492_inject_5486536157584250880",
+   "kind": "injection",
+   "miss_arcsec": 1.27825817806306,
+   "offset_err_arcsec": 2.0342144725641096
+  },
+  {
+   "label": "TIC294053492_inject_5486535672251646976",
+   "kind": "injection",
+   "miss_arcsec": 0.9140693630648234,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TIC149390648_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 5.830951894845301,
+   "offset_err_arcsec": 5.014626706796775
+  },
+  {
+   "label": "TIC149390648_inject_4757656533594500352",
+   "kind": "injection",
+   "miss_arcsec": 1.8313052309121998,
+   "offset_err_arcsec": 4.686510657907603
+  },
+  {
+   "label": "TIC149390648_inject_4757656598015657728",
+   "kind": "injection",
+   "miss_arcsec": 0.392074832773149,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TIC149390648_inject_4757656494936417152",
+   "kind": "injection",
+   "miss_arcsec": 0.3570852039498218,
+   "offset_err_arcsec": 0.7978845608028654
+  },
+  {
+   "label": "TOI-6000b",
+   "kind": "planet",
+   "miss_arcsec": 4.47213595499958,
+   "offset_err_arcsec": 1.8712051592547776
+  },
+  {
+   "label": "TOI-5728b",
+   "kind": "planet",
+   "miss_arcsec": 1.4142135623730951,
+   "offset_err_arcsec": 2.256758334191025
+  },
+  {
+   "label": "TOI-5728b_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 6.0,
+   "offset_err_arcsec": 3.826519928662906
+  },
+  {
+   "label": "TOI-5728b_inject_1637184534726157440",
+   "kind": "injection",
+   "miss_arcsec": 0.5711762860918348,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TOI-5728b_inject_1637184534726157184",
+   "kind": "injection",
+   "miss_arcsec": 0.12855257657318542,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TOI-5728b_inject_1637184500366418560",
+   "kind": "injection",
+   "miss_arcsec": 3.3879039929928214,
+   "offset_err_arcsec": 3.6125759969217834
+  },
+  {
+   "label": "TOI-700c",
+   "kind": "planet",
+   "miss_arcsec": 0.0,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TOI-700c_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 0.0,
+   "offset_err_arcsec": 0.7978845608028654
+  },
+  {
+   "label": "TOI-700b",
+   "kind": "planet",
+   "miss_arcsec": 4.123105625617661,
+   "offset_err_arcsec": 2.4592453796829674
+  },
+  {
+   "label": "TOI-700d",
+   "kind": "planet",
+   "miss_arcsec": 1.0,
+   "offset_err_arcsec": 2.4592453796829674
+  },
+  {
+   "label": "TOI-1756b",
+   "kind": "planet",
+   "miss_arcsec": 3.1622776601683795,
+   "offset_err_arcsec": 1.4927053303604616
+  },
+  {
+   "label": "TOI-1756b_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 1.4142135623730951,
+   "offset_err_arcsec": 1.7841241161527712
+  },
+  {
+   "label": "TOI-1756b_inject_2290553715914294144",
+   "kind": "injection",
+   "miss_arcsec": 0.5659509247668865,
+   "offset_err_arcsec": 0.7978845608028654
+  },
+  {
+   "label": "TOI-2094b",
+   "kind": "planet",
+   "miss_arcsec": 0.0,
+   "offset_err_arcsec": 1.7841241161527712
+  },
+  {
+   "label": "TOI-2094b_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 1.0,
+   "offset_err_arcsec": 3.0901936161855166
+  },
+  {
+   "label": "TOI-2094b_inject_1649377152308845952",
+   "kind": "injection",
+   "miss_arcsec": 3.3945266319235494,
+   "offset_err_arcsec": 2.256758334191025
+  },
+  {
+   "label": "TOI-2094b_inject_1649377190964268416",
+   "kind": "injection",
+   "miss_arcsec": 0.4820200847697217,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "L98-59c",
+   "kind": "planet",
+   "miss_arcsec": 0.0,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "L98-59c_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 0.0,
+   "offset_err_arcsec": 0.7978845608028654
+  },
+  {
+   "label": "L98-59d",
+   "kind": "planet",
+   "miss_arcsec": 0.0,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "L98-59b",
+   "kind": "planet",
+   "miss_arcsec": 1.0,
+   "offset_err_arcsec": 0.5641895835477563
+  },
+  {
+   "label": "TOI-2084b",
+   "kind": "planet",
+   "miss_arcsec": 1.0,
+   "offset_err_arcsec": 1.4927053303604616
+  },
+  {
+   "label": "TOI-2084b_inject_target",
+   "kind": "injection",
+   "miss_arcsec": 1.0,
+   "offset_err_arcsec": 1.5957691216057308
+  },
+  {
+   "label": "TOI-2084b_inject_1652137995942479488",
+   "kind": "injection",
+   "miss_arcsec": 0.2310419454539051,
+   "offset_err_arcsec": 1.1283791670955126
+  },
+  {
+   "label": "TOI-2084b_inject_1652137995942480000",
+   "kind": "injection",
+   "miss_arcsec": 0.9213606252027864,
+   "offset_err_arcsec": 1.4927053303604616
+  },
+  {
+   "label": "TOI-2084b_inject_1652137995942480768",
+   "kind": "injection",
+   "miss_arcsec": 0.10411691614995437,
+   "offset_err_arcsec": 0.5641895835477563
+  }
+ ]
+}

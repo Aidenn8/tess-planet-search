@@ -1,0 +1,72 @@
+{
+ "229689348": {
+  "our_period": 0.465377,
+  "our_snr_box": 11.164189839907273,
+  "baseline_d": 1951.4599721597544,
+  "runs": [
+   {
+    "run": "s0014-s0050",
+    "spoc_period": 0.4653649999999999,
+    "spoc_snr": 5.821569,
+    "our_snr_at_spoc_period": 6.5710852394292765,
+    "drift_over_baseline_h": 1.207667056999317
+   },
+   {
+    "run": "s0014-s0055",
+    "spoc_period": 0.465378,
+    "spoc_snr": 18.36093,
+    "our_snr_at_spoc_period": 11.248732466369184,
+    "drift_over_baseline_h": 0.1006389214189375
+   },
+   {
+    "run": "s0014-s0086",
+    "spoc_period": 0.465335,
+    "spoc_snr": 3.815406,
+    "our_snr_at_spoc_period": 4.467276886757372,
+    "drift_over_baseline_h": 4.226834699472471
+   }
+  ]
+ },
+ "198412174": {
+  "our_period": 1.39016,
+  "our_snr_box": 10.170747795468074,
+  "baseline_d": 1979.47129049612,
+  "runs": [
+   {
+    "run": "s0014-s0050",
+    "spoc_period": 1.39019,
+    "spoc_snr": 8.477601,
+    "our_snr_at_spoc_period": 5.147234545227702,
+    "drift_over_baseline_h": 1.0252196359814658
+   },
+   {
+    "run": "s0014-s0078",
+    "spoc_period": 1.39028,
+    "spoc_snr": 5.972872,
+    "our_snr_at_spoc_period": 3.926789422000303,
+    "drift_over_baseline_h": 4.100878543925863
+   },
+   {
+    "run": "s0014-s0086",
+    "spoc_period": 1.39023,
+    "spoc_snr": 4.366414,
+    "our_snr_at_spoc_period": 4.562910650394044,
+    "drift_over_baseline_h": 2.3921791506259495
+   }
+  ]
+ },
+ "149390648": {
+  "our_period": 2.836887,
+  "our_snr_box": 8.563648495436098,
+  "baseline_d": 2578.9930108621047,
+  "runs": [
+   {
+    "run": "s0001-s0096",
+    "spoc_period": 2.83687,
+    "spoc_snr": 8.547409,
+    "our_snr_at_spoc_period": 8.620235807904207,
+    "drift_over_baseline_h": 0.3709097854237341
+   }
+  ]
+ }
+}

@@ -40,6 +40,35 @@ def half_search(lc, period, r_star, m_star):
     return out
 
 
+def periodogram(lc, rec, k, r_star, m_star):
+    """The stacked periodogram the search saw for signal k (earlier signals masked, as in search_star)."""
+    span = max(np.ptp(lc.time[lc.season == s]) for s in np.unique(lc.season))
+    periods = search.period_grid(span, r_star, m_star)
+    mask = np.zeros(len(lc.time), bool)
+    for prev in rec["signals"][:k - 1]:
+        p = prev["detection"]
+        mask |= search.transit_mask(lc.time, p["period"], p["t0"], p["duration"], factor=2.0)
+    return periods, search.sde(search.stacked_periodogram(lc, periods, mask=mask))
+
+
+def pm(value, err, max_decimals=8):
+    """'value ± err' with the error to two significant figures."""
+    if err is None or not np.isfinite(err) or err <= 0:
+        return f"{value:.6f}"
+    dec = int(np.clip(1 - np.floor(np.log10(err)), 0, max_decimals))
+    return f"{value:.{dec}f} ± {err:.{dec}f}"
+
+
+def centroid_sentence(v):
+    """What the light-curve centroid test can and cannot say."""
+    z, p = v.get("centroid_z", float("nan")), v.get("centroid_p", float("nan"))
+    shift_z = v.get("centroid_shift_z", float("nan"))
+    if np.isfinite(shift_z) and shift_z > 0:
+        return f"centroid motion in transit: chi2 z = {z:.1f} vs fake epochs (p = {p:.2f}), shift z = {shift_z:.1f}"
+    return (f"centroid motion in transit: chi2 z = {z:.1f} vs fake epochs (p = {p:.2f}); the shift itself is "
+            f"below the noise, which for a dip this shallow does not exclude a neighbour (see pixel localization)")
+
+
 def dossier(i):
     """One page per candidate with everything a CTOI submission (ExoFOP) asks for."""
     f, v, g = i["fit"], i["vet"], i["gaia"]
@@ -52,8 +81,8 @@ def dossier(i):
     if ok:
         lines += ["## Transit fit (batman, quadratic limb darkening fixed; stellar-density prior on a/R*)",
                   "| parameter | value |", "|---|---|",
-                  f"| period (d) | {f['period']:.6f} ± {f['period_err']:.6f} |",
-                  f"| mid-transit (BJD_TDB) | {f['t0_bjd']:.5f} ± {f['t0_err']:.5f} |",
+                  f"| period (d) | {pm(f['period'], f['period_err'])} |",
+                  f"| mid-transit (BJD_TDB) | {pm(f['t0_bjd'], f['t0_err'])} |",
                   f"| depth (ppm) | {f['depth_ppm']:.0f} |",
                   f"| Rp/R* | {f['rp_rs']:.4f} ± {f['rp_rs_err']:.4f} |",
                   f"| planet radius (R_earth) | {f['rp_rearth']:.2f} ± {f['rp_rearth_err']:.2f} (stellar radius error not included) |",
@@ -65,7 +94,7 @@ def dossier(i):
               f"{v.get('red_snr', float('nan')):.1f}, {v.get('n_transits_measured')} transits observed. "
               f"Odd/even difference {v.get('oddeven_sigma', float('nan')):.1f} sigma; phase-0.5 depth "
               f"{v.get('phase05_depth_ppm', float('nan')):.0f} ppm ({v.get('phase05_sigma', float('nan')):.1f} sigma); "
-              f"centroid shift z {v.get('centroid_shift_z', float('nan')):.1f}; largest single-transit share "
+              f"{centroid_sentence(v)}; largest single-transit share "
               f"{v.get('max_single_frac', float('nan')):.2f}; depth in SAP flux {v.get('sap_depth_ppm', float('nan')):.0f} ppm.",
               "Independent searches of each half of the data: " + ", ".join(
                   f"{h['half']} SNR {h['snr']:.1f}" + (" (same period)" if h.get("period_match") else " (different period)")
@@ -117,8 +146,9 @@ def main():
             except Exception as exc:
                 fit = {"error": repr(exc)}
             png = OUT / f"TIC{tic}_{int(s.signal)}.png"
-            report.plot_detection(lc, d, v, verdict, reasons, hits, path=png,
-                                  title_extra=f"signal {int(s.signal)}: {verdict} ({s.novelty})")
+            periods, sde_curve = periodogram(lc, rec, int(s.signal), r_star, m_star)
+            report.plot_detection(lc, d, v, verdict, reasons, hits, periods=periods, sde_curve=sde_curve,
+                                  path=png, title_extra=f"signal {int(s.signal)}: {verdict} ({s.novelty})")
             info = {"tic": int(tic), "signal": int(s.signal), "verdict": verdict, "reasons": reasons,
                     "novelty": s.novelty, "matches": hits, "vet": v, "gaia": gaia, "halves": halves, "fit": fit,
                     "tmag": float(row.Tmag), "teff": float(row.Teff), "r_star": r_star, "m_star": m_star,

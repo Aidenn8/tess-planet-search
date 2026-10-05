@@ -120,22 +120,26 @@ def neighbour_check(ra, dec, depth, target_gaia_id=None):
     df = gaia_neighbours(ra, dec)
     if df.empty:
         return {"n_gaia": 0, "neighbours": [], "possible_sources": 0}
-    mag = df.phot_rp_mean_mag.fillna(df.phot_g_mean_mag)
-    if target_gaia_id is not None and int(target_gaia_id) in set(df.source_id.astype(np.int64)):
-        is_target = df.source_id.astype(np.int64) == int(target_gaia_id)
+    mag = df.phot_rp_mean_mag.fillna(df.phot_g_mean_mag).to_numpy(float)
+    # Gaia source IDs are 19-digit integers: keep them as an int64 array. Going through a
+    # pandas row (iterrows) turns them into floats and rounds them to the nearest 256-1024.
+    ids = df.source_id.to_numpy(np.int64)
+    seps = df.sep_arcsec.to_numpy(float)
+    if target_gaia_id is not None and int(target_gaia_id) in set(ids.tolist()):
+        t_idx = int(np.flatnonzero(ids == int(target_gaia_id))[0])
     else:
-        is_target = df.sep_arcsec == df.sep_arcsec.min()
-    m_t = float(mag[is_target].iloc[0])
-    target = df[is_target].iloc[0]
+        t_idx = int(np.argmin(seps))
+    m_t = float(mag[t_idx])
+    target = df.iloc[t_idx]
     out = []
-    for (_, row), m in zip(df.iterrows(), mag):
-        if row.source_id == target.source_id or not np.isfinite(m):
+    for k in range(len(df)):
+        if k == t_idx or not np.isfinite(mag[k]):
             continue
-        flux_ratio = 10 ** (-0.4 * (m - m_t))           # neighbour / target
+        flux_ratio = 10 ** (-0.4 * (mag[k] - m_t))      # neighbour / target
         needed = depth * (1 + flux_ratio) / flux_ratio   # eclipse depth the neighbour would need
-        out.append({"source_id": int(row.source_id), "sep_arcsec": float(row.sep_arcsec),
-                    "delta_mag": float(m - m_t), "needed_depth": float(needed),
-                    "could_be_source": bool(needed < 0.8 and row.sep_arcsec < SEARCH_RADIUS_ARCSEC)})
+        out.append({"source_id": int(ids[k]), "sep_arcsec": float(seps[k]),
+                    "delta_mag": float(mag[k] - m_t), "needed_depth": float(needed),
+                    "could_be_source": bool(needed < 0.8 and seps[k] < SEARCH_RADIUS_ARCSEC)})
     return {
         "n_gaia": int(len(df)),
         "target_ruwe": float(target.ruwe) if np.isfinite(target.ruwe) else None,
