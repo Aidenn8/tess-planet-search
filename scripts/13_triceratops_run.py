@@ -169,7 +169,7 @@ if __name__ == "__main__":
                    "NFPP_mean": float(nfpp.mean()), "NFPP_std": float(nfpp.std(ddof=1)),
                    "top_scenarios": top, "runs": [{k: v for k, v in r.items() if k != "probs"} for r in runs],
                    "stars": [],
-                   "background_population": str(target.trilegal_fname), "runtime_s": round(time.time() - t_start),
+                   "background_population": os.path.relpath(str(target.trilegal_fname), ROOT), "runtime_s": round(time.time() - t_start),
                    "cleared_by_localization": cleared}
             out_path.write_text(json.dumps(res, indent=1))  # save before anything else can fail
             try:

@@ -9,3 +9,4 @@ tools/thermal/pgids/
 tools/thermal/thermalstate
 results/plots/
 .venv-tri/
+*.log
