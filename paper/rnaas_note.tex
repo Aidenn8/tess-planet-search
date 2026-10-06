@@ -29,7 +29,7 @@ places 3 TFOP-retired nearby eclipsing binaries off target, and traces 34 of 35
 reliably fitted eclipses injected into the real pixels to the correct star. We fitted each transit with \texttt{batman}
 \citep{kreidberg2015} and \texttt{emcee} \citep{foreman2013} (stellar-density prior from the TIC,
 \citealt{stassun2019}) and computed false-positive probabilities with TRICERATOPS \citep{giacalone2021}
-using the Gaia DR3 field population, without high-resolution imaging.
+using the Gaia DR3 field population, without high-resolution imaging except where noted.
 
 \section{Results}
 TIC~294053492 ($P=1.0853$\,d) is a nearby eclipsing binary: its light loss lies
@@ -41,16 +41,18 @@ and even sectors), 2.1$''$ from Gaia DR3 5486535775331400832. The other four rem
 signal at 2.1468\,d (1.05 $\pm$ 0.06\,$R_\oplus$) beside TOI-218.01 and .02. All three signals
 localize to TIC~32090583; the new one excludes the companion at 4.4$\sigma$.
 TRICERATOPS alone, blind to the pixels, gives FPP\,=\,0.41, almost all from the companion as host;
-with the neighbours the localization excludes treated as cleared, FPP\,=\,0.082.
+with the neighbours the localization excludes treated as cleared, FPP\,=\,0.088, and adding the public
+Gemini-South speckle contrast curve (2020) gives FPP\,$\approx$\,$1\times10^{-5}$. We do not claim
+validation: the host flares and the transit has not been detected from the ground.
 
 \textit{TIC~229689348} hosts an 11.2-hour, 1.25 $\pm$ 0.08\,$R_\oplus$ candidate ($T_{\rm eq}\approx
 1131$\,K). SPOC flagged it in three runs; its falling SNR follows SPOC's period error, and its
 55$''$ difference-image offset came from images that failed SPOC's quality metric. Our localization places
-the source on the target and excludes the 9$''$ and 49$''$ neighbours at 4.6 and
+the source on the target and excludes the 10$''$ and 48$''$ neighbours at 4.6 and
 8.0$\sigma$.
 
 \textit{TIC~149390648} lies in a crowded field (NFPP\,=\,0.0047).
-\textit{TIC~198412174} is near-grazing; a $T=18.2$ star 4.7$''$ away cannot be excluded, and TRICERATOPS
+\textit{TIC~198412174} is near-grazing; a $T=18.2$ star 5.3$''$ away cannot be excluded, and TRICERATOPS
 favors a planet around an unresolved companion (46\%) about equally with the target
 (45\%).
 
@@ -65,7 +67,7 @@ and per-candidate dossiers are available at \url{https://github.com/Aidenn8/tess
 \colhead{$T_{14}$ (h)} & \colhead{$R_p$ ($R_\oplus$)} & \colhead{$T_{\rm eq}$ (K)} &
 \colhead{Offset ($''$)} & \colhead{FPP} & \colhead{FPP$_{\rm cl}$}}
 \startdata
-32090583 (TOI-218) & $2.146798$ & $9318.6971$ & $1273\pm106$ & $0.93\pm0.05$ & $1.05\pm0.06$ & $578$ & $2.2\pm3.0$ & $0.41$ & $0.082$ \\
+32090583 (TOI-218) & $2.146798$ & $9318.6971$ & $1273\pm106$ & $0.93\pm0.05$ & $1.05\pm0.06$ & $578$ & $2.2\pm3.0$ & $0.41$ & $0.088$ \\
 229689348 & $0.465377$ & $9027.6289$ & $693\pm65$ & $0.53\pm0.02$ & $1.25\pm0.08$ & $1131$ & $3.6\pm3.3$ & $0.20$ & $0.197$ \\
 198412174 & $1.390160$ & $9644.3198$ & $382\pm43$ & $0.61\pm0.04$ & $1.35\pm0.11$ & $954$ & $2.2\pm3.5$ & $0.46$ & $0.478$ \\
 149390648 & $2.836887$ & $9180.6342$ & $798\pm88$ & $1.14\pm0.08$ & $1.00\pm0.07$ & $581$ & $4.2\pm3.6$ & $0.09$ & $0.088$ \\

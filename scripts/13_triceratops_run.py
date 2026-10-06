@@ -14,8 +14,9 @@ considers them, and the result goes to <label>_result_cleared.json.
 
 Giacalone et al. call a candidate statistically validated at FPP < 0.015 and
 NFPP < 0.001 (with high-resolution imaging), likely planet at FPP < 0.5 and
-NFPP < 0.001. No imaging contrast curves are used here, so unresolved companions
-are only limited by Gaia; these FPPs are therefore upper-end values.
+NFPP < 0.001. Without imaging contrast curves, unresolved companions are only limited
+by Gaia and the FPPs are upper-end values; --contrast <file> <filter> adds a contrast
+curve (separation, delta-mag; comma-separated) and writes <label>_result..._cc.json.
 
 The calculation is Monte Carlo; it is repeated N_RUNS (5) times and the mean and
 scatter reported. Results: results/hardening/triceratops/<label>_result.json.
@@ -97,13 +98,41 @@ LOC_DIR = ROOT / "results" / "hardening" / "localize"
 CLEAR_SIGMA = 3.0
 
 
-def clear_neighbours(target, tic):
+def gaia_offsets_j2000(ra, dec, target_gaia, radius_arcsec=150.0):
+    """East/north offsets (arcsec) of Gaia DR3 stars from the target at epoch J2000.0, the epoch of
+    the TIC positions TRICERATOPS uses. The localization's offsets are at the TESS epoch; for a
+    high-proper-motion target (TOI-218 moves 0.24"/yr) the two differ by several arcsec."""
+    import astropy.units as u
+    from astropy.coordinates import SkyCoord
+    from astroquery.vizier import Vizier
+
+    v = Vizier(columns=["Source", "RA_ICRS", "DE_ICRS", "pmRA", "pmDE"], row_limit=-1)
+    t = v.query_region(SkyCoord(ra * u.deg, dec * u.deg), radius=radius_arcsec * u.arcsec,
+                       catalog="I/355/gaiadr3")[0]
+    sid = np.asarray(t["Source"], dtype=np.int64)
+    dt = 2000.0 - 2016.0                                   # Gaia DR3 reference epoch is J2016.0
+    dec0 = np.asarray(t["DE_ICRS"], float)
+    pmra = np.nan_to_num(np.ma.filled(t["pmRA"], np.nan).astype(float))   # mas/yr, includes cos(dec)
+    pmde = np.nan_to_num(np.ma.filled(t["pmDE"], np.nan).astype(float))
+    ra_e = np.asarray(t["RA_ICRS"], float) + pmra * dt / 3.6e6 / np.cos(np.radians(dec0))
+    de_e = dec0 + pmde * dt / 3.6e6
+    k = int(np.flatnonzero(sid == target_gaia)[0])
+    east = (ra_e - ra_e[k]) * np.cos(np.radians(de_e[k])) * 3600
+    north = (de_e - de_e[k]) * 3600
+    return {int(s_): (float(e), float(n)) for s_, e, n in zip(sid, east, north)}
+
+
+def clear_neighbours(target, tic, ra, dec):
     """Zero the required depth of TRICERATOPS stars that the pixel localization excludes.
 
-    TRICERATOPS stars are TIC entries (offsets from the target from their TIC positions);
-    localization stars are Gaia DR3 sources. Match by sky offset (within 4") and brightness."""
+    TRICERATOPS stars are TIC entries (offsets from the target from their epoch-J2000 TIC positions);
+    localization stars are Gaia DR3 sources. Gaia positions are moved to J2000 with their proper
+    motions, then matched by sky offset (within 4") and brightness."""
     loc = json.loads((LOC_DIR / f"TIC{tic}.json").read_text())
-    gstars = [s_ for s_ in loc["stars"] if not s_["is_target"]]
+    target_gaia = next(s_["source_id"] for s_ in loc["stars"] if s_["is_target"])
+    j2000 = gaia_offsets_j2000(ra, dec, target_gaia)
+    gstars = [dict(s_, east=j2000[s_["source_id"]][0], north=j2000[s_["source_id"]][1])
+              for s_ in loc["stars"] if not s_["is_target"] and s_["source_id"] in j2000]
     st = target.stars
     cleared = []
     for i in range(1, len(st)):
@@ -123,8 +152,14 @@ def clear_neighbours(target, tic):
     return cleared
 
 if __name__ == "__main__":
-    cleared_mode = "--cleared" in sys.argv
-    order = [int(a) for a in sys.argv[1:] if a != "--cleared"]  # optional: TIC IDs to run, in this order
+    argv = sys.argv[1:]
+    cleared_mode = "--cleared" in argv
+    contrast = None   # --contrast <file> <filter>: a high-resolution imaging contrast curve
+    if "--contrast" in argv:
+        i = argv.index("--contrast")
+        contrast, contrast_filt = argv[i + 1], argv[i + 2]
+        del argv[i:i + 3]
+    order = [int(a) for a in argv if a != "--cleared"]  # optional: TIC IDs to run, in this order
     CACHE.mkdir(parents=True, exist_ok=True)
     paths = sorted(OUT.glob("*_input.json"))
     if order:
@@ -132,7 +167,7 @@ if __name__ == "__main__":
         paths = [by_tic[t] for t in order if t in by_tic]
     for path in paths:
         d = json.loads(path.read_text())
-        out_path = OUT / f"{d['label']}_result{'_cleared' if cleared_mode else ''}.json"
+        out_path = OUT / f"{d['label']}_result{'_cleared' if cleared_mode else ''}{'_cc' if contrast else ''}.json"
         if out_path.exists():
             print(f"{d['label']}: done already", flush=True)
             continue
@@ -144,13 +179,15 @@ if __name__ == "__main__":
             target = tr.target(ID=d["tic"], sectors=sectors, search_radius=10,
                                lightkurve_cache_dir=str(CACHE), trilegal_fname=bg)
             target.calc_depths(tdepth=d["depth"], all_ap_pixels=aps)
-            cleared = clear_neighbours(target, d["tic"]) if cleared_mode else []
+            cleared = clear_neighbours(target, d["tic"], d["ra"], d["dec"]) if cleared_mode else []
             if cleared_mode:
                 print(f"{d['label']}: cleared by pixel localization: {cleared}", flush=True)
             runs = []
             for i in range(N_RUNS):
                 target.calc_probs(time=np.array(d["time"]), flux_0=np.array(d["flux"]), flux_err_0=d["flux_err"],
-                                  P_orb=d["period"], N=N_DRAWS, parallel=True, verbose=0)
+                                  P_orb=d["period"], N=N_DRAWS, parallel=True, verbose=0,
+                                  **({"contrast_curve_file": str(ROOT / contrast), "filt": contrast_filt}
+                                     if contrast else {}))
                 runs.append({"FPP": float(target.FPP), "NFPP": float(target.NFPP),
                              "degenerate": bool(getattr(target, "FPP_degenerate", False)),
                              "probs": target.probs[["ID", "scenario", "prob"]].to_dict("records")})
@@ -170,7 +207,8 @@ if __name__ == "__main__":
                    "top_scenarios": top, "runs": [{k: v for k, v in r.items() if k != "probs"} for r in runs],
                    "stars": [],
                    "background_population": os.path.relpath(str(target.trilegal_fname), ROOT), "runtime_s": round(time.time() - t_start),
-                   "cleared_by_localization": cleared}
+                   "cleared_by_localization": cleared,
+                   "contrast_curve": {"file": contrast, "filter": contrast_filt} if contrast else None}
             out_path.write_text(json.dumps(res, indent=1))  # save before anything else can fail
             try:
                 cols = [c for c in ("ID", "Tmag", "sep (arcsec)", "PA (E of N)", "fluxratio", "tdepth")

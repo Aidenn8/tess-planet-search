@@ -36,6 +36,7 @@ keyring==25.7.0
 kiwisolver==1.5.1
 lightkurve==2.5.1
 llvmlite==0.50.0
+markdown==3.11
 markupsafe==3.0.4
 matplotlib==3.11.2
 memoization==0.4.0
@@ -53,6 +54,7 @@ propcache==0.5.4
 pyarrow==25.0.1
 pyerfa==2.0.1.5
 pygments==2.21.0
+pymdown-extensions==12.1
 pyparsing==3.3.3
 pytest==9.1.1
 python-dateutil==2.9.0.post0

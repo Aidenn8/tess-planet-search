@@ -426,17 +426,20 @@ def fig_triceratops():
     colors = [C1, C2, C3, C4]
     rows = []
     for tic, name in CANDS:
-        for suffix, tag in (("", "TESS photometry only"), ("_cleared", "neighbours excluded by pixels cleared")):
+        for suffix, tag in (("", "TESS only"), ("_cleared", "cleared"), ("_cleared_cc", "cleared + imaging")):
+            if suffix == "_cleared_cc" and not (HARD / "triceratops" / f"TIC{tic}_result{suffix}.json").exists():
+                continue
             r = load(HARD / "triceratops" / f"TIC{tic}_result{suffix}.json")
             share = np.zeros(4)
             for key, v in r["top_scenarios"]:
                 share[scen_group(key.split(":")[0])] += v
             share[3] += max(0.0, 1 - share.sum())
             rows.append((f"{name.split(' (')[0]}", tag, share, r["FPP_mean"]))
-    fig, ax = plt.subplots(figsize=(7.4, 3.6))
-    y = []
+    fig, ax = plt.subplots(figsize=(7.4, 3.9))
+    y, yy = [], 0.0
     for i, (name, tag, share, fpp) in enumerate(rows):
-        yy = len(rows) - 1 - i + (i // 2) * 0 - (i // 2) * 0.6
+        if i and name != rows[i - 1][0]:
+            yy -= 0.6                      # gap between candidates
         y.append(yy)
         left = 0.0
         for k in range(4):
@@ -445,15 +448,17 @@ def fig_triceratops():
                 ax.barh(yy, w - (0.004 if w > 0.01 else 0), left=left, height=0.62, color=colors[k],
                         label=labels[k] if i == 0 else None)
             left += w
-        ax.text(1.01, yy, f"FPP {fpp:.2f}", va="center", fontsize=7.5, color=INK2)
+        ax.text(1.01, yy, f"FPP {fpp:.2f}" if fpp >= 0.01 else f"FPP {fpp:.0e}".replace("e-0", "e-"), va="center", fontsize=7.5,
+                color=INK2)
+        yy -= 1.0
     ax.set_yticks(y)
-    ax.set_yticklabels([f"{n}  ·  {'TESS only' if 'only' in t else 'cleared'}" for n, t, _, _ in rows], fontsize=7.5)
+    ax.set_yticklabels([f"{n}  ·  {t}" for n, t, _, _ in rows], fontsize=7.5)
     ax.set_xlim(0, 1.1)
     ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
     ax.set_xticklabels(["0", "25%", "50%", "75%", "100%"])
     ax.grid(axis="y", visible=False)
     ax.set_xlabel("TRICERATOPS scenario probability")
-    ax.set_title("What else could the dip be?  TESS photometry alone vs. with pixel-excluded neighbours cleared")
+    ax.set_title("What else could the dip be?  TESS alone, pixel-excluded neighbours cleared, and imaging")
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=4, fontsize=7.5)
     fig.tight_layout()
     save(fig, "fig09_triceratops.png")

@@ -158,7 +158,7 @@ pinned to TRICERATOPS 1.1.0):
 | nearby stars | TIC within 10 pixels, via TRICERATOPS's own query |
 | field population | Gaia DR3 within 0.1 deg² down to G = 21, converted to stellar properties with TRICERATOPS's own dwarf-sequence relations; queried through VizieR because the ESA Gaia archive did not respond during this work |
 | draws, repeats | 10⁶ per run; 5 runs (TESS-only) or 3 runs (cleared), mean and scatter reported |
-| imaging | none (no contrast curves) |
+| imaging | none, except one additional TOI-218 run with its public speckle contrast curve (below) |
 
 ### Clearing neighbours with the pixel localization
 
@@ -167,13 +167,15 @@ use the localization of Chapter 4. A second set of runs therefore treats every n
 localization excludes at more than 3σ as cleared, in the same way that stars cleared by ground-based
 photometry are removed from consideration: the neighbour's required depth is set to zero, so TRICERATOPS
 no longer considers it a possible host. TRICERATOPS stars (TIC entries) are matched to localization
-stars (Gaia DR3) by sky offset within 4″ and TESS magnitude within 1.5 mag.
+stars (Gaia DR3) by sky offset within 4″ and TESS magnitude within 1.5 mag, after the Gaia positions
+are moved to the TIC epoch (J2000) with their proper motions. (TOI-218 moves 0.24″ per year; without
+that step two of its pixel-excluded neighbours went unmatched in an earlier version.)
 
 ### Results
 
 | candidate | FPP (TESS only) | NFPP (TESS only) | neighbours cleared | FPP (cleared) | NFPP (cleared) | dominant non-planet scenario |
 |---|---|---|---|---|---|---|
-| TOI-218 | 0.414 ± 0.012 | 0.359 ± 0.011 | 1 | **0.082 ± 0.002** | 0.00034 | planet on the wide-binary companion (TESS only); bound companion (cleared) |
+| TOI-218 | 0.414 ± 0.012 | 0.359 ± 0.011 | 3 | **0.088 ± 0.006** | < 10⁻⁵ | planet on the wide-binary companion (TESS only); bound companion (cleared) |
 | TIC 229689348 | 0.199 ± 0.005 | 0.00097 | 6 | **0.197 ± 0.004** | < 10⁻⁵ | planet on an unresolved bound companion (STP, 20%) |
 | TIC 149390648 | 0.092 ± 0.003 | 0.0047 | 15 | **0.088 ± 0.003** | 0.00093 | diluting bound companion (PTP, 14%) |
 | TIC 198412174 | 0.461 ± 0.016 | 0.00069 | 3 | **0.478 ± 0.003** | 0.00001 | planet on an unresolved bound companion (STP, 48%) |
@@ -181,19 +183,38 @@ stars (Gaia DR3) by sky offset within 4″ and TESS magnitude within 1.5 mag.
 
 ![TRICERATOPS](figures/fig09_triceratops.png)
 
-*Figure 9. TRICERATOPS scenario probabilities from TESS photometry alone and with the neighbours
-excluded by the pixel localization cleared.*
+*Figure 9. TRICERATOPS scenario probabilities from TESS photometry alone, with the neighbours
+excluded by the pixel localization cleared, and (TOI-218) with the existing speckle imaging added.*
 
 With the pixel-excluded neighbours cleared, **all four candidates meet the "likely planet" criteria**
-(FPP < 0.5, NFPP < 0.001). None is validated. What remains of each FPP is almost entirely unresolved
+(FPP < 0.5, NFPP < 0.001). From TESS data alone none is validated. What remains of each FPP is almost entirely unresolved
 bound companions: a second star too close to the target for Gaia or TESS to separate, either diluting a
 planet on the target or hosting the transit itself. High-resolution imaging tests exactly those scenarios.
+
+### Adding high-resolution imaging: TOI-218
+
+TOI-218 is the only candidate with high-resolution imaging on ExoFOP: Gemini-South 'Zorro' speckle
+imaging from 2020-11-27 (PI S. Howell), taken for TFOP because of the two known TOIs, reaching Δ = 4.4 mag
+at 562 nm and 5.5 mag at 832 nm at 0.5″, with no companion listed. The public 562-nm sensitivity curve
+(`results/hardening/triceratops/contrast/`) was added to the cleared run (`13_triceratops_run.py
+--cleared --contrast <file> Vis`; TRICERATOPS filter "Vis"; 3 runs of 10⁶ draws):
+
+| run | FPP | NFPP | planet on target |
+|---|---|---|---|
+| TESS photometry only | 0.414 ± 0.012 | 0.359 | 50% |
+| pixel-excluded neighbours cleared (3 stars) | 0.088 ± 0.006 | < 10⁻⁵ | 78% |
+| cleared + speckle contrast curve | **1.4 × 10⁻⁵** (runs 0.7–2.0 × 10⁻⁵) | **< 10⁻⁵** | 99.95% |
+
+The contrast curve removes nearly all of the bound-companion scenarios, which were all that remained once
+the neighbours were cleared. The result is far below the validation thresholds above (FPP < 0.015,
+NFPP < 0.001). This work still stops short of calling the signal validated (Chapter 6): the host flares,
+and no ground-based light curve has yet seen the transit.
 
 Three details are worth recording.
 
 * **TOI-218.** From photometry alone, TRICERATOPS assigns 36% to a planet transiting the wide-binary
   companion, TIC 32090581 (13.5″ away, nearly equal in brightness). The pixel localization excludes that
-  star at 4.5σ; once it is cleared the FPP falls from 0.41 to 0.08.
+  star at 4.4σ; once it is cleared the FPP falls from 0.41 to 0.09.
 * **TIC 149390648.** The only neighbour scenario left after clearing (NFPP 0.0008 of the 0.00093) is
   TIC 149390646, a TIC entry with T = 17.0 that has no Gaia counterpart. At its position Gaia DR3 lists
   only a G = 21.6 source, far too faint to produce the dip, so the remaining NFPP reflects a catalogue

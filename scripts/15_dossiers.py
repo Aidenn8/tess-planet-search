@@ -8,8 +8,8 @@ Pulls together, for each of the five candidates:
   results/hardening/spoc_*   SPOC DV cross-check and period-drift test (scripts/11_*.py)
 
 Writes results/candidates/TIC<tic>.md, results/candidates/summary.csv and
-results/hardening/exofop/params_planet_DRAFT.txt (NOT submitted: the tag field is a placeholder that
-needs the submitter's ExoFOP username; the paper field points to this repository).
+results/hardening/exofop/params_planet_DRAFT.txt (NOT submitted: the tag and paper fields are placeholders
+for the submitter's ExoFOP username and the refereed publication ExoFOP now requires).
 """
 import json
 import sys
@@ -27,7 +27,7 @@ HARD = RESULTS / "hardening"
 CANDIDATES = [(32090583, 5, "TOI-218"), (229689348, 1, None), (198412174, 1, None), (149390648, 1, None),
               (294053492, 1, None)]
 PREDICT_BJD = 2461557.5   # 2027 June 1: timing uncertainty quoted at this date
-from tess_search.assessments import SUBMIT, VERDICT, assessment  # noqa: E402  hand-written verdicts
+from tess_search.assessments import CTOI_SUFFIX, _sep, rel, small_p, SUBMIT, VERDICT, assessment  # noqa: E402  hand-written verdicts
 
 
 def load(path):
@@ -62,7 +62,7 @@ def fmt_err(v, e, digits=None):
     return f"{v:.{digits}f} ± {e:.{digits}f}"
 
 
-def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star, tri_c=None):
+def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star, tri_c=None, tri_cc=None):
     p, p_err, t0, t0_err, sig_min = ephemeris(fu, mc)
     s = mc["prior"]
     fr = mc["free_density"]
@@ -127,7 +127,7 @@ def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star, tri_c=None):
         L += [""]
     if loc:
         alive = [r for r in loc["stars"] if not r["is_target"] and r["excluded_sigma_total"] < 3]
-        comp = sorted([r for r in loc["stars"] if not r["is_target"]], key=lambda r: r["sep_arcsec"])[:3]
+        comp = sorted([r for r in loc["stars"] if not r["is_target"]], key=_sep)[:3]
         L += ["## Pixel-level localization (where the light goes missing)",
               f"Difference images from {loc['n_sectors']} sectors ({loc['n_transits']} transits) fitted jointly with the "
               "SPOC PRF (scripts/12_localize.py). Errors include a 1.5\" systematic floor measured on 46 cases with "
@@ -139,10 +139,10 @@ def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star, tri_c=None):
               f"{loc['expected_amplitude']:.2f} e-/s expected if the target hosts the observed depth "
               f"(ratio {loc['amplitude_ratio']:.2f}; confirmed planets in the test set span 0.85-1.30)",
               "* nearest neighbours: " + "; ".join(
-                  f"Gaia DR3 {r['source_id']} at {r['sep_arcsec']:.1f}\" (T = {r['tmag']:.1f}) excluded at "
+                  f"Gaia DR3 {r['source_id']} at {_sep(r):.1f}\" (T = {r['tmag']:.1f}) excluded at "
                   f"{r['excluded_sigma_total']:.1f} sigma" for r in comp),
               "* neighbours not excluded at 3 sigma: " + ("none" if not alive else "; ".join(
-                  f"Gaia DR3 {r['source_id']} at {r['sep_arcsec']:.1f}\" (T = {r['tmag']:.1f}; would need a "
+                  f"Gaia DR3 {r['source_id']} at {_sep(r):.1f}\" (T = {r['tmag']:.1f}; would need a "
                   f"{100 * r['implied_eclipse_depth']:.1f}% eclipse)" for r in alive))]
         if loc.get("split_halves"):
             L.append("* odd / even sectors separately: " + "; ".join(
@@ -163,6 +163,12 @@ def dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk, star, tri_c=None):
                                                   for c in cl[:4]) or "none") + (", ..." if len(cl) > 4 else "")
                   + f"), FPP = {tri_c['FPP_mean']:.3f} ± {tri_c['FPP_std']:.3f} and NFPP = {tri_c['NFPP_mean']:.5f} ± "
                   f"{tri_c['NFPP_std']:.5f}.", ""]
+        if tri_cc:
+            cc = tri_cc["contrast_curve"]
+            L += [f"Adding the high-resolution imaging contrast curve `{cc['file']}` (TRICERATOPS filter {cc['filter']}) "
+                  f"to the cleared run: FPP {rel(small_p(tri_cc['FPP_mean']))} and NFPP {rel(small_p(tri_cc['NFPP_mean']))} "
+                  f"(mean of {tri_cc['n_runs']} runs; per run: "
+                  + ", ".join(f"{r_['FPP']:.1e}" for r_ in tri_cc.get("runs", [])) + ").", ""]
     L += ["## Files",
           f"* follow-up sheet and vetting: `results/followup/TIC{tic}_{sig}.png`, `.json`",
           f"* transit fit: `results/hardening/mcmc/TIC{tic}.png`, `.json`",
@@ -189,13 +195,13 @@ def ctoi_row(tic, sig, row, mc, loc, tri, notes):
     ins, ins_e = pm(s["insolation_earth"])
     rho, rho_e = pm(s["rho_cgs"])
     a, a_e = pm(s["a_au"])
-    f = [f"TIC{tic}.01", "newctoi", "PC", "TESS", "",
+    f = [f"TIC{tic}.{CTOI_SUFFIX.get(tic, '01')}", "newctoi", "PC", "TESS", "",
          f"{row['period']:.7f}", f"{row['period_err']:.7f}", f"{row['t0_bjd']:.5f}", f"{row['t0_err']:.5f}",
          f"{depth:.0f}", f"{depth_e:.0f}", f"{dur:.3f}", f"{dur_e:.3f}", f"{inc:.2f}", f"{inc_e:.2f}",
          f"{b:.3f}", f"{b_e:.3f}", f"{k:.4f}", f"{k_e:.4f}", f"{ar:.2f}", f"{ar_e:.2f}", f"{rp:.3f}", f"{rp_e:.3f}",
          "", "", f"{teq:.0f}", f"{teq_e:.0f}", f"{ins:.1f}", f"{ins_e:.1f}", f"{rho:.2f}", f"{rho_e:.2f}",
          f"{a:.5f}", f"{a_e:.5f}", "", "", "", "", "", "", "", "",
-         "YYYYMMDD_EXOFOPUSERNAME_mdwarfdeepsearch_00001", "", "0", "https://github.com/Aidenn8/tess-planet-search", notes[:120]]
+         "YYYYMMDD_EXOFOPUSERNAME_mdwarfdeepsearch_00001", "", "0", "REFEREED_PAPER_URL", notes[:120]]
     return "|".join(f)
 
 
@@ -211,9 +217,10 @@ if __name__ == "__main__":
         mc = load(HARD / "mcmc" / f"TIC{tic}.json")
         tri = load(HARD / "triceratops" / f"TIC{tic}_result.json")
         tri_c = load(HARD / "triceratops" / f"TIC{tic}_result_cleared.json")
+        tri_cc = load(HARD / "triceratops" / f"TIC{tic}_result_cleared_cc.json")
         dv = dv_all[dv_all.tic == tic].sort_values("run") if len(dv_all) else None
         star = tic_tab.loc[tic].to_dict()
-        text, row = dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk_all.get(str(tic)), star, tri_c)
+        text, row = dossier(tic, sig, name, fu, loc, mc, tri, dv, pchk_all.get(str(tic)), star, tri_c, tri_cc)
         (OUT / f"TIC{tic}.md").write_text(text)
         s = mc["prior"]
         row.update(verdict=VERDICT.get(tic, ""), rp_rearth=s["rp_rearth"]["median"],
@@ -224,7 +231,8 @@ if __name__ == "__main__":
                    loc_err_arcsec=loc["offset_err_total_arcsec"] if loc else None,
                    loc_target_sigma=loc["target_sigma_total"] if loc else None,
                    fpp=tri["FPP_mean"] if tri else None, nfpp=tri["NFPP_mean"] if tri else None,
-                   fpp_cleared=tri_c["FPP_mean"] if tri_c else None, nfpp_cleared=tri_c["NFPP_mean"] if tri_c else None)
+                   fpp_cleared=tri_c["FPP_mean"] if tri_c else None, nfpp_cleared=tri_c["NFPP_mean"] if tri_c else None,
+                   fpp_imaging=tri_cc["FPP_mean"] if tri_cc else None, nfpp_imaging=tri_cc["NFPP_mean"] if tri_cc else None)
         rows.append(row)
         if SUBMIT.get(tic):
             ctoi.append(ctoi_row(tic, sig, row, mc, loc, tri, SUBMIT[tic] if isinstance(SUBMIT[tic], str) else ""))
@@ -233,8 +241,11 @@ if __name__ == "__main__":
     template = (HARD / "exofop" / "exofop_template_params_planet.txt").read_text().splitlines()
     header = next(line for line in template if line.startswith("target|"))
     (HARD / "exofop" / "params_planet_DRAFT.txt").write_text(
-        "\\ DRAFT - NOT SUBMITTED. Fill in the tag (the submitter's ExoFOP username), check the next\n"
-        "\\ free TIC<id>.NN candidate number on each target's ExoFOP overview page, then rename to\n"
-        "\\ params_planet_YYYYMMDD_001.txt before uploading. Format: ExoFOP planet-parameter bulk upload template.\n"
+        "\\ DRAFT - NOT SUBMITTED. Since 2026-08-19 ExoFOP accepts community candidates only once they are published\n"
+        "\\ in the refereed literature (or in an RNAAS note that cites a previously published, refereed detection and\n"
+        "\\ vetting method), from uploaders approved through its Published Candidate Upload Request form. Before\n"
+        "\\ uploading: fill in the paper URL and the tag (the submitter's ExoFOP username), confirm the next free\n"
+        "\\ TIC<id>.NN on each target's ExoFOP overview page, and rename to params_planet_YYYYMMDD_001.txt.\n"
+        "\\ Format: ExoFOP planet-parameter bulk upload template (exofop_template_params_planet.txt).\n"
         + header + "\n" + "\n".join(ctoi) + "\n")
     print(f"CTOI draft: {len(ctoi)} rows")

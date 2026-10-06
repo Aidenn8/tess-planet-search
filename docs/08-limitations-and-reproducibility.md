@@ -23,7 +23,7 @@
 
 **Pixel-level localization.**
 
-* Sources closer than about 5″ cannot be separated (TIC 198412174's 4.7″ neighbour).
+* Sources about 5″ apart cannot be separated (TIC 198412174's neighbour 5.3″ away).
 * The model assumes that only one source in the stamp varies in step with the transit ephemeris. A
   second variable star with a commensurate period breaks this; such fits are flagged by a reduced
   χ² ≥ 2 (Chapter 4), but a weaker version of the same effect would not be flagged.
@@ -45,8 +45,10 @@
 
 **Statistical validation.**
 
-* TRICERATOPS was run without high-resolution imaging, so unresolved companions are constrained only by
-  Gaia; the reported FPPs are upper-end values and no candidate is statistically validated.
+* Only TOI-218 has public high-resolution imaging; for the other three, unresolved companions are
+  constrained only by Gaia and the reported FPPs are upper-end values. TOI-218 falls below the numerical
+  validation thresholds once its 2020 speckle contrast curve is included, but is not called validated
+  (Chapter 6).
 * The field-star population was queried from VizieR rather than the ESA Gaia archive, using TRICERATOPS's
   own conversion from Gaia photometry to stellar properties.
 * Treating pixel-excluded neighbours as cleared is analogous to clearing by ground-based photometry, but

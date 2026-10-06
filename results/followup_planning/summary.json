@@ -1,0 +1,73 @@
+{
+ "start_utc": "2026-10-06",
+ "end_utc": "2027-03-31",
+ "min_altitude_deg": 30.0,
+ "max_sun_altitude_deg": -12.0,
+ "baseline_h": 0.5,
+ "candidates": {
+  "TIC 32090583 (TOI-218)": {
+   "period_d": 2.1467982123991036,
+   "transits_in_window": 82,
+   "timing_sigma_min_range": [
+    2.9,
+    3.1
+   ],
+   "observable_per_site": {
+    "LCO Cerro Tololo (Chile)": 16,
+    "LCO SAAO Sutherland (South Africa)": 17,
+    "LCO Siding Spring (Australia)": 14,
+    "LCO Teide (Tenerife)": 0,
+    "LCO McDonald (Texas)": 0,
+    "LCO Haleakala (Hawaii)": 0
+   }
+  },
+  "TIC 229689348": {
+   "period_d": 0.4653768852437353,
+   "transits_in_window": 378,
+   "timing_sigma_min_range": [
+    3.4,
+    3.6
+   ],
+   "observable_per_site": {
+    "LCO Cerro Tololo (Chile)": 0,
+    "LCO SAAO Sutherland (South Africa)": 0,
+    "LCO Siding Spring (Australia)": 0,
+    "LCO Teide (Tenerife)": 18,
+    "LCO McDonald (Texas)": 12,
+    "LCO Haleakala (Hawaii)": 6
+   }
+  },
+  "TIC 198412174": {
+   "period_d": 1.3901601925745497,
+   "transits_in_window": 126,
+   "timing_sigma_min_range": [
+    2.7,
+    2.9
+   ],
+   "observable_per_site": {
+    "LCO Cerro Tololo (Chile)": 0,
+    "LCO SAAO Sutherland (South Africa)": 0,
+    "LCO Siding Spring (Australia)": 0,
+    "LCO Teide (Tenerife)": 6,
+    "LCO McDonald (Texas)": 6,
+    "LCO Haleakala (Hawaii)": 3
+   }
+  },
+  "TIC 149390648": {
+   "period_d": 2.836886745638589,
+   "transits_in_window": 62,
+   "timing_sigma_min_range": [
+    4.6,
+    4.9
+   ],
+   "observable_per_site": {
+    "LCO Cerro Tololo (Chile)": 11,
+    "LCO SAAO Sutherland (South Africa)": 12,
+    "LCO Siding Spring (Australia)": 11,
+    "LCO Teide (Tenerife)": 0,
+    "LCO McDonald (Texas)": 0,
+    "LCO Haleakala (Hawaii)": 0
+   }
+  }
+ }
+}

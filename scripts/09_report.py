@@ -186,7 +186,8 @@ def main():
     for _, r in cs.iterrows():
         w(f"**TIC {r.tic}.** {assessment(int(r.tic))} Dossier: `results/candidates/TIC{r.tic}.md`.\n")
     w("The ExoFOP community-TOI upload is drafted in `results/hardening/exofop/params_planet_DRAFT.txt` "
-      "(not submitted; it needs the submitter's ExoFOP username as its tag).\n")
+      "(not submitted: since August 2026 ExoFOP accepts community candidates only after refereed publication; "
+      "see `FOLLOW_UP.md`).\n")
     hardening_section(w, loc)
 
     # ------------------------------------------------------------ data

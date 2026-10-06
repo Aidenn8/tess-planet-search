@@ -17,7 +17,7 @@ observations. None of these is a confirmed planet.
 | T_eq (K) | 578 | 1131 | 581 | 954 | – |
 | SNR | 11.1 | 10.4 | 9.1 | 9.7 | 7.9 |
 | source offset | 2.2 ± 3.0″ | 3.6 ± 3.3″ | 4.2 ± 3.6″ | 2.2 ± 3.5″ | 21.6 ± 3.1″ |
-| FPP (cleared) | 0.082 | 0.197 | 0.088 | 0.478 | – |
+| FPP (cleared) | 0.088 | 0.197 | 0.088 | 0.478 | – |
 | prior status | in no list | SPOC TCE, never a TOI | SPOC TCE, never a TOI | SPOC TCE, never a TOI | in no list |
 
 ---
@@ -42,28 +42,42 @@ eclipsing binary or SPOC TCE.
 * **A wide binary.** TOI-218 has a near-twin companion 13.5″ away: Gaia DR3 4667466549703138304, with the
   same parallax (19.03 mas) and proper motion (139.9, 191.2 mas yr⁻¹) and only 0.17 mag fainter in the
   TESS band. The two are blended in every TESS aperture. The pixel localization places the new signal on
-  TIC 32090583 (2.2 ± 3.0″) and excludes the companion at 4.5σ; the two known TOIs also come from
+  TIC 32090583 (2.2 ± 3.0″) and excludes the companion at 4.4σ; the two known TOIs also come from
   TIC 32090583 (companion excluded at 8.7σ and 6.8σ). Before the Gaia-ID fix described in the
   repository history, this companion was missing from the candidate's neighbour table.
 * The target loses 1.25 ± 0.18 times the light the light-curve depth predicts, within the range of
   confirmed planets.
 * TRICERATOPS: FPP = 0.41 from photometry alone, almost entirely the scenario that the planet orbits the
-  companion; with the companion cleared by the pixel localization, **FPP = 0.082, NFPP = 0.0003**.
+  companion; with the companion cleared by the pixel localization, **FPP = 0.088, NFPP < 10⁻⁵**; adding the
+  existing speckle imaging, **FPP = 1.4 × 10⁻⁵, NFPP < 10⁻⁵** (below).
 * Additional candidates in systems that already host candidates are statistically more likely to be
   real (Lissauer et al. 2012).
 
 **Open questions.** TFOP notes describe the host as an eruptive (flaring) variable and suspect that
 TOI-218.01 may be stellar variability. Flares are removed before the search, and the new signal is a
 periodic, flat-bottomed, 0.9-hour dip present in hundreds of transits and in both halves of the data,
-which does not resemble spot modulation or flaring. ExoFOP lists two high-resolution imaging observations
-of this star; their contrast curves were not used here and would lower the FPP. ExoFOP also lists 22
-ground-based time-series observations of TOI-218, obtained for the two known TOIs; some may cover
-transits of the new signal by chance and can be checked against its ephemeris at no cost.
+which does not resemble spot modulation or flaring. No ground-based light curve has yet seen the transit.
+ExoFOP lists 22 TFOP time-series observations of TOI-218, obtained for the two known TOIs, with public
+photometry for those taken before October 2025: 27 AstroImageJ tables, a TRAPPIST light curve and
+joint-fit subsets, all checked against this ephemeris (`scripts/18_archival_ground_check.py`). Only one,
+LCO-CTIO 1 m on 2018-12-03 (tag 1415), covers more than half of a predicted transit (87%, timing
+uncertainty ±1.8 min). It starts at ingress, with no pre-transit baseline, and the answer depends on the
+baseline model: the target-to-companion flux ratio dips by 1874 ± 608 ppm with a flat baseline and by
+586 ± 1221 ppm with a linear one, against 1273 ppm expected. It neither confirms nor rules out the signal.
+The four TFOP observations since October 2025 have no public photometry yet.
 
-**What would settle it.** Checking the existing TFOP time-series observations against this ephemeris;
-ground-based photometry that resolves the 13.5″ pair during a predicted transit, which independently
-tests which star hosts each of the three signals; inclusion of the existing high-resolution imaging in
-the statistical validation.
+**High-resolution imaging.** ExoFOP also lists Gemini-South 'Zorro' speckle imaging of TOI-218
+(2020-11-27; PI S. Howell), with contrast limits of Δ = 4.4 mag (562 nm) and 5.5 mag (832 nm) at 0.5″;
+ExoFOP lists no detected companion. Adding the public 562-nm contrast curve to the cleared TRICERATOPS run gives
+**FPP = 1.4 × 10⁻⁵ and NFPP < 10⁻⁵**, far below the thresholds Giacalone et al. (2021) use for
+validation (FPP < 0.015, NFPP < 0.001). This work does not call the planet validated: the host is a
+flaring star, the 2020 imaging was taken for the two known TOIs, and a ground-based detection of the
+transit is the standard independent check.
+
+**What would settle it.** Ground-based photometry of a predicted transit that resolves the 13.5″ pair,
+with baseline on both sides: at 1.3 ppt the transit is within reach of a 2-m telescope such as LCO's
+MuSCAT4, which has observed TOI-218 for TFOP since 2024 (`FOLLOW_UP.md` lists observable windows). The
+TFOP team's own unpublished light curves of TOI-218 may already cover transits of the new signal.
 
 ---
 
@@ -86,8 +100,8 @@ R_p = 1.25 ± 0.08 R⊕; a = 0.0089 AU; T_eq ≈ 1130 K; 272 times Earth's insol
   source 55 ± 10″ away, which may be why it was not promoted; none of that run's 22 per-sector difference
   images passed SPOC's quality metric.
 * **The pixels put it on the target.** The joint localization at the correct period with all 25 sectors
-  (1,138 transit events) places the source 3.6 ± 3.3″ from the target and excludes the neighbours at 9.2″
-  (4.6σ) and 48.7″ (the bright star SPOC's offset points towards, 8.0σ). Synthetic eclipses planted on
+  (1,138 transit events) places the source 3.6 ± 3.3″ from the target and excludes the neighbours at 9.7″
+  (4.6σ) and 48.3″ (the bright star SPOC's offset points towards, 8.0σ). Synthetic eclipses planted on
   those neighbours are correctly traced to them, so the method could have seen an off-target source here.
   The pixel/light-curve depth ratio is 1.02 ± 0.15.
 * TRICERATOPS: FPP = 0.199 with NFPP below 10⁻⁵ once the six pixel-excluded neighbours are cleared. The
@@ -148,19 +162,20 @@ R_p = 1.35 ± 0.11 R⊕; T_eq ≈ 954 K.
 * SPOC flagged it in three runs (Sectors 14–50, 14–78, 14–86) with falling SNR (8.5, 6.0, 4.4); as for
   TIC 229689348, the fall follows SPOC's period error, and at this work's period the light curve gives
   SNR 10.2.
-* The pixels place the source on or very near the target (2.2 ± 3.5″); all neighbours more than 5″ away
-  are excluded.
+* The pixels place the source on or very near the target (2.2 ± 3.5″); every other neighbour (the next
+  nearest is 18″ away) is excluded.
 
 **Open questions.** Two separate ambiguities.
 
-* A T = 18.2 star 4.7″ from the target is excluded at only 1.3σ; it would need an ~11% eclipse. Two
+* A T = 18.2 star 5.3″ from the target is excluded at only 1.3σ; it would need an ~11% eclipse. Two
   sources this close are below the localization's resolution (Chapter 4).
 * TRICERATOPS gives FPP = 0.478, dominated by a planet transiting an unresolved bound companion (48%)
   rather than the target (43%). The transit is short for this star's size, which a smaller, denser host
   would explain; the shape-only density (6.8 +9.4/−6.6 × TIC) leans the same way but is unconstrained.
 
 **What would settle it.** High-resolution imaging (adaptive optics or speckle) to detect or exclude both
-a close bound companion and the 4.7″ star's contribution. If a companion hosts the transit, the planet
+a close bound companion and the 5.3″ star's contribution. Seeing-limited photometry that resolves the
+5.3″ pair can also test that star directly: it would need an ~11% eclipse, easy to see in a 1-m telescope. If a companion hosts the transit, the planet
 would be larger than 1.35 R⊕.
 
 ---
@@ -185,7 +200,7 @@ That star is fainter than the G < 19.5 limit of the first localization run, whic
 extended to G = 21.
 
 **The statistics.** TRICERATOPS, without pixel information, also gives substantial weight to a neighbour
-(NFPP = 0.30) but attributes it to the bright star 22.6″ to the north-west, which the pixels exclude at
+(NFPP = 0.30) but attributes it to the bright star 18.4″ to the north-west, which the pixels exclude at
 8.3σ. The faint true source carries little prior probability in TRICERATOPS. The two approaches agree that
 the target is not the host and disagree about which neighbour is, and the pixel data are the direct
 measurement.
@@ -200,10 +215,10 @@ This signal is reported as a false positive and is not included in the community
 
 | priority | candidate | most useful observation | why |
 |---|---|---|---|
-| 1 | TOI-218 | existing TFOP photometry checked against the new ephemeris; photometry resolving the 13.5″ pair; existing imaging in TRICERATOPS | strongest signal; likely planet once the companion is cleared; third member of a known system |
-| 2 | TIC 229689348 | high-resolution imaging; ground-based check of the 9″ and 49″ neighbours | Earth-sized USP; SPOC's offset not reproduced |
+| 1 | TOI-218 | photometry of a predicted transit resolving the 13.5″ pair; TFOP's unpublished light curves checked against the new ephemeris | strongest signal; meets TRICERATOPS's validation thresholds with the existing speckle imaging; third member of a known system |
+| 2 | TIC 229689348 | high-resolution imaging; ground-based check of the 10″ and 48″ neighbours | Earth-sized USP; SPOC's offset not reproduced |
 | 3 | TIC 149390648 | seeing-limited photometry of the crowded field | likely planet; crowding is the main remaining question |
-| 4 | TIC 198412174 | adaptive-optics or speckle imaging | host ambiguous between the target and a possible companion |
+| 4 | TIC 198412174 | adaptive-optics or speckle imaging; photometry resolving the 5.3″ neighbour | host ambiguous between the target and a possible companion |
 
 ## References
 

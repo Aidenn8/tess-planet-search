@@ -128,7 +128,8 @@ def describe(loc, stars, target_idx, sig):
                target_sigma_total=tot["target_sigma_total"], reliable=bool(loc.chi2_red < CHI2_RELIABLE))
     # neighbours the data cannot exclude at 3 sigma (systematic floor included)
     alive = [r for r in loc.stars if not r["is_target"] and r["excluded_sigma_total"] < 3]
-    rec["neighbours_not_excluded_3sigma"] = [(r["source_id"], round(r["sep_arcsec"], 1), round(r["tmag"], 2))
+    rec["neighbours_not_excluded_3sigma"] = [(r["source_id"], round(float(np.hypot(r["east"], r["north"])), 1),
+                                              round(r["tmag"], 2))
                                              for r in alive]
     rec["miss_arcsec"] = float(np.hypot(loc.offset_east - t["east"], loc.offset_north - t["north"]))
     if sig.get("expected"):
@@ -293,7 +294,8 @@ def injections(tic, cals, stars, target_idx, sig):
         t_row = next(r for r in loc.stars if r["is_target"])
         out.append({"label": f"{sig['label']}_inject_{'target' if k == target_idx else src}", "kind": "injection",
                     "tic": tic, "injected_on": "target" if k == target_idx else "neighbour",
-                    "injected_source": src, "injected_sep_arcsec": float(stars.sep_arcsec.values[k]),
+                    "injected_source": src,
+                    "injected_sep_arcsec": float(np.hypot(row["east"], row["north"])) if row else None,
                     "injected_tmag": float(stars.tmag.values[k]), "needed_eclipse_depth": needed,
                     "recovered_best_star": loc.stars[0]["source_id"],
                     "recovered_correct": loc.stars[0]["source_id"] == src,

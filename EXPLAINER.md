@@ -79,24 +79,29 @@ back to the raw images.
 * **Four remain candidates**, all on their own star:
   * **TOI-218, a third signal** (every 2.15 days, about Earth's size). TOI-218 turned out to be one of a
     pair of twin red dwarfs orbiting each other far apart; the image check shows the new signal, and the
-    two already-known ones, come from TOI-218 itself and not from its twin.
+    two already-known ones, come from TOI-218 itself and not from its twin. A sharp image of the star from
+    an 8-metre telescope, taken in 2020 for the known signals, rules out most remaining alternatives: the
+    statistical test then puts the chance of a false positive at about 1 in 70,000.
   * **TIC 229689348**, a dip every **11.2 hours** (1.25 Earth sizes, about 1,100 K). NASA's pipeline
     thought the source might be a star 55 arcseconds away; the image check, done at the correct period
     with all the data, puts it on the target.
   * **TIC 149390648** (Earth-sized, 2.84 days) in a crowded patch of sky.
-  * **TIC 198412174** (1.35 Earth sizes, 1.39 days): a faint star only 4.7 arcseconds away is too close to
+  * **TIC 198412174** (1.35 Earth sizes, 1.39 days): a faint star only 5 arcseconds away is too close to
     rule out, and the dip's shape also fits a planet around a small unseen companion star. A sharp image
     from a large telescope would settle it.
-* All four meet TRICERATOPS's "likely planet" bar. None is "statistically validated", which needs a very
-  low false-positive probability plus sharp images from a large telescope. They are documented
-  candidates, ready for that step.
+* All four meet TRICERATOPS's "likely planet" bar. "Statistically validated" needs a very low
+  false-positive probability plus sharp images from a large telescope; TOI-218's new signal, the only one
+  with such images already, passes that numerical bar, but a telescope on the ground still needs to see
+  one of its transits, because its star flares. The other three are documented candidates, ready for
+  that step.
 
 ## What a "candidate" means, and does not mean
 A candidate passed every automated test and is not in any catalogue. It is *not* a confirmed planet.
 Confirmation needs more observations: telescopes on the ground to rule out nearby eclipsing stars, sharper
 images, and measurements of the star's wobble. What a candidate *is*: a specific, reproducible, documented
-signal worth those follow-up observations. Such signals can be submitted to NASA's ExoFOP follow-up
-database as "community TOIs".
+signal worth those follow-up observations. NASA's ExoFOP follow-up database lists such signals as
+"community TOIs", but since August 2026 only after they are published in a refereed journal
+([FOLLOW_UP.md](FOLLOW_UP.md) explains the route).
 
 ## Glossary
 * **Light curve:** a star's brightness over time.

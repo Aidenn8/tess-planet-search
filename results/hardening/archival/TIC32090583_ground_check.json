@@ -1,0 +1,103 @@
+{
+ "tic": 32090583,
+ "tables_checked": 27,
+ "covering_observations": [
+  {
+   "file": "TIC32090583-01_20181203_LCO-CTIO-1m_ip_measurements.tbl",
+   "tag": "1415",
+   "epoch": -402,
+   "tc_bjd": 2458455.6841899245,
+   "tc_sigma_min": 1.832122079891518,
+   "transit_fraction_covered": 0.87,
+   "pre_transit_baseline_h": 0.0,
+   "post_transit_baseline_h": 1.55,
+   "tess_depth_ppm": 1273,
+   "target (T1) | flat": {
+    "depth_ppm": 1018,
+    "err_ppm": 489
+   },
+   "target (T1) | linear": {
+    "depth_ppm": 1,
+    "err_ppm": 983
+   },
+   "second aperture (T2) | flat": {
+    "depth_ppm": -862,
+    "err_ppm": 472
+   },
+   "second aperture (T2) | linear": {
+    "depth_ppm": -581,
+    "err_ppm": 958
+   },
+   "T1 / T2 ratio | flat": {
+    "depth_ppm": 1874,
+    "err_ppm": 608
+   },
+   "T1 / T2 ratio | linear": {
+    "depth_ppm": 586,
+    "err_ppm": 1221
+   }
+  }
+ ],
+ "other_light_curves_coverage": [
+  {
+   "file": "TIC32090583-01_20250928_LCO-SSO-M4_zs_bjd-flux-err-sky-yfit_subset.dat",
+   "tag": "458775",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-01_20250928_LCO-SSO-M4_rp_bjd-flux-err-air-bjd_subset.dat",
+   "tag": "458775",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-01_20250928_LCO-SSO-M4_ip_bjd-flux-err-bjd_subset.dat",
+   "tag": "458775",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-01_20250708_LCO-SSO-M4_zs_bjd-flux-err-air_subset.dat",
+   "tag": "455990",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-01_20250708_LCO-SSO-M4_rp_bjd-flux-err-bjd_subset.dat",
+   "tag": "455990",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-01_20250708_LCO-SSO-M4_ip_bjd-flux-err-bjd_subset.dat",
+   "tag": "455990",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-02_20250116_LCO-SSO-M4_rp_bjd-flux-err_subset.dat",
+   "tag": "446725",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-02_20250116_LCO-SSO-M4_ip_bjd-flux-err-bjd_subset.dat",
+   "tag": "446725",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC32090583-02_20250116_LCO-SSO-M4_gp_bjd-flux-err_subset.dat",
+   "tag": "446725",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  },
+  {
+   "file": "TIC-32090583.02_2025_1_8_TRAPPIST-South_z_measurments.txt",
+   "tag": "445671",
+   "points_in_transit": 0,
+   "fraction_of_points_in_transit": 0.0
+  }
+ ]
+}

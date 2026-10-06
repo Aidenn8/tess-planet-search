@@ -143,12 +143,12 @@ target's aperture equals the observed depth (required neighbour eclipse depths 0
 eclipse of the neighbour's PRF, scaled to the required light loss, is subtracted from every in-eclipse
 cadence at a period of 1.3713 × the signal's period, so it does not coincide with the real transits.
 
-* 39 eclipses were planted (12 on targets, 27 on neighbours 4.7–83″ away).
+* 39 eclipses were planted (12 on targets, 27 on neighbours 5.3–83″ away).
 * 35 fits are reliable (reduced χ² < 2). Of these, **34 are attributed to the correct star**.
 * For 22 of the 24 reliable neighbour injections, the target is excluded at more than 3σ. The two
-  exceptions are faint neighbours 13–16″ away that would need 3% and 28% eclipses; there the target is
+  exceptions are faint neighbours 9.6″ and 14.7″ away that would need 28% and 3% eclipses; there the target is
   excluded at 2.7–2.8σ.
-* The one misattribution is the target injection on TIC 198412174, assigned to a T = 18.2 star 4.7″ from
+* The one misattribution is the target injection on TIC 198412174, assigned to a T = 18.2 star 5.3″ from
   the target: two sources that close are below the method's resolution.
 
 ### A failure mode, and how it is flagged
@@ -188,10 +188,10 @@ light-curve dips are not reproduced in the pixels (Chapter 7).
 
 | signal | sectors | transits | offset from target | target excluded at | nearest neighbour excluded at | depth ratio | reduced χ² |
 |---|---|---|---|---|---|---|---|
-| TOI-218 (TIC 32090583) | 41 | 428 | 2.2 ± 3.0″ | 0.6σ | 4.5σ (13.5″, wide-binary companion) | 1.25 ± 0.18 | 1.08 |
-| TIC 229689348 | 25 | 1,138 | 3.6 ± 3.3″ | 0.7σ | 4.6σ (9.2″) | 1.02 ± 0.15 | 1.12 |
+| TOI-218 (TIC 32090583) | 41 | 428 | 2.2 ± 3.0″ | 0.6σ | 4.4σ (13.5″, wide-binary companion) | 1.25 ± 0.18 | 1.08 |
+| TIC 229689348 | 25 | 1,138 | 3.6 ± 3.3″ | 0.7σ | 4.6σ (9.7″) | 1.02 ± 0.15 | 1.12 |
 | TIC 149390648 | 32 | 234 | 4.2 ± 3.6″ | 1.4σ | all > 3σ | 1.47 ± 0.23 | 1.06 |
-| TIC 198412174 | 37 | 546 | 2.2 ± 3.5″ | 0.4σ | 1.3σ (4.7″, T = 18.2) | 0.80 ± 0.13 | 1.16 |
+| TIC 198412174 | 37 | 546 | 2.2 ± 3.5″ | 0.4σ | 1.3σ (5.3″, T = 18.2) | 0.80 ± 0.13 | 1.16 |
 | TIC 294053492 | 21 | 419 | **21.6 ± 3.1″** | **7.7σ** | source on a G = 19.8 star | – | 1.11 |
 
 Each candidate was also localized from the odd-numbered and even-numbered sectors separately. The four
@@ -206,7 +206,7 @@ brightness, + the target and × the best-fit source position.*
 
 The same method shows that all three signals in the TOI-218 system come from TIC 32090583 and not its
 equal-brightness wide-binary companion 13.5″ away: the companion is excluded at 8.7σ for TOI-218.01,
-6.8σ for TOI-218.02 and 4.5σ for the new signal.
+6.8σ for TOI-218.02 and 4.4σ for the new signal.
 
 ## 4.9 Comparison with SPOC's difference-image centroids
 
@@ -216,7 +216,7 @@ relevant DV reports were retrieved from MAST and parsed (`tess_search/spoc_dv.py
 runs, none of the 135 per-sector difference images passed SPOC's own quality metric, and in two runs
 SPOC's period was far enough off to smear the transit (Chapter 5). The 55″ offset SPOC reported for TIC
 229689348 in its Sectors 14–55 run is therefore not a reliable localization; the joint fit here, at the
-correct period with all 25 sectors, places the source on the target and excludes the bright star 48.7″
+correct period with all 25 sectors, places the source on the target and excludes the bright star 48.3″
 away that the SPOC offset points towards at 8.0σ.
 
 ## References

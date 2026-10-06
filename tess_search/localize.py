@@ -422,6 +422,8 @@ def localize(tic, cals, stars, target_idx, period, t0, t14, depth, half_width=10
         k, c2, a, sep = r0["k"], r0["c2"], r0["a"], r0["sep"]
         dchi2 = (c2 - chi2_ref) / scale
         f = star_flux(stars.tmag.values[k]) * med_scale
+        # sep_arcsec: from the target's catalogue (TIC, J2000) position, used only to bound the field;
+        # separations from the target itself come from east/north (both stars at the TESS epoch)
         rows.append({"source_id": int(stars.source_id.values[k]), "sep_arcsec": sep,
                      "east": float((sra[k] - tra[0]) * cosd * 3600), "north": float((sdec[k] - tdec[0]) * 3600),
                      "tmag": float(stars.tmag.values[k]), "gmag": float(stars.gmag.values[k]),
