@@ -7,7 +7,9 @@ Pages:
     writeup/index.html     chapter list
     writeup/NN-*.html      docs/NN-*.md rendered with MathJax
     follow-up.html         FOLLOW_UP.md plus upcoming observable transits
-The output directory is published on the gh-pages branch.
+Every page is a title block followed by rows: a short label on the left, content on the right.
+Figures come from site/figures/ (the dark renderings made by `docs/make_figures.py --dark`),
+falling back to docs/figures/. The output directory is published on the gh-pages branch.
 """
 import csv
 import html
@@ -21,26 +23,23 @@ import markdown
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "site" / "_site"
+FIG_DIRS = [ROOT / "site" / "figures", ROOT / "docs" / "figures"]
 REPO = "https://github.com/Aidenn8/tess-planet-search"
 BRANCH = "research"
 SITE = "https://aidenn8.github.io/tess-planet-search"
 AUTHOR = "Aidenn8"                      # display name on the site and in the citation
 AUTHOR_URL = "https://github.com/Aidenn8"
+SHORT = "TESS M-dwarf deep search"
 TITLE = "Four Earth-sized planet candidates from a deep search of the longest-observed TESS M dwarfs"
 DESCRIPTION = ("A transit search of the 1,279 M dwarfs NASA's TESS has observed the longest, with every "
                "candidate checked in the light curve, in the pixels, statistically, and against NASA's own pipeline.")
+WIDE_FIGS = {"fig06_localization_maps.png", "fig07_transits.png"}
 
 sys.path.insert(0, str(ROOT))
 
-ICON = {
-    "code": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/></svg>',
-    "doc": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>',
-    "list": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
-    "scope": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>',
-    "table": '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/></svg>',
-}
-FAVICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="#eb6834"/>'
-           '<circle cx="11" cy="13" r="4" fill="#111110"/></svg>')
+FAVICON = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="#000"/>'
+           '<circle cx="16" cy="16" r="10" fill="none" stroke="#fff" stroke-width="2"/>'
+           '<circle cx="16" cy="6" r="2.4" fill="#56b4e9"/></svg>')
 
 CHAPTERS = [
     ("01-data-and-search", "Data and search", "sample, cleaning, stacked seasonal BLS, crossmatch"),
@@ -55,16 +54,24 @@ CHAPTERS = [
 ]
 
 
+# ------------------------------------------------------------------ page skeleton
+
+
 def page(title, body, rel="", active="", math=False, description=DESCRIPTION):
     nav = [("Overview", f"{rel}index.html", "overview"), ("Write-up", f"{rel}writeup/index.html", "writeup"),
            ("Follow-up", f"{rel}follow-up.html", "follow-up"), ("Code", REPO, "code")]
-    links = "".join(f'<a href="{h}" class="{"on" if k == active else ""}">{t}</a>' for t, h, k in nav)
+    links = "".join(f'<a href="{h}"{" class=on" if k == active else ""}>{t}</a>' for t, h, k in nav)
     mathjax = ""
     if math:
         mathjax = ('<script>window.MathJax={tex:{inlineMath:[["\\\\(","\\\\)"]],displayMath:[["\\\\[","\\\\]"]]},'
                    'options:{processHtmlClass:"arithmatex"}};</script>'
                    '<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>')
-    full_title = title if title == TITLE else f"{title} · TESS M-dwarf deep search"
+    full_title = title if title == TITLE else f"{title} · {SHORT}"
+    colophon = (f'<footer class="colophon"><div>{SHORT}</div><div>'
+                f'<p><a href="{AUTHOR_URL}">{AUTHOR}</a> · 2026 · <a href="{REPO}">source on GitHub</a> · MIT License</p>'
+                f'<p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and '
+                f'the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, '
+                f'Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>')
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -76,24 +83,53 @@ def page(title, body, rel="", active="", math=False, description=DESCRIPTION):
 <meta property="og:description" content="{html.escape(description)}">
 <meta property="og:image" content="{SITE}/assets/figures/fig07_transits.png">
 <meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
 <link rel="icon" href="{rel}assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{rel}assets/style.css">
 {mathjax}
 </head>
 <body>
-<header class="bar"><div class="inner"><a class="brand" href="{rel}index.html">TESS M-dwarf deep search</a><nav>{links}</nav></div></header>
+<div class="page">
+<nav class="top"><a class="brand" href="{rel}index.html">{SHORT}</a><div class="links">{links}</div></nav>
 {body}
-<footer><div class="wide"><span>TESS M-dwarf deep search · {AUTHOR} · 2026</span>
-<span><a href="{REPO}">Source on GitHub</a> · MIT License</span></div></footer>
+{colophon}
+</div>
 </body>
 </html>
 """
 
 
-# ------------------------------------------------------------------ markdown chapters
+def titleblock(h1, subtitle=None, meta=None, eyebrow=None, actions=""):
+    out = ['<header class="titleblock">']
+    if eyebrow:
+        out.append(f'<p class="eyebrow">{eyebrow}</p>')
+    out.append(f"<h1>{h1}</h1>")
+    if subtitle:
+        out.append(f'<p class="subtitle">{subtitle}</p>')
+    if meta:
+        out.append(f'<p class="meta">{meta}</p>')
+    if actions:
+        out.append(f'<div class="actions">{actions}</div>')
+    out.append("</header>")
+    return "".join(out)
+
+
+def cbtn(label, href, external=False):
+    arrow = '<span class="arr">↗</span>' if external else ""
+    return f'<a class="cbtn" href="{href}">{html.escape(label)}{arrow}</a>'
+
+
+def row(label, body, sub=None, cls="", rid=None):
+    rid_attr = f' id="{rid}"' if rid else ""
+    sub_html = f'<span class="no">{sub}</span>' if sub else ""
+    return (f'<section class="row {cls}"{rid_attr}><div class="lab"><h2>{label}</h2>{sub_html}</div>'
+            f'<div class="body">{body}</div></section>')
+
+
+# ------------------------------------------------------------------ markdown
 
 
 def gh(path):
@@ -136,33 +172,76 @@ def md_to_html(text):
                                                 "toc": {"permalink": False}})
 
 
+def tidy(htm):
+    """Site conventions for rendered Markdown: scrollable tables, image + italic line -> figure."""
+    htm = re.sub(r"<table>", '<div class="tbl"><table>', htm).replace("</table>", "</table></div>")
+
+    def figure(m):
+        img, cap = m.group(1), m.group(2)
+        name = re.search(r'src="[^"]*/([^"/]+)"', img)
+        cls = ' class="wide"' if name and name.group(1) in WIDE_FIGS else ""
+        cap = re.sub(r"^(Figure \d+(?: \([^)]*\))?\.)", r"<b>\1</b>", cap)
+        return f"<figure{cls}>{img}<figcaption>{cap}</figcaption></figure>"
+    htm = re.sub(r"<p>(<img[^>]*>)</p>\s*<p><em>(.*?)</em></p>", figure, htm, flags=re.S)
+    htm = re.sub(r"<p>(<img[^>]*>)</p>", r"<figure>\1</figure>", htm)
+    return htm
+
+
+def split_rows(htm):
+    """Split rendered Markdown at <h2> into (label, number, id, content) rows; the text before the
+    first heading is returned separately."""
+    parts = re.split(r"(<h2[^>]*>.*?</h2>)", htm, flags=re.S)
+    intro = parts[0]
+    rows = []
+    for head, content in zip(parts[1::2], parts[2::2]):
+        rid = re.search(r'id="([^"]*)"', head)
+        text = re.sub(r"<[^>]+>", "", head).strip()
+        num = re.match(r"^(\d+(?:\.\d+)*)\s+(.*)$", text)
+        label, no = (num.group(2), num.group(1)) if num else (text, None)
+        rows.append((label, no, rid.group(1) if rid else None, content))
+    return intro, rows
+
+
+def rows_html(rows):
+    return "".join(row(html.escape(label), content, sub=no, rid=rid) for label, no, rid, content in rows)
+
+
+# ------------------------------------------------------------------ write-up
+
+
 def build_chapters():
     (OUT / "writeup").mkdir(parents=True, exist_ok=True)
-    for i, (stem, title, _) in enumerate(CHAPTERS):
+    for i, (stem, title, desc) in enumerate(CHAPTERS):
         text = (ROOT / "docs" / f"{stem}.md").read_text()
-        body = rewrite_links(md_to_html(text), ROOT / "docs", "../")
-        body = re.sub(r"<table>", '<div class="tablewrap"><table>', body).replace("</table>", "</table></div>")
+        body = tidy(rewrite_links(md_to_html(text), ROOT / "docs", "../"))
+        body = re.sub(r"<h1[^>]*>.*?</h1>", "", body, count=1, flags=re.S)
+        intro, rows = split_rows(body)
         prev_ = CHAPTERS[i - 1] if i > 0 else None
         next_ = CHAPTERS[i + 1] if i + 1 < len(CHAPTERS) else None
-        pager = '<nav class="pager">'
-        pager += (f'<a href="{prev_[0]}.html"><span class="k">Previous</span>{prev_[1]}</a>' if prev_ else "<span></span>")
-        pager += (f'<a href="{next_[0]}.html" style="text-align:right"><span class="k">Next</span>{next_[1]}</a>'
-                  if next_ else '<a href="index.html" style="text-align:right"><span class="k">Back to</span>Contents</a>')
-        pager += "</nav>"
+        pager = '<div class="pager">'
+        pager += cbtn(f"← {prev_[1]}", f"{prev_[0]}.html") if prev_ else cbtn("← Contents", "index.html")
+        pager += cbtn(f"{next_[1]} →", f"{next_[0]}.html") if next_ else cbtn("Follow-up guide →", "../follow-up.html")
+        pager += "</div>"
+        content = titleblock(html.escape(title), meta=html.escape(desc), eyebrow=f"Chapter {i + 1} of {len(CHAPTERS)}")
+        if intro.strip():
+            content += row("Overview", intro, cls="overview")
+        content += rows_html(rows)
+        content += row("Continue", pager, sub=f"{i + 1} / {len(CHAPTERS)}")
         (OUT / "writeup" / f"{stem}.html").write_text(
-            page(title, f'<main class="wrap"><article>{body}{pager}</article></main>', rel="../", active="writeup",
-                 math=True))
-    items = "".join(f'<li><a href="{s}.html">{i + 1}. {t}</a><span>{d}</span></li>'
+            page(title, content, rel="../", active="writeup", math=True))
+
+    items = "".join(f'<li><span class="n">{i + 1:02d}</span><div><a href="{s}.html">{t}</a><span class="d">{d}</span></div></li>'
                     for i, (s, t, d) in enumerate(CHAPTERS))
-    body = (f'<main class="wrap"><article><h1>Technical write-up</h1>'
-            f'<p class="lead">A complete account of the search, its calibration and its results, in eight chapters. '
-            f'Each stands on its own; together they document every step from raw TESS data to the four candidates.</p>'
-            f'<ol class="chapters">{items}</ol>'
-            f'<p class="small muted" style="margin-top:22px">Also available as Markdown in the repository: '
-            f'<a href="{gh("docs/")}">docs/</a>. Per-candidate dossiers: <a href="{gh("results/candidates/")}">'
-            f'results/candidates/</a>. Generated summary of every number: <a href="{gh("REPORT.md")}">REPORT.md</a>.</p>'
-            f'</article></main>')
-    (OUT / "writeup" / "index.html").write_text(page("Technical write-up", body, rel="../", active="writeup"))
+    content = titleblock("Technical write-up",
+                         subtitle="A complete account of the search, its calibration and its results, in eight chapters. "
+                                  "Each stands on its own; together they document every step from raw TESS data to the "
+                                  "four candidates.")
+    content += row("Chapters", f'<ol class="chapters">{items}</ol>', cls="overview")
+    content += row("Elsewhere", f'<p>The chapters are also Markdown files in the repository: <a href="{gh("docs/")}">docs/</a>. '
+                                f'Per-candidate dossiers with every number and figure: <a href="{gh("results/candidates/")}">'
+                                f'results/candidates/</a>. A generated summary of every number: <a href="{gh("REPORT.md")}">REPORT.md</a>. '
+                                f'A short note in AAS Research Note format: <a href="{gh("paper/rnaas_note.tex")}">paper/rnaas_note.tex</a>.</p>')
+    (OUT / "writeup" / "index.html").write_text(page("Technical write-up", content, rel="../", active="writeup"))
 
 
 # ------------------------------------------------------------------ overview page
@@ -174,8 +253,9 @@ def read_csv(path):
 
 
 def fig(name, caption, alt):
-    return (f'<figure><div class="card"><img src="assets/figures/{name}" alt="{html.escape(alt)}" loading="lazy">'
-            f'</div><figcaption>{caption}</figcaption></figure>')
+    cls = ' class="wide"' if name in WIDE_FIGS else ""
+    return (f'<figure{cls}><img src="assets/figures/{name}" alt="{html.escape(alt)}" loading="lazy">'
+            f'<figcaption>{caption}</figcaption></figure>')
 
 
 def build_index():
@@ -205,42 +285,49 @@ def build_index():
                     f'<td class="num">{rp}</td><td class="num">{teq}</td>'
                     f'<td class="num">{float(r["loc_offset_arcsec"]):.1f} ± {float(r["loc_err_arcsec"]):.1f}″</td>'
                     f'<td class="num">{fpp}</td><td>{status}</td></tr>')
-    table = ('<div class="tablewrap"><table><thead><tr><th>Target</th><th>Period</th><th>Radius (R⊕)</th>'
-             '<th>T<sub>eq</sub></th><th>Source offset</th><th>FPP</th><th>Status</th></tr></thead><tbody>'
+    table = ('<div class="tbl"><table><thead><tr><th>Target</th><th>Period</th><th>Radius (R⊕)</th>'
+             '<th>T<sub>eq</sub></th><th>Source offset</th><th>FPP</th><th>Status before this work</th></tr></thead><tbody>'
              + "".join(rows) + "</tbody></table></div>")
 
     f218, f229, f149, f198, f294 = (facts(t) for t in (32090583, 229689348, 149390648, 198412174, 294053492))
-    cards = f"""
-<div class="cards">
- <div class="cand"><h3>TOI-218, third signal <span class="tag">strongest</span></h3>
-  <div class="meta">P = {f218['period']:.4f} d · R<sub>p</sub> = {f218['rp']} R⊕ · T<sub>eq</sub> ≈ {f218['teq']:.0f} K · FPP {f218['fpp_c']:.3f}</div>
-  <ul><li>A third periodic signal beside TOI-218.01 and .02, in 437 transits and both halves of the data.</li>
-  <li>TOI-218 has an equal-brightness wide-binary companion 13.5″ away; the pixels place all three signals on TOI-218 and exclude the companion at {f218['comp_sig']:.1f}σ for the new one.</li>
-  <li>With the existing Gemini speckle imaging, FPP {f218['fpp_cc']}, below TRICERATOPS's validation thresholds.</li>
-  <li>Open: flaring host; no ground-based light curve has yet seen the transit.</li></ul></div>
- <div class="cand"><h3>TIC 229689348 <span class="tag">11.2-hour orbit</span></h3>
-  <div class="meta">P = {f229['period']:.4f} d · R<sub>p</sub> = {f229['rp']} R⊕ · T<sub>eq</sub> ≈ {f229['teq']:.0f} K · FPP {f229['fpp_c']:.3f}</div>
-  <ul><li>Flat-bottomed, {f229['n_transits']:,} transits; flagged three times by NASA's pipeline but never promoted.</li>
-  <li>NASA's 55″ source offset came from difference images that failed its own quality metric; the joint localization puts the source on the target ({f229['loc_off']:.1f} ± {f229['loc_err']:.1f}″).</li>
-  <li>Open: unresolved bound companions, which imaging would test.</li></ul></div>
- <div class="cand"><h3>TIC 149390648</h3>
-  <div class="meta">P = {f149['period']:.4f} d · R<sub>p</sub> = {f149['rp']} R⊕ · T<sub>eq</sub> ≈ {f149['teq']:.0f} K · FPP {f149['fpp_c']:.3f}</div>
-  <ul><li>Earth-sized; on target in a crowded field, in agreement with NASA's own offset.</li>
-  <li>NFPP {f149['nfpp_c']:.5f} once the 15 neighbours the pixels exclude are cleared.</li>
-  <li>Open: the first half of the data alone does not lock onto the period.</li></ul></div>
- <div class="cand"><h3>TIC 198412174 <span class="tag">host ambiguous</span></h3>
-  <div class="meta">P = {f198['period']:.4f} d · R<sub>p</sub> = {f198['rp']} R⊕ · T<sub>eq</sub> ≈ {f198['teq']:.0f} K · FPP {f198['fpp_c']:.3f}</div>
-  <ul><li>Near-grazing (b ≈ {f198['b']:.2f}); on or near the target.</li>
-  <li>A T = 18.2 star {f198['near_sep']:.1f}″ away is below the localization's resolution, and TRICERATOPS weighs a planet on an unseen companion ({f198['stp']:.0f}%) about equally with the target ({f198['tp']:.0f}%).</li>
-  <li>Open: needs adaptive-optics or speckle imaging.</li></ul></div>
-</div>"""
 
-    stats = (f'<div class="stats"><div class="stat"><div class="v">{summ["stars"]:,}</div><div class="k">M dwarfs, 20–44 sectors each</div></div>'
-             f'<div class="stat"><div class="v">{summ["signals_total"]:,}</div><div class="k">periodic signals detected</div></div>'
-             f'<div class="stat"><div class="v">25 / 26</div><div class="k">confirmed transiting planets recovered</div></div>'
-             f'<div class="stat"><div class="v">4</div><div class="k">Earth-sized candidates in no catalogue</div></div></div>')
+    def cand(title, tag, f, fpp, bullets):
+        tag_html = f'<span class="tag">{tag}</span>' if tag else ""
+        items = "".join(f"<li>{b}</li>" for b in bullets)
+        return (f'<div class="cand"><h3>{title}{tag_html}</h3>'
+                f'<p class="fact">P <b>{f["period"]:.4f} d</b> · R<sub>p</sub> <b>{f["rp"]} R⊕</b> · '
+                f'T<sub>eq</sub> <b>{f["teq"]:.0f} K</b> · FPP <b>{fpp}</b></p><ul>{items}</ul></div>')
 
-    items = "".join(f'<li><a href="writeup/{s}.html">{i + 1}. {t}</a><span>{d}</span></li>' for i, (s, t, d) in enumerate(CHAPTERS))
+    cands = '<div class="cands">' + cand(
+        "TOI-218, third signal", "strongest", f218, f"{f218['fpp_c']:.3f}", [
+            "A third periodic signal beside TOI-218.01 and .02, in 437 transits and in both halves of the data.",
+            f"TOI-218 has an equal-brightness wide-binary companion 13.5″ away; the pixels place all three signals on "
+            f"TOI-218 and exclude the companion at {f218['comp_sig']:.1f}σ for the new one.",
+            f"With the existing Gemini speckle imaging, FPP {f218['fpp_cc']}, below TRICERATOPS's validation thresholds.",
+            "Open: flaring host; no ground-based light curve has yet seen the transit."]) + cand(
+        "TIC 229689348", "11.2-hour orbit", f229, f"{f229['fpp_c']:.3f}", [
+            f"Flat-bottomed, {f229['n_transits']:,} transits; flagged three times by NASA's pipeline but never promoted.",
+            f"NASA's 55″ source offset came from difference images that failed its own quality metric; the joint "
+            f"localization puts the source on the target ({f229['loc_off']:.1f} ± {f229['loc_err']:.1f}″).",
+            "Open: unresolved bound companions, which imaging would test."]) + cand(
+        "TIC 149390648", "", f149, f"{f149['fpp_c']:.3f}", [
+            "Earth-sized; on target in a crowded field, in agreement with NASA's own offset.",
+            f"NFPP {f149['nfpp_c']:.5f} once the 15 neighbours the pixels exclude are cleared.",
+            "Open: the first half of the data alone does not lock onto the period."]) + cand(
+        "TIC 198412174", "host ambiguous", f198, f"{f198['fpp_c']:.3f}", [
+            f"Near-grazing (b ≈ {f198['b']:.2f}); on or near the target.",
+            f"A T = 18.2 star {f198['near_sep']:.1f}″ away is below the localization's resolution, and TRICERATOPS weighs a "
+            f"planet on an unseen companion ({f198['stp']:.0f}%) about equally with the target ({f198['tp']:.0f}%).",
+            "Open: needs adaptive-optics or speckle imaging."]) + "</div>"
+
+    stats = (f'<div class="stats">'
+             f'<div class="stat"><b>{summ["stars"]:,}</b><p>M dwarfs searched, with 20 to 44 sectors of 2-minute data each</p></div>'
+             f'<div class="stat"><b>{summ["signals_total"]:,}</b><p>periodic signals detected and vetted</p></div>'
+             f'<div class="stat"><b>25 <span>of</span> 26</b><p>confirmed transiting planets in range recovered</p></div>'
+             f'<div class="stat"><b>4</b><p>Earth-sized candidates in no planet or candidate catalogue</p></div></div>')
+
+    items = "".join(f'<li><span class="n">{i + 1:02d}</span><div><a href="writeup/{s}.html">{t}</a><span class="d">{d}</span></div></li>'
+                    for i, (s, t, d) in enumerate(CHAPTERS))
     bib = f"""@misc{{tess_mdwarf_deep_search_2026,
   author       = {{{AUTHOR}}},
   title        = {{{TITLE}}},
@@ -249,54 +336,38 @@ def build_index():
   note         = {{Version of October 2026}}
 }}"""
 
-    body = f"""
-<main>
-<div class="wide hero">
-  <div class="eyebrow">TESS · M dwarfs · transit search</div>
-  <h1 class="title">{TITLE}</h1>
-  <p class="subtitle">{DESCRIPTION}</p>
-  <div class="byline"><span><a href="{AUTHOR_URL}">{AUTHOR}</a></span><span>October 2026</span></div>
-  <div class="buttons">
-    <a class="btn" href="{REPO}">{ICON['code']}Code</a>
-    <a class="btn" href="writeup/index.html">{ICON['doc']}Technical write-up</a>
-    <a class="btn" href="{gh('results/candidates/')}">{ICON['list']}Candidate dossiers</a>
-    <a class="btn" href="follow-up.html">{ICON['scope']}Follow-up</a>
-    <a class="btn" href="{gh('results/followup_planning/transits.csv')}">{ICON['table']}Transit predictions</a>
-  </div>
-</div>
+    actions = (cbtn("code", REPO, external=True) + cbtn("technical write-up", "writeup/index.html")
+               + cbtn("follow-up guide", "follow-up.html") + cbtn("candidate dossiers", gh("results/candidates/"), external=True)
+               + cbtn("transits.csv", gh("results/followup_planning/transits.csv"), external=True))
+    content = titleblock(TITLE, subtitle=DESCRIPTION,
+                         meta=f'<a href="{AUTHOR_URL}">{AUTHOR}</a> · October 2026', actions=actions)
 
-<div class="wide">{fig('fig07_transits.png', '<b>The four candidates.</b> Phase-folded TESS photometry in 8-minute bins with the median MCMC transit model. Radii include the stellar-radius uncertainty.', 'Folded transit light curves of the four candidates')}</div>
-
-<section class="wrap" id="summary">
-  <h2>Summary</h2>
-  <p class="lead">M dwarfs near the TESS continuous viewing zones now have years of 2-minute photometry, enough to
-  reach Earth-sized planets. This work searched the {summ['stars']:,} M dwarfs with at least 20 sectors of SPOC
-  light curves through Sector 107 and found four Earth-sized transit candidates that appear in no planet or
-  candidate catalogue: a third signal in the TOI-218 system and three signals NASA's pipeline had flagged but
-  never promoted, including an 11.2-hour orbit around TIC 229689348.</p>
+    content += row("Overview", f"""
+  <p>M dwarfs near the TESS continuous viewing zones now have years of 2-minute photometry, enough to reach
+  Earth-sized planets. This work searched the {summ['stars']:,} M dwarfs with at least 20 sectors of SPOC light
+  curves through Sector 107 and found four Earth-sized transit candidates that appear in no planet or candidate
+  catalogue: a third signal in the TOI-218 system and three signals NASA's pipeline had flagged but never
+  promoted, including an 11.2-hour orbit around TIC 229689348.</p>
   <p>Each candidate was then tested beyond the light curve. A new pixel-level localization, validated on confirmed
   planets, known nearby eclipsing binaries and eclipses planted in the real images, places all four on their
   target stars and shows that a fifth first-pass candidate is an eclipsing binary 22″ away. With the neighbours
   the pixels exclude treated as cleared, all four meet the TRICERATOPS <i>likely planet</i> criteria, and TOI-218's
-  new signal, the only one with existing high-resolution imaging, also falls below the validation thresholds. None is
-  yet confirmed; the remaining questions are exactly what ground-based photometry and high-resolution imaging
+  new signal, the only one with existing high-resolution imaging, also falls below the validation thresholds. None
+  is yet confirmed; the remaining questions are exactly what ground-based photometry and high-resolution imaging
   answer.</p>
-  {stats}
-</section>
+  {stats}""", cls="overview", rid="overview")
 
-<section class="wide" id="candidates">
-  <h2>Candidates</h2>
+    content += row("Candidates", f"""
+  {fig('fig07_transits.png', '<b>The four candidates.</b> Phase-folded TESS photometry in 8-minute bins with the median MCMC transit model. Radii include the stellar-radius uncertainty.', 'Folded transit light curves of the four candidates')}
   {table}
   <p class="small muted">Source offset: where the light goes missing relative to the target, from the joint
   pixel-level fit (1.5″ systematic floor included). FPP: TRICERATOPS false-positive probability with the neighbours
   the pixels exclude treated as cleared, before high-resolution imaging (TOI-218 with its existing imaging:
-  FPP {f218['fpp_cc']}). NASA TCE: flagged by NASA's SPOC pipeline
-  as a Threshold Crossing Event but never promoted to a TESS Object of Interest.</p>
-  {cards}
-</section>
+  FPP {f218['fpp_cc']}). NASA TCE: flagged by NASA's SPOC pipeline as a Threshold Crossing Event but never promoted
+  to a TESS Object of Interest.</p>
+  {cands}""", sub="four signals, one false positive", rid="candidates")
 
-<section class="wrap" id="search">
-  <h2>Search and vetting</h2>
+    content += row("Search and vetting", f"""
   <p>Light curves are cleaned of flares, detrended with a robust biweight filter, and searched from 0.4 to 40 days.
   Because eight years of data with year-long gaps would need a prohibitively fine coherent period grid, box least
   squares runs on each observing season separately and the seasons' likelihoods are added: a real planet adds up
@@ -306,36 +377,31 @@ def build_index():
   <p>The pipeline recovers 25 of 26 confirmed transiting planets around these stars, keeps 74% of 300 planets
   injected into the real light curves (89% of 2–4 R⊕ planets inside 15 days), and produces no false candidates from
   200 light curves turned upside down.</p>
-  {fig('fig03_completeness.png', '<b>Completeness.</b> Fraction of injected planets found and kept, by radius and period.', 'Completeness as a function of planet radius')}
-</section>
+  {fig('fig03_completeness.png', '<b>Completeness.</b> Fraction of injected planets found and kept, by radius and period.', 'Completeness as a function of planet radius')}""",
+                   rid="search")
 
-<section class="wrap" id="localization">
-  <h2>Where the light goes missing</h2>
+    content += row("Where the light goes missing", f"""
   <p>TESS pixels are 21″ wide, so an eclipsing binary a few pixels away can leak a planet-sized dip into the
   target's light curve. For every sector the images taken during transit are subtracted from those just before
   and after, and all sectors are fitted together with NASA's pixel response function, calibrated per sector on Gaia
   stars, to find where the light disappeared. Per-pixel errors come from fake transits at random times; position
   errors include a 1.5″ floor measured on {len(inj) + len(planets)} sources of known position.</p>
-</section>
-<div class="wide">{fig('fig06_localization_maps.png', '<b>Localization of the five signals.</b> Shading shows how strongly each position is excluded as the source (dark: allowed); the dashed contour is the 3σ region; circles are Gaia DR3 stars. TIC 294053492’s light loss lies on a faint star 22″ north-east.', 'Localization maps for five signals')}</div>
-<section class="wrap" style="border-top:0;padding-top:0">
+  {fig('fig06_localization_maps.png', '<b>Localization of the five signals.</b> Shading shows where the source can be (bright: allowed; dark: excluded); the dashed contour is the 3σ region; circles are Gaia DR3 stars scaled by brightness. TIC 294053492’s light loss lies on a faint star 22″ north-east.', 'Localization maps for five signals')}
   <p>The method was validated before it was trusted: all {len(planets)} confirmed planets tested come out on their
   own star, all {len(nebs)} signals the TESS Follow-up Observing Program had traced to nearby eclipsing binaries come
   out off target, and {inj_ok} of {len(inj)} reliable synthetic eclipses planted in the real pixels are traced to the
   correct star.</p>
-  {fig('fig04_localization_validation.png', '<b>Validation.</b> Left: position errors of sources with known positions against the expectation. Right: how strongly the target is excluded, for confirmed planets, known nearby eclipsing binaries and this work’s signals.', 'Localization validation')}
-</section>
+  {fig('fig04_localization_validation.png', '<b>Validation.</b> Left: position errors of sources with known positions against the expectation. Right: how strongly the target is excluded, for confirmed planets, known nearby eclipsing binaries and this work’s signals.', 'Localization validation')}""",
+                   sub="pixel-level localization", rid="localization")
 
-<section class="wrap" id="pipeline">
-  <h2>What NASA's pipeline saw</h2>
+    content += row("What NASA's pipeline saw", f"""
   <p>Three candidates were SPOC Threshold Crossing Events that never became TOIs. Their reported SNR fell as data
   accumulated. Folding this work's light curves at each SPOC period reproduces the drop: a period error of a few
   10<sup>−5</sup> d smears a sub-hour transit by hours over a 2,000-day baseline. The signals did not fade.</p>
-  {fig('fig08_spoc_period_drift.png', '<b>Period drift.</b> SNR of this work’s light curve versus trial period, with the periods SPOC adopted in each run.', 'SNR versus trial period')}
-</section>
+  {fig('fig08_spoc_period_drift.png', '<b>Period drift.</b> SNR of this work’s light curve versus trial period, with the periods SPOC adopted in each run.', 'SNR versus trial period')}""",
+                   rid="pipeline")
 
-<section class="wrap" id="statistics">
-  <h2>How likely is each alternative?</h2>
+    content += row("How likely is each alternative?", f"""
   <p>TRICERATOPS weighs a planet on the target against eclipsing binaries, unresolved companions, background stars
   and resolved neighbours. It has no pixel information, so it is run twice: on TESS photometry alone, and with the
   neighbours the localization excludes treated as cleared. For TOI-218 this removes the twin companion as a host
@@ -345,57 +411,42 @@ def build_index():
   and NFPP {f218['nfpp_cc']}, below the thresholds TRICERATOPS uses for validation (FPP &lt; 0.015,
   NFPP &lt; 0.001). It is not called validated here, because the host flares and no ground-based light curve has yet
   seen the transit.</p>
-  {fig('fig09_triceratops.png', '<b>Scenario probabilities</b> from TESS photometry alone, with pixel-excluded neighbours cleared, and for TOI-218 with its existing speckle imaging.', 'TRICERATOPS scenario probabilities')}
-</section>
+  {fig('fig09_triceratops.png', '<b>Scenario probabilities</b> from TESS photometry alone, with pixel-excluded neighbours cleared, and for TOI-218 with its existing speckle imaging.', 'TRICERATOPS scenario probabilities')}""",
+                   sub="statistical validation", rid="statistics")
 
-<section class="wrap" id="false-positive">
-  <h2>A false positive caught</h2>
+    content += row("A false positive caught", f"""
   <p>TIC 294053492 ({f294['period']:.4f} d) passed every light-curve test and was a candidate in the first pass. In
   the pixels its light loss lies {f294['loc_off']:.1f} ± {f294['loc_err']:.1f}″ north-east of the target, which is
   excluded at {f294['target_sig']:.1f}σ, independently in odd and even sectors. The best-fit position is
   {f294['src_dbest']:.1f}″ from a G = {f294['src_g']:.1f} background star that would need a ~{f294['src_depth']:.0f}%
-  eclipse: an ordinary eclipsing binary.</p>
-</section>
+  eclipse: an ordinary eclipsing binary.</p>""", rid="false-positive")
 
-<section class="wrap" id="weak">
-  <h2>Weak signals</h2>
+    content += row("Weak signals", f"""
   <p>Twenty-one weaker signals passed the rejecting tests with flags. The inverted light curves predict about 38
   such false alarms in this sample, many cluster at 36–41-day periods where few transits exist, and six are not
   reproduced in the pixels at all.</p>
-  {fig('fig10_weak_periods.png', '<b>Weak-signal periods</b> in real data and in inverted data, which contain no planets.', 'Weak signal periods')}
-</section>
+  {fig('fig10_weak_periods.png', '<b>Weak-signal periods</b> in real data and in inverted data, which contain no planets.', 'Weak signal periods')}""",
+                   rid="weak")
 
-<section class="wrap" id="follow-up">
-  <h2>Follow-up</h2>
+    content += row("Follow-up", f"""
   <p>Each candidate's remaining question has a specific observation that answers it: seeing-limited photometry that
   resolves the neighbours during a predicted transit, and adaptive-optics or speckle imaging for unresolved
-  companions. Ephemerides, upcoming observable transits from the Las Cumbres Observatory sites, and what each
-  observation would settle are on the <a href="follow-up.html">follow-up page</a>.</p>
-</section>
+  companions. Ephemerides, upcoming observable transits from the Las Cumbres Observatory sites, neighbour
+  checklists and the current route for reporting candidates are in the <a href="follow-up.html">follow-up guide</a>.</p>
+  <div class="actions">{cbtn("follow-up guide", "follow-up.html")}{cbtn("transits.csv", gh("results/followup_planning/transits.csv"), external=True)}
+  {cbtn("neighbours.csv", gh("results/followup_planning/neighbours.csv"), external=True)}</div>""", rid="follow-up")
 
-<section class="wrap" id="writeup">
-  <h2>Technical write-up</h2>
-  <ol class="chapters">{items}</ol>
-</section>
+    content += row("Technical write-up", f'<ol class="chapters">{items}</ol>', sub="eight chapters", rid="writeup")
 
-<section class="wrap" id="reproduce">
-  <h2>Reproducing</h2>
+    content += row("Reproducing", f"""
   <p>Everything is generated by numbered scripts from public data (about 56 GB from MAST), on a fanless MacBook
   Air under a thermal guard. Commands, seeds and compute times are in
   <a href="writeup/08-limitations-and-reproducibility.html">Chapter 8</a>.</p>
 <pre><code>uv venv --python 3.12 .venv &amp;&amp; uv pip install --python .venv/bin/python -r requirements.txt
-.venv/bin/python -m pytest tests/</code></pre>
-</section>
+.venv/bin/python -m pytest tests/</code></pre>""", rid="reproduce")
 
-<section class="wrap" id="cite">
-  <h2>Citation</h2>
-<pre><code>{html.escape(bib)}</code></pre>
-  <p class="small muted">This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR,
-  ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas,
-  Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p>
-</section>
-</main>"""
-    (OUT / "index.html").write_text(page(TITLE, body, active="overview"))
+    content += row("Citation", f"<pre><code>{html.escape(bib)}</code></pre>", rid="cite")
+    (OUT / "index.html").write_text(page(TITLE, content, active="overview"))
 
 
 # ------------------------------------------------------------------ follow-up page
@@ -403,7 +454,7 @@ def build_index():
 
 def build_followup():
     fu = ROOT / "FOLLOW_UP.md"
-    content = rewrite_links(md_to_html(fu.read_text()), ROOT, "") if fu.exists() else "<h1>Follow-up</h1>"
+    htm = rewrite_links(md_to_html(fu.read_text()), ROOT, "") if fu.exists() else "<h1>Follow-up</h1>"
     rows = read_csv(ROOT / "results" / "followup_planning" / "transits.csv")
     order = ["TIC 32090583 (TOI-218)", "TIC 229689348", "TIC 149390648", "TIC 198412174"]
     by = {}
@@ -420,13 +471,18 @@ def build_followup():
         parts.append(f'<h4>{html.escape(cand)}</h4>'
                      f'<table><thead><tr><th>Mid-transit</th><th>1σ</th>'
                      f'<th>Window</th><th>Site</th><th>Min. alt.</th></tr></thead><tbody>{body}</tbody></table>')
-    tables = "".join(parts)
     marker = "<!-- transit-tables -->"
-    content = content.replace(marker, tables) if marker in content else content + tables
-    content = re.sub(r"<table>", '<div class="tablewrap"><table>', content)
-    content = content.replace("</table>", "</table></div>")
-    (OUT / "follow-up.html").write_text(page("Follow-up", f'<main class="wrap"><article>{content}</article></main>',
-                                             active="follow-up", math=True))
+    tables = "".join(parts)
+    htm = htm.replace(marker, tables) if marker in htm else htm + tables
+    htm = tidy(htm)
+    htm = re.sub(r"<h1[^>]*>.*?</h1>", "", htm, count=1, flags=re.S)
+    intro, rows_ = split_rows(htm)
+    content = titleblock("Follow-up guide", meta="for observers and collaborators · status as of October 2026",
+                         eyebrow="FOLLOW_UP.md")
+    if intro.strip():
+        content += row("Overview", intro, cls="overview")
+    content += rows_html(rows_)
+    (OUT / "follow-up.html").write_text(page("Follow-up", content, active="follow-up", math=True))
 
 
 def main():
@@ -435,8 +491,10 @@ def main():
     (OUT / "assets" / "figures").mkdir(parents=True)
     shutil.copy(ROOT / "site" / "style.css", OUT / "assets" / "style.css")
     (OUT / "assets" / "favicon.svg").write_text(FAVICON)
-    for p in (ROOT / "docs" / "figures").glob("*.png"):
-        shutil.copy(p, OUT / "assets" / "figures" / p.name)
+    for d in reversed(FIG_DIRS):          # site/figures/ (dark) overrides docs/figures/
+        if d.exists():
+            for p in d.glob("*.png"):
+                shutil.copy(p, OUT / "assets" / "figures" / p.name)
     (OUT / ".nojekyll").write_text("")
     build_index()
     build_chapters()

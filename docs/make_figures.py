@@ -1,10 +1,12 @@
-"""Figures for the technical documents in docs/ (every value is read from results/).
+"""Figures for the technical documents in docs/ and for the project site (every value is read from results/).
 
-    .venv/bin/python docs/make_figures.py          ->  docs/figures/*.png
+    .venv/bin/python docs/make_figures.py [names]            ->  docs/figures/*.png   (light, for the Markdown)
+    .venv/bin/python docs/make_figures.py --dark [names]     ->  site/figures/*.png   (dark, for the website)
 
-Style: one light chart surface, recessive hairline grid, 2 px lines, >= 8 px markers,
-a fixed categorical order (validated for colour-vision deficiency, all pairs for the
-first three slots), a single blue ramp for magnitudes, and no second y-axis.
+Style: one chart surface, recessive hairline grid, 2 px lines, >= 8 px markers, a fixed categorical
+order (the Okabe-Ito blue, orange, green and pink, distinguishable under colour-vision deficiency),
+a single ramp for the localization maps, and no second y-axis. Text is set in Inter when
+data/fonts/Inter.ttf is present (the site's typeface), otherwise Helvetica Neue.
 """
 import json
 import sys
@@ -21,18 +23,32 @@ from matplotlib.colors import LinearSegmentedColormap
 
 from tess_search import DATA, RESULTS
 
-OUT = Path(__file__).resolve().parent / "figures"
 HARD = RESULTS / "hardening"
+DOCS = Path(__file__).resolve().parent
 
-# palette (light surface)
-SURFACE = "#fcfcfb"
-INK = "#0b0b0b"
-INK2 = "#52514e"
-MUTED = "#898781"
-GRID = "#e1e0d9"
-AXIS = "#c3c2b7"
-C1, C2, C3, C4 = "#2a78d6", "#eb6834", "#1baf7a", "#eda100"
-BLUE_RAMP = ["#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
+THEMES = {
+    # light: the Markdown documents (GitHub renders them on white)
+    "light": dict(out=DOCS / "figures", surface="#ffffff", ink="#0b0b0b", ink2="#52514e", muted="#898781",
+                  grid="#e6e5df", axis="#c3c2b7", band="#eeede7", err="#b4b3aa",
+                  c=("#2a78d6", "#eb6834", "#1baf7a", "#eda100"),
+                  # localization maps: allowed = dark blue, excluded = surface
+                  # (position on the 0-8 sigma scale, colour): reaches the surface colour by ~6 sigma
+                  ramp=[(0, "#0d366b"), (0.12, "#184f95"), (0.3, "#3987e5"), (0.5, "#9ec5f4"), (0.7, "#dceaf9"),
+                        (0.85, "#f7fafd"), (1, "#ffffff")],
+                  map_note="Shading: where the source can be\n(dark = allowed, light = excluded)."),
+    # dark: the project site (black page, white Inter text)
+    "dark": dict(out=DOCS.parent / "site" / "figures", surface="#000000", ink="#ffffff", ink2="#d4d4d4", muted="#8e8e8e",
+                 grid="#1f1f1f", axis="#3a3a3a", band="#1a1a1a", err="#5e5e5e",
+                 c=("#56b4e9", "#e69f00", "#2fc495", "#da8fc2"),
+                 # localization maps: allowed = bright, excluded = black
+                 ramp=[(0, "#f2f8fd"), (0.12, "#b9d9f5"), (0.3, "#56b4e9"), (0.5, "#1d5f8a"), (0.7, "#0a2436"),
+                       (0.85, "#02090e"), (1, "#000000")],
+                 map_note="Shading: where the source can be\n(bright = allowed, dark = excluded)."),
+}
+THEME = THEMES["light"]
+OUT = THEME["out"]
+SURFACE = INK = INK2 = MUTED = GRID = AXIS = BAND = ERR = C1 = C2 = C3 = C4 = ""
+MAP_RAMP, MAP_NOTE = [], ""
 SYS_ARCSEC = 1.5
 R68 = 1.5151947600179898
 
@@ -40,11 +56,22 @@ CANDS = [(32090583, "TOI-218 (TIC 32090583)"), (229689348, "TIC 229689348"), (14
          (198412174, "TIC 198412174")]
 
 
-def style():
+def style(theme="light"):
+    global THEME, OUT, SURFACE, INK, INK2, MUTED, GRID, AXIS, BAND, ERR, C1, C2, C3, C4, MAP_RAMP, MAP_NOTE
+    THEME = THEMES[theme]
+    OUT = THEME["out"]
+    SURFACE, INK, INK2, MUTED = THEME["surface"], THEME["ink"], THEME["ink2"], THEME["muted"]
+    GRID, AXIS, BAND, ERR = THEME["grid"], THEME["axis"], THEME["band"], THEME["err"]
+    C1, C2, C3, C4 = THEME["c"]
+    MAP_RAMP, MAP_NOTE = THEME["ramp"], THEME["map_note"]
+    inter = DATA / "fonts" / "Inter.ttf"
+    if inter.exists():
+        from matplotlib import font_manager
+        font_manager.fontManager.addfont(str(inter))
     plt.rcParams.update({
         "figure.facecolor": SURFACE, "axes.facecolor": SURFACE, "savefig.facecolor": SURFACE,
-        "font.family": "sans-serif", "font.sans-serif": ["Helvetica Neue", "Helvetica", "Arial", "DejaVu Sans"],
-        "font.size": 9, "axes.titlesize": 9.5, "axes.titleweight": "regular", "axes.titlecolor": INK,
+        "font.family": "sans-serif", "font.sans-serif": ["Inter", "Helvetica Neue", "Helvetica", "Arial", "DejaVu Sans"],
+        "text.color": INK, "font.size": 9, "axes.titlesize": 9.5, "axes.titleweight": "regular", "axes.titlecolor": INK,
         "axes.titlelocation": "left", "axes.labelcolor": INK2, "axes.labelsize": 9,
         "axes.edgecolor": AXIS, "axes.linewidth": 0.8, "axes.spines.top": False, "axes.spines.right": False,
         "axes.grid": True, "grid.color": GRID, "grid.linewidth": 0.6, "grid.linestyle": "-",
@@ -109,6 +136,9 @@ def fig_funnel():
     ax.barh(y, vals, height=0.5, color=C1)
     ax.set_xscale("log")
     ax.set_xlim(1, 4000)
+    ax.set_xticks([1, 10, 100, 1000])
+    ax.set_xticklabels(["1", "10", "100", "1,000"])
+    ax.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     for yi, (lab, v) in zip(y, stages):
         ax.text(v * 1.12, yi, f"{v:,}", va="center", ha="left", color=INK, fontsize=8.5)
     ax.set_yticks(y)
@@ -161,7 +191,8 @@ def fig_completeness():
         ax.text(x[-1] + 0.08, p[-1] + (0, 0.035, -0.035)[k], lab, color=INK2, va="center", fontsize=8)
     tot = [wilson(int(df[(df.rp >= a) & (df.rp < b)].passed.sum()), int(((df.rp >= a) & (df.rp < b)).sum()))[0]
            for a, b in zip(edges[:-1], edges[1:])]
-    ax.plot(mids, tot, color=MUTED, lw=1.2, ls=(0, (1, 2)), label="all periods", zorder=1)
+    ax.plot(mids, tot, color=MUTED, lw=1.2, ls=(0, (1, 2)), zorder=1)
+    ax.text(mids[3], tot[3] + 0.045, "all periods", color=MUTED, va="center", ha="center", fontsize=8)
     ax.set_xticks(edges)
     ax.set_xlim(0.55, 4.45)
     ax.set_ylim(0, 1.02)
@@ -170,7 +201,6 @@ def fig_completeness():
     ax.set_xlabel("injected planet radius (R$_\\oplus$)")
     ax.set_ylabel("found and kept")
     ax.set_title(f"Completeness from {len(df)} planets injected into real light curves (1-sigma binomial intervals)")
-    ax.legend(loc="lower right", ncol=4)
     fig.tight_layout()
     save(fig, "fig03_completeness.png")
 
@@ -251,7 +281,7 @@ def fig_transits():
         post = mcmc.TransitPosterior(t, f, e, period, t14, None)
         th = [0.0, s["rp_rs"]["median"], s["b"]["median"], np.log10(s["rho_cgs"]["median"]),
               s["u1"]["median"], s["u2"]["median"]]
-        ax.vlines(tb * 24, (fb - eb - 1) * 1e6, (fb + eb - 1) * 1e6, color=AXIS, lw=1, zorder=1)
+        ax.vlines(tb * 24, (fb - eb - 1) * 1e6, (fb + eb - 1) * 1e6, color=ERR, lw=1, zorder=1)
         ax.scatter(tb * 24, (fb - 1) * 1e6, s=10, color=INK2, zorder=2, linewidths=0)
         ax.plot(t * 24, (post.curve(th) - 1) * 1e6, color=C1, zorder=3)
         r = s["rp_rearth"]
@@ -271,7 +301,7 @@ def fig_transits():
 
 def fig_localization_maps():
     panels = CANDS + [(294053492, "TIC 294053492 (false positive)")]
-    cmap = LinearSegmentedColormap.from_list("likelihood", BLUE_RAMP[::-1] + [SURFACE])
+    cmap = LinearSegmentedColormap.from_list("likelihood", MAP_RAMP)
     fig, axes = plt.subplots(2, 3, figsize=(7.6, 5.4))
     for ax, (tic, name) in zip(axes.ravel(), panels):
         d = load(HARD / "localize" / f"TIC{tic}.json")
@@ -308,8 +338,8 @@ def fig_localization_maps():
     leg.scatter([], [], s=60, facecolors="none", edgecolors=INK2, label="Gaia DR3 star (size ~ brightness)")
     leg.plot([], [], color=INK2, lw=0.8, ls=(0, (3, 2)), label="3-sigma region")
     leg.legend(loc="center left", fontsize=8)
-    leg.text(0.0, 0.08, "Shading: where the source can be\n(dark = allowed, light = excluded).\n"
-                        "1.5\" systematic floor included.", transform=leg.transAxes, fontsize=7.5, color=INK2)
+    leg.text(0.0, 0.08, MAP_NOTE + "\n1.5\" systematic floor included.", transform=leg.transAxes, fontsize=7.5,
+             color=INK2)
     fig.tight_layout(h_pad=1.2, w_pad=1.0)
     save(fig, "fig06_localization_maps.png")
 
@@ -332,7 +362,7 @@ def fig_depth_ratio():
     df = pd.DataFrame(rows, columns=["kind", "label", "ratio", "err", "cls"])
     df = df[~df.label.eq("TIC294053492")]
     fig, ax = plt.subplots(figsize=(7.4, 3.0))
-    ax.axhspan(0.85, 1.29, color=GRID, alpha=0.6, lw=0, zorder=0)
+    ax.axhspan(0.85, 1.29, color=BAND, lw=0, zorder=0)
     ax.axhline(1, color=MUTED, lw=1, zorder=1)
     x0 = 0
     ticks, ticklabels = [], []
@@ -359,7 +389,7 @@ def fig_depth_ratio():
     ax.set_ylim(-0.3, 2.0)
     ax.set_title("Does the target lose, in the pixels, the light the light curve says it does?  "
                  "(band: range for confirmed planets)")
-    ax.legend(loc="upper left", ncol=3, fontsize=7.5)
+    ax.legend(loc="upper right", ncol=2, fontsize=7.5)
     fig.tight_layout()
     save(fig, "fig05_depth_ratio.png")
 
@@ -389,7 +419,8 @@ def fig_spoc_period():
         snr = np.asarray(bls.power(grid, dur, objective="snr", oversample=20).depth_snr)
         ax.plot((grid - p0) * 1e5, snr, color=C1, lw=1.5)
         ax.axvline(0, color=INK, lw=1)
-        ax.text(0, snr.max() * 1.19, "this work", fontsize=7.5, color=INK, ha="center")
+        ax.text(0, snr.max() * 1.19, "this work", fontsize=7.5, color=INK, ha="center", va="center",
+                bbox=dict(facecolor=SURFACE, edgecolor="none", pad=1.5))
         lines = []
         for j, r in enumerate(sorted(runs, key=lambda r: r["spoc_period"])):
             dx = (r["spoc_period"] - p0) * 1e5
@@ -474,7 +505,7 @@ def fig_weak_periods():
     inv = [json.loads(line) for line in (RESULTS / "reliability" / "invert.jsonl").read_text().splitlines() if line.strip()]
     inv_p = [s["period"] for r in inv for s in r["signals"] if s.get("vet") and vetting.classify(s["vet"])[0] == "weak candidate"]
     fig, ax = plt.subplots(figsize=(7.4, 2.3))
-    ax.axvspan(36, 41, color=GRID, alpha=0.7, lw=0)
+    ax.axvspan(36, 41, color=BAND, lw=0)
     ax.text(38.3, 1.42, "36-41 d", fontsize=7.5, color=INK2, ha="center")
     rng = np.random.default_rng(3)
     ax.scatter(weak.period, 1 + rng.uniform(-0.22, 0.22, len(weak)), s=30, color=C1, edgecolor=SURFACE,
@@ -496,8 +527,9 @@ def fig_weak_periods():
 
 
 if __name__ == "__main__":
-    style()
-    only = sys.argv[1:]
+    args = sys.argv[1:]
+    style("dark" if "--dark" in args else "light")
+    only = [a for a in args if a != "--dark"]
     for name, fn in [("sample", fig_sample), ("funnel", fig_funnel), ("completeness", fig_completeness),
                      ("locval", fig_localization_validation), ("transits", fig_transits),
                      ("locmaps", fig_localization_maps), ("ratio", fig_depth_ratio), ("spoc", fig_spoc_period),

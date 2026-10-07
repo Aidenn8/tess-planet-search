@@ -113,6 +113,7 @@ $G .venv/bin/python scripts/14_mcmc.py --only L98-59c TOI-700d --scale 3
 # 5. outputs
 .venv/bin/python scripts/15_dossiers.py && .venv/bin/python scripts/09_report.py
 .venv/bin/python scripts/07_figures.py && .venv/bin/python docs/make_figures.py
+.venv/bin/python docs/make_figures.py --dark && .venv/bin/python site/build.py   # website figures and pages
 .venv/bin/python paper/make_figure.py && .venv/bin/python paper/make_note.py
 .venv/bin/python -m pytest tests/
 ```
