@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transit fits and false-positive probabilities · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Transit fits and false-positive probabilities · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 5 of 8</p><h1>Transit fits and false-positive probabilities</h1><p class="meta">MCMC, NASA&#x27;s pipeline history, TRICERATOPS</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>This chapter covers the physical transit fits that give each candidate's size and orbit, the comparison
+with NASA's own pipeline for the candidates it had flagged, and the statistical weighing of planet and
+false-positive scenarios with TRICERATOPS.</p>
+</div></section><section class="row " id="51-transit-model"><div class="lab"><h2>Transit model</h2><span class="no">5.1</span></div><div class="body">
+<p>Each signal is fitted with a Mandel–Agol transit model (<code>batman</code>, Kreidberg 2015) sampled with <code>emcee</code>
+(Foreman-Mackey et al. 2013) (<code>tess_search/mcmc.py</code>, <code>scripts/14_mcmc.py</code>).</p>
+<p><strong>Data.</strong> The light curve is detrended again with the transits masked: the biweight trend is fitted to
+points more than 1.5 T₁₄ from any transit and interpolated across the transits. The search's own
+detrending sees the in-transit points and, for deep or long transits, sags slightly into them, making
+transits shallower and more V-shaped (see 5.2). The detrended light curve is folded at the period and
+binned to 1 minute within ±3 T₁₄. Each bin's error is the out-of-transit point scatter divided by √n,
+multiplied by the red-noise factor β measured at the transit timescale (β = 1.00–1.16 for the
+candidates). The model is integrated over 2.5 minutes to match 1-minute bins of 2-minute cadences.</p>
+<p><strong>Parameters and priors.</strong></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>prior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mid-transit offset</td>
+<td>uniform within ±T₁₄/2</td>
+</tr>
+<tr>
+<td>radius ratio k = R_p/R⋆</td>
+<td>uniform, 0.001–0.3</td>
+</tr>
+<tr>
+<td>impact parameter b</td>
+<td>uniform, 0 to 1 + k (grazing allowed)</td>
+</tr>
+<tr>
+<td>stellar density ρ⋆</td>
+<td>Gaussian, ρ_TIC ± σ (sampled in log ρ⋆)</td>
+</tr>
+<tr>
+<td>limb darkening u₁, u₂</td>
+<td>Gaussian, 0.20 ± 0.10 and 0.40 ± 0.10, restricted to physical values</td>
+</tr>
+</tbody>
+</table></div>
+<p>The density prior comes from the TIC mass and radius, ρ_TIC = M/R³ × ρ☉, with the TIC's 3% radius error
+and an assumed 5% mass error for the Mann et al. (2019) mass–luminosity relation, giving σ/ρ ≈ 10%. With
+the period fixed, ρ⋆ sets a/R⋆ through Kepler's third law, <span class="arithmatex">\(a/R_\star = (G\rho_\star P^2/3\pi)^{1/3}\)</span>, and
+breaks the degeneracy between b and a/R⋆ that otherwise dominates low-SNR fits.</p>
+<p><strong>Sampling.</strong> 32 walkers, 6,000 steps, the first 2,000 discarded. Integrated autocorrelation times are
+66–77 steps for the candidates, so the retained chains are 52–61 autocorrelation times long (convergence
+is required at &gt; 30). Each posterior sample is converted to physical quantities with the stellar radius drawn
+from its TIC uncertainty, so the planet radius carries the stellar-radius error:</p>
+<div class="arithmatex">\[R_p = k\,R_\star,\qquad a = (a/R_\star)\,R_\star,\qquad T_{\rm eq} = T_{\rm eff}\sqrt{R_\star/2a},\qquad S = (R_\star/{\rm R_\odot})^2\,(T_{\rm eff}/5772\,{\rm K})^4\,/\,(a/{\rm AU})^2 .\]</div>
+<p>T_eq assumes zero albedo and full heat redistribution; S is in units of Earth's insolation.</p>
+<p><strong>A shape check.</strong> Each signal is fitted a second time with a wide log-uniform prior on ρ⋆
+(10^−1.5–10^2.5 g cm⁻³), so that the stellar density implied by the transit shape alone can be compared
+with the TIC value. A transit on a much larger or smaller star (a blend), or on an eccentric orbit,
+would pull it away from one. These chains mix slowly because b and ρ⋆ trade off almost perfectly at
+these SNRs (autocorrelation times up to ~1,800 steps even with 30,000 steps), so they are reported as
+indicative only.</p>
+</div></section><section class="row " id="52-validation-on-published-planets"><div class="lab"><h2>Validation on published planets</h2><span class="no">5.2</span></div><div class="body">
+<p>The same fit was applied to two well-characterized planets around stars in the sample, with their
+period and epoch first refined by a least-squares transit fit:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>planet</th>
+<th>this work</th>
+<th>published</th>
+<th>difference</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TOI-700 d</td>
+<td>1.18 ± 0.05 R⊕</td>
+<td>1.073 +0.059/−0.054 R⊕ (Gilbert et al. 2023)</td>
+<td>+1.4σ</td>
+</tr>
+<tr>
+<td>L 98-59 c</td>
+<td>1.34 ± 0.04 R⊕</td>
+<td>1.385 +0.095/−0.075 R⊕ (Demangeon et al. 2021)</td>
+<td>−0.5σ</td>
+</tr>
+</tbody>
+</table></div>
+<p>TOI-700 d's insolation (0.87 S⊕) and equilibrium temperature (269 K) also agree with the literature.
+Two lessons from this test shape how the candidate results should be read.</p>
+<ul>
+<li><strong>Detrending moves radii.</strong> Without transit masking, TOI-700 d's fit gives 1.00 ± 0.05 R⊕; with it,
+  1.18 ± 0.05 R⊕. A 0.5-day biweight window is only four times TOI-700 d's 3.2-hour transit, so the
+  unmasked filter absorbs part of the dip. The candidates' transits are 0.5–1.1 hours long and their
+  radii changed by only 1–4% between the two treatments, which is smaller than their statistical errors.</li>
+<li><strong>The shape check is weak.</strong> For L 98-59 c (SNR 125) the free-density fit prefers a near-grazing
+  geometry and 0.49 times the TIC density, although L 98-59 is a well-studied single M dwarf. The
+  shape-only density is therefore treated as weak evidence in both directions.</li>
+</ul>
+</div></section><section class="row " id="53-candidate-parameters"><div class="lab"><h2>Candidate parameters</h2><span class="no">5.3</span></div><div class="body">
+<p>Medians and 68% intervals of the adopted (density-prior) fits. Periods and their errors come from the
+least-squares fit, inflated by β; T₀ is near the middle of each baseline.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th></th>
+<th>TOI-218 (TIC 32090583)</th>
+<th>TIC 229689348</th>
+<th>TIC 149390648</th>
+<th>TIC 198412174</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>period (d)</td>
+<td>2.1467982 ± 0.0000019</td>
+<td>0.4653769 ± 0.0000005</td>
+<td>2.8368867 ± 0.0000038</td>
+<td>1.3901602 ± 0.0000014</td>
+</tr>
+<tr>
+<td>T₀ (BJD_TDB)</td>
+<td>2459318.6971 ± 0.0010</td>
+<td>2459027.6289 ± 0.0005</td>
+<td>2459180.6342 ± 0.0015</td>
+<td>2459644.3198 ± 0.0008</td>
+</tr>
+<tr>
+<td>timing σ on 2027 June 1</td>
+<td>3.2 min</td>
+<td>3.7 min</td>
+<td>5.0 min</td>
+<td>3.0 min</td>
+</tr>
+<tr>
+<td>depth (ppm)</td>
+<td>1273 ± 106</td>
+<td>693 ± 65</td>
+<td>798 ± 88</td>
+<td>382 ± 43</td>
+</tr>
+<tr>
+<td>T₁₄ (h)</td>
+<td>0.93 ± 0.05</td>
+<td>0.53 ± 0.02</td>
+<td>1.14 ± 0.08</td>
+<td>0.61 ± 0.04</td>
+</tr>
+<tr>
+<td>R_p/R⋆</td>
+<td>0.0339 ± 0.0017</td>
+<td>0.0266 ± 0.0014</td>
+<td>0.0267 ± 0.0017</td>
+<td>0.0216 ± 0.0016</td>
+</tr>
+<tr>
+<td>b</td>
+<td>0.51 ± 0.10</td>
+<td>0.80 ± 0.03</td>
+<td>0.51 ± 0.12</td>
+<td>0.93 ± 0.01</td>
+</tr>
+<tr>
+<td>a/R⋆</td>
+<td>15.8 ± 0.5</td>
+<td>4.4 ± 0.2</td>
+<td>16.9 ± 0.6</td>
+<td>7.6 ± 0.3</td>
+</tr>
+<tr>
+<td>inclination (°)</td>
+<td>88.1 ± 0.4</td>
+<td>79.6 ± 0.7</td>
+<td>88.3 ± 0.4</td>
+<td>83.0 ± 0.3</td>
+</tr>
+<tr>
+<td><strong>R_p (R⊕)</strong></td>
+<td><strong>1.05 ± 0.06</strong></td>
+<td><strong>1.25 ± 0.08</strong></td>
+<td><strong>1.00 ± 0.07</strong></td>
+<td><strong>1.35 ± 0.11</strong></td>
+</tr>
+<tr>
+<td>a (AU)</td>
+<td>0.0209 ± 0.0009</td>
+<td>0.0089 ± 0.0004</td>
+<td>0.0271 ± 0.0013</td>
+<td>0.0202 ± 0.0009</td>
+</tr>
+<tr>
+<td>T_eq (K)</td>
+<td>578 ± 30</td>
+<td>1131 ± 56</td>
+<td>581 ± 29</td>
+<td>954 ± 44</td>
+</tr>
+<tr>
+<td>insolation (S⊕)</td>
+<td>19 ± 4</td>
+<td>272 ± 54</td>
+<td>19 ± 4</td>
+<td>138 ± 25</td>
+</tr>
+<tr>
+<td>ρ⋆ shape-only / TIC</td>
+<td>1.1 +0.6/−0.8</td>
+<td>3.1 +1.4/−2.0</td>
+<td>0.8 +0.8/−0.8</td>
+<td>6.8 +9.4/−6.6</td>
+</tr>
+</tbody>
+</table></div>
+<p>All four are close to Earth's size (1.0–1.35 R⊕) on orbits of 11 hours to 2.8 days and far too hot to
+be habitable. TIC 229689348 and TIC 198412174 have short transits for their periods, which the fit
+explains with high impact parameters (b ≈ 0.80 and 0.93); their shape-only densities lean towards a
+denser host, consistent within the large uncertainties with the target, and they matter for the
+companion scenarios below.</p>
+<figure class="wide"><img alt="Folded transits" src="../assets/figures/fig07_transits.png" /><figcaption><b>Figure 7.</b> Phase-folded TESS photometry of the four candidates (8-minute bins) with the median transit
+model.</figcaption></figure>
+</div></section><section class="row " id="54-what-nasas-pipeline-saw"><div class="lab"><h2>What NASA&#x27;s pipeline saw</h2><span class="no">5.4</span></div><div class="body">
+<p>Three candidates (TIC 229689348, TIC 198412174, TIC 149390648) were SPOC Threshold Crossing Events that
+never became TOIs. For two of them, the SNR SPOC reported fell as more data were added:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>star</th>
+<th>SPOC run</th>
+<th>SPOC period (d)</th>
+<th>SPOC SNR</th>
+<th>SNR of this light curve at SPOC's period</th>
+<th>transit drift over baseline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TIC 229689348</td>
+<td>s14–s50</td>
+<td>0.465365</td>
+<td>5.8</td>
+<td>6.6</td>
+<td>1.2 h</td>
+</tr>
+<tr>
+<td></td>
+<td>s14–s55</td>
+<td>0.465378</td>
+<td>18.4</td>
+<td>11.2</td>
+<td>0.1 h</td>
+</tr>
+<tr>
+<td></td>
+<td>s14–s86</td>
+<td>0.465335</td>
+<td>3.8</td>
+<td>4.5</td>
+<td>4.2 h</td>
+</tr>
+<tr>
+<td>TIC 198412174</td>
+<td>s14–s50</td>
+<td>1.39019</td>
+<td>8.5</td>
+<td>5.1</td>
+<td>1.0 h</td>
+</tr>
+<tr>
+<td></td>
+<td>s14–s78</td>
+<td>1.39028</td>
+<td>6.0</td>
+<td>3.9</td>
+<td>4.1 h</td>
+</tr>
+<tr>
+<td></td>
+<td>s14–s86</td>
+<td>1.39023</td>
+<td>4.4</td>
+<td>4.6</td>
+<td>2.4 h</td>
+</tr>
+<tr>
+<td>TIC 149390648</td>
+<td>s1–s96</td>
+<td>2.83687</td>
+<td>8.5</td>
+<td>8.6</td>
+<td>0.4 h</td>
+</tr>
+</tbody>
+</table></div>
+<p>Folding this work's light curve at each SPOC period reproduces SPOC's drop (<code>scripts/11_spoc_period_check.py</code>).
+A period error of a few 10⁻⁵ d, invisible over a single sector, accumulates over ~2,000 days and
+thousands of orbits into hours of drift, smearing a sub-hour transit. At this work's period the same
+light curves give box SNRs of 11.2 and 10.2. The signals did not fade; SPOC's period estimates moved.
+The DV reports also show that none of SPOC's per-sector difference images for these runs passed its own
+quality metric (Chapter 4).</p>
+<figure><img alt="SPOC period drift" src="../assets/figures/fig08_spoc_period_drift.png" /><figcaption><b>Figure 8.</b> Box SNR of this work's light curves as a function of trial period, with the periods SPOC
+adopted in each multi-sector run.</figcaption></figure>
+</div></section><section class="row " id="55-statistical-validation-with-triceratops"><div class="lab"><h2>Statistical validation with TRICERATOPS</h2><span class="no">5.5</span></div><div class="body">
+<h3 id="configuration">Configuration</h3>
+<p>TRICERATOPS (Giacalone et al. 2021) computes the probability of each scenario that could produce the
+observed transit: a planet on the target (TP); an eclipsing binary on the target (EB, and EBx2P at twice
+the period); a planet or eclipsing binary on an unresolved bound companion, either diluting a planet on
+the target (PTP, PEB) or hosting the event itself (STP, SEB); unresolved foreground or background stars
+(DTP, DEB, BTP, BEB); and resolved neighbouring stars (NTP, NEB). It combines priors from the stellar
+population with the likelihood of the transit shape and the flux each star contributes to the aperture.
+It reports</p>
+<ul>
+<li>FPP, the probability that the signal is not a planet on the target, and</li>
+<li>NFPP, the probability that it comes from a resolved neighbour.</li>
+</ul>
+<p>Giacalone et al. (2021) call a candidate <em>validated</em> if FPP &lt; 0.015 and NFPP &lt; 0.001 (with
+high-resolution imaging), and a <em>likely planet</em> if FPP &lt; 0.5 and NFPP &lt; 0.001.</p>
+<p>Inputs (<code>scripts/13_triceratops_inputs.py</code>, <code>13_triceratops_run.py</code>, run in a separate environment
+pinned to TRICERATOPS 1.1.0):</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>input</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>light curve</td>
+<td>PDCSAP, folded, 2-minute bins within ±3 T₁₄; one flux error (out-of-transit scatter of the bins)</td>
+</tr>
+<tr>
+<td>depth, period</td>
+<td>from the follow-up fit</td>
+</tr>
+<tr>
+<td>apertures</td>
+<td>SPOC photometric apertures of four sectors spread over each star's baseline</td>
+</tr>
+<tr>
+<td>nearby stars</td>
+<td>TIC within 10 pixels, via TRICERATOPS's own query</td>
+</tr>
+<tr>
+<td>field population</td>
+<td>Gaia DR3 within 0.1 deg² down to G = 21, converted to stellar properties with TRICERATOPS's own dwarf-sequence relations; queried through VizieR because the ESA Gaia archive did not respond during this work</td>
+</tr>
+<tr>
+<td>draws, repeats</td>
+<td>10⁶ per run; 5 runs (TESS-only) or 3 runs (cleared), mean and scatter reported</td>
+</tr>
+<tr>
+<td>imaging</td>
+<td>none, except one additional TOI-218 run with its public speckle contrast curve (below)</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="clearing-neighbours-with-the-pixel-localization">Clearing neighbours with the pixel localization</h3>
+<p>TRICERATOPS uses brightness ratios and the transit shape but no pixel-level information, so it cannot
+use the localization of Chapter 4. A second set of runs therefore treats every neighbour that the
+localization excludes at more than 3σ as cleared, in the same way that stars cleared by ground-based
+photometry are removed from consideration: the neighbour's required depth is set to zero, so TRICERATOPS
+no longer considers it a possible host. TRICERATOPS stars (TIC entries) are matched to localization
+stars (Gaia DR3) by sky offset within 4″ and TESS magnitude within 1.5 mag, after the Gaia positions
+are moved to the TIC epoch (J2000) with their proper motions. (TOI-218 moves 0.24″ per year; without
+that step two of its pixel-excluded neighbours went unmatched in an earlier version.)</p>
+<h3 id="results">Results</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>candidate</th>
+<th>FPP (TESS only)</th>
+<th>NFPP (TESS only)</th>
+<th>neighbours cleared</th>
+<th>FPP (cleared)</th>
+<th>NFPP (cleared)</th>
+<th>dominant non-planet scenario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TOI-218</td>
+<td>0.414 ± 0.012</td>
+<td>0.359 ± 0.011</td>
+<td>3</td>
+<td><strong>0.088 ± 0.006</strong></td>
+<td>&lt; 10⁻⁵</td>
+<td>planet on the wide-binary companion (TESS only); bound companion (cleared)</td>
+</tr>
+<tr>
+<td>TIC 229689348</td>
+<td>0.199 ± 0.005</td>
+<td>0.00097</td>
+<td>6</td>
+<td><strong>0.197 ± 0.004</strong></td>
+<td>&lt; 10⁻⁵</td>
+<td>planet on an unresolved bound companion (STP, 20%)</td>
+</tr>
+<tr>
+<td>TIC 149390648</td>
+<td>0.092 ± 0.003</td>
+<td>0.0047</td>
+<td>15</td>
+<td><strong>0.088 ± 0.003</strong></td>
+<td>0.00093</td>
+<td>diluting bound companion (PTP, 14%)</td>
+</tr>
+<tr>
+<td>TIC 198412174</td>
+<td>0.461 ± 0.016</td>
+<td>0.00069</td>
+<td>3</td>
+<td><strong>0.478 ± 0.003</strong></td>
+<td>0.00001</td>
+<td>planet on an unresolved bound companion (STP, 48%)</td>
+</tr>
+<tr>
+<td>TIC 294053492</td>
+<td>0.340 ± 0.003</td>
+<td>0.300 ± 0.003</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>resolved neighbour (see Chapter 6)</td>
+</tr>
+</tbody>
+</table></div>
+<figure><img alt="TRICERATOPS" src="../assets/figures/fig09_triceratops.png" /><figcaption><b>Figure 9.</b> TRICERATOPS scenario probabilities from TESS photometry alone, with the neighbours
+excluded by the pixel localization cleared, and (TOI-218) with the existing speckle imaging added.</figcaption></figure>
+<p>With the pixel-excluded neighbours cleared, <strong>all four candidates meet the "likely planet" criteria</strong>
+(FPP &lt; 0.5, NFPP &lt; 0.001). From TESS data alone none is validated. What remains of each FPP is almost entirely unresolved
+bound companions: a second star too close to the target for Gaia or TESS to separate, either diluting a
+planet on the target or hosting the transit itself. High-resolution imaging tests exactly those scenarios.</p>
+<h3 id="adding-high-resolution-imaging-toi-218">Adding high-resolution imaging: TOI-218</h3>
+<p>TOI-218 is the only candidate with high-resolution imaging on ExoFOP: Gemini-South 'Zorro' speckle
+imaging from 2020-11-27 (PI S. Howell), taken for TFOP because of the two known TOIs, reaching Δ = 4.4 mag
+at 562 nm and 5.5 mag at 832 nm at 0.5″, with no companion listed. The public 562-nm sensitivity curve
+(<code>results/hardening/triceratops/contrast/</code>) was added to the cleared run (<code>13_triceratops_run.py
+--cleared --contrast &lt;file&gt; Vis</code>; TRICERATOPS filter "Vis"; 3 runs of 10⁶ draws):</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>run</th>
+<th>FPP</th>
+<th>NFPP</th>
+<th>planet on target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TESS photometry only</td>
+<td>0.414 ± 0.012</td>
+<td>0.359</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>pixel-excluded neighbours cleared (3 stars)</td>
+<td>0.088 ± 0.006</td>
+<td>&lt; 10⁻⁵</td>
+<td>78%</td>
+</tr>
+<tr>
+<td>cleared + speckle contrast curve</td>
+<td><strong>1.4 × 10⁻⁵</strong> (runs 0.7–2.0 × 10⁻⁵)</td>
+<td><strong>&lt; 10⁻⁵</strong></td>
+<td>99.95%</td>
+</tr>
+</tbody>
+</table></div>
+<p>The contrast curve removes nearly all of the bound-companion scenarios, which were all that remained once
+the neighbours were cleared. The result is far below the validation thresholds above (FPP &lt; 0.015,
+NFPP &lt; 0.001). This work still stops short of calling the signal validated (Chapter 6): the host flares,
+and no ground-based light curve has yet seen the transit.</p>
+<p>Three details are worth recording.</p>
+<ul>
+<li><strong>TOI-218.</strong> From photometry alone, TRICERATOPS assigns 36% to a planet transiting the wide-binary
+  companion, TIC 32090581 (13.5″ away, nearly equal in brightness). The pixel localization excludes that
+  star at 4.4σ; once it is cleared the FPP falls from 0.41 to 0.09.</li>
+<li><strong>TIC 149390648.</strong> The only neighbour scenario left after clearing (NFPP 0.0008 of the 0.00093) is
+  TIC 149390646, a TIC entry with T = 17.0 that has no Gaia counterpart. At its position Gaia DR3 lists
+  only a G = 21.6 source, far too faint to produce the dip, so the remaining NFPP reflects a catalogue
+  brightness rather than a plausible host.</li>
+<li><strong>TIC 198412174.</strong> The FPP is dominated by a planet transiting an unresolved bound companion (48%),
+  favoured because the transit is short for the target's size. This candidate's host is genuinely
+  ambiguous until high-resolution imaging rules a companion in or out.</li>
+</ul>
+</div></section><section class="row " id="references"><div class="lab"><h2>References</h2></div><div class="body">
+<ul>
+<li>Demangeon, O. D. S., et al. 2021, A&amp;A, 653, A41 (L 98-59)</li>
+<li>Foreman-Mackey, D., Hogg, D. W., Lang, D., &amp; Goodman, J. 2013, PASP, 125, 306 (<code>emcee</code>)</li>
+<li>Giacalone, S., et al. 2021, AJ, 161, 24 (TRICERATOPS)</li>
+<li>Gilbert, E. A., et al. 2023, ApJL, 944, L35 (TOI-700)</li>
+<li>Kreidberg, L. 2015, PASP, 127, 1161 (<code>batman</code>)</li>
+<li>Mann, A. W., et al. 2019, ApJ, 871, 63 (M-dwarf masses)</li>
+</ul></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">5 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="04-pixel-level-localization.html">← Pixel-level localization</a><a class="cbtn" href="06-candidates.html">Candidates →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data and search · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Data and search · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 1 of 8</p><h1>Data and search</h1><p class="meta">sample, cleaning, stacked seasonal BLS, crossmatch</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>This chapter describes the stars that were searched, how their light curves were prepared, and how
+periodic transit signals were found. Vetting (Chapter 2) and everything after it operate on the
+detections produced here.</p>
+</div></section><section class="row " id="11-sample"><div class="lab"><h2>Sample</h2><span class="no">1.1</span></div><div class="body">
+<p>The search targets the M dwarfs that NASA's Transiting Exoplanet Survey Satellite (TESS) has observed
+for the longest. An Earth-sized planet blocks about 0.008% of a Sun-like star's light but about 0.1% of
+a 0.3 R☉ M dwarf's, so small stars are where small planets are easiest to see. Stars near the ecliptic
+poles fall in TESS's continuous viewing zones and have been re-observed for years, which accumulates
+hundreds to thousands of transits for short orbits and makes Earth-sized signals detectable.</p>
+<p>Candidates for the sample were drawn from every Science Processing Operations Center (SPOC) 2-minute
+light curve released for Sectors 1–107: <strong>1,735,111 light-curve files of 592,592 stars</strong>, parsed from
+MAST's per-sector download lists (<code>scripts/01_select_targets.py</code>). Sectors were counted per star, the
+TESS Input Catalog (TIC v8.2) was queried for the 15,737 stars with at least 15 sectors, and a star was
+kept if it satisfied all of:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>criterion</th>
+<th>value</th>
+<th>reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sectors of 2-minute data</td>
+<td>≥ 20</td>
+<td>long baselines; many transits per orbit</td>
+</tr>
+<tr>
+<td>effective temperature</td>
+<td>≤ 3,900 K</td>
+<td>approximately the M spectral class</td>
+</tr>
+<tr>
+<td>stellar radius</td>
+<td>≤ 0.65 R☉</td>
+<td>excludes evolved and K-type stars</td>
+</tr>
+<tr>
+<td>TESS magnitude</td>
+<td>≤ 13.5</td>
+<td>photometric precision</td>
+</tr>
+<tr>
+<td>luminosity class</td>
+<td>dwarf</td>
+<td>main-sequence stars only</td>
+</tr>
+<tr>
+<td>TIC contamination ratio</td>
+<td>≤ 0.2</td>
+<td>limits dilution by neighbours</td>
+</tr>
+<tr>
+<td>TIC disposition</td>
+<td>none</td>
+<td>removes catalogue duplicates and artefacts</td>
+</tr>
+</tbody>
+</table></div>
+<p>The selection yields <strong>1,279 M dwarfs</strong> with 20–44 sectors each (median 26), 2,821–3,900 K (median
+3,473 K), 0.14–0.65 R☉ (median 0.43 R☉) and T = 8.1–13.5.</p>
+<figure><img alt="Sample" src="../assets/figures/fig01_sample.png" /><figcaption><b>Figure 1.</b> Observing baseline (left) and TIC stellar parameters (right) of the 1,279 searched stars.</figcaption></figure>
+<p>NASA's most recent combined multi-sector search of these stars (SPOC, Sectors 1–96) predates Sectors
+97–107; this search uses all of them.</p>
+</div></section><section class="row " id="12-light-curve-preparation"><div class="lab"><h2>Light-curve preparation</h2><span class="no">1.2</span></div><div class="body">
+<p>For each star every sector's SPOC light curve is downloaded, the columns the search needs are kept in one
+compressed file per star (<code>tess_search/download.py</code>), and the light curve is prepared as follows
+(<code>tess_search/lightcurve.py</code>):</p>
+<ol>
+<li><strong>Quality.</strong> Only cadences with <code>QUALITY = 0</code> and finite PDCSAP flux and error are used.</li>
+<li><strong>Normalisation.</strong> Each sector is divided by its median (PDCSAP and SAP separately).</li>
+<li><strong>Flare removal.</strong> M dwarfs flare frequently, and a flare's fast rise and slow decay can pull the
+   detrending curve upward and create an artificial dip beside it. A running median (0.25 d) defines the
+   local level; cadences more than 3σ above it in runs of two or more, or more than 5σ above it singly,
+   are removed together with the following 10 contiguous cadences (20 minutes) of decay. Transits are
+   dips and are never removed by this step.</li>
+<li><strong>Detrending.</strong> A robust sliding biweight filter (<code>wotan</code>, Hippke et al. 2019) with a 0.5-day window
+   removes starspot modulation and instrumental drifts. The window is several times longer than any
+   transit searched for. For strongly spotted fast rotators (Lomb–Scargle peak power &gt; 0.3, peak-to-peak
+   variability &gt; 0.3%), the window is shortened to P_rot/6, but never below 0.3 d, so that rotation does
+   not leak into the search.</li>
+<li><strong>Outlier clip.</strong> Single points more than 15σ below the median (cosmic rays, momentary pointing
+   glitches) are removed; 15σ is far deeper than any per-cadence planetary signal at these precisions.</li>
+<li><strong>Seasons.</strong> The time series is split wherever there is a gap longer than 40 days. Each run of
+   contiguous sectors (usually up to one observing year) is a <em>season</em>.</li>
+</ol>
+<p>The stellar rotation period used in step 4 comes from a Lomb–Scargle periodogram of 30-minute bins,
+computed per sector over 2.4 h to 13 d; the sector with the median peak power supplies the period. It is
+stored and later used to flag signals at the rotation period.</p>
+</div></section><section class="row " id="13-transit-search"><div class="lab"><h2>Transit search</h2><span class="no">1.3</span></div><div class="body">
+<h3 id="stacked-seasonal-box-least-squares">Stacked seasonal box least squares</h3>
+<p>Eight years of data with year-long gaps make a single coherent box-least-squares (BLS) search
+expensive: keeping transit phase aligned over the whole ~2,700-day baseline needs roughly ten times the
+trial periods of a single season (of order a million per star), each evaluated on hundreds of thousands
+of points. The search instead runs BLS (Kovács et al. 2002, <code>astropy</code>)
+separately on each season, on one shared period grid, and <strong>adds the seasons' log-likelihoods</strong>:</p>
+<div class="arithmatex">\[\ln \mathcal{L}(P) = \sum_{s \in \text{seasons}} \max_{t_0,\,D} \ln \mathcal{L}_s(P, t_0, D).\]</div>
+<p>A real planet raises the likelihood at its period in every season, so the sum grows with the number of
+seasons; noise peaks land at different periods in different seasons and average out. Because BLS with
+per-point errors gives <span class="arithmatex">\(\ln\mathcal{L} = \tfrac{1}{2}\,\mathrm{SNR}^2\)</span> for the best box, the stacked
+value converts to an incoherent signal-to-noise ratio <span class="arithmatex">\(\sqrt{2\ln\mathcal{L}}\)</span>.</p>
+<p>Details:</p>
+<ul>
+<li><strong>Binning.</strong> Each season is binned to 10-minute bins before BLS; per-bin errors come from the
+  point-to-point scatter of that season. Seasons with fewer than 500 points are skipped, and a period
+  contributes from a season only if the season spans at least two cycles of it.</li>
+<li><strong>Period grid.</strong> Frequencies are spaced following Ofir (2014) for the star's TIC radius and mass, so
+  that over a season the predicted transit time never drifts by more than a fraction of the expected
+  transit duration (oversampling 3). Periods run from 0.4 to 40 days.</li>
+<li><strong>Durations.</strong> Only physically plausible transit durations are tried in each period range: 0.5–1.4 h
+  below 2 d, 0.75–2.8 h for 2–10 d, and 1.0–4.0 h above 10 d (M-dwarf central transits last about
+  0.5–1.3 h at 1 d and 1.9–4.5 h at 40 d).</li>
+<li><strong>Only dips count.</strong> Trial boxes with a positive (brightening) depth are given zero likelihood.</li>
+<li><strong>Detection statistic.</strong> The stacked periodogram is converted to a signal detection efficiency (SDE):
+  the peak height above a running median baseline, in units of the robust scatter of the periodogram.</li>
+</ul>
+<h3 id="coherent-refinement">Coherent refinement</h3>
+<p>Each periodogram peak is refined by a coherent BLS on all data together, over ±30 coherent peak widths
+around the seasonal period with a step of <span class="arithmatex">\(P \cdot D_{\min} / (5\,T_{\rm span})\)</span> and ten-fold phase
+oversampling. This pins the period down to ~10⁻⁶ d for short orbits and yields the epoch, duration,
+depth, depth error and a coherent box SNR.</p>
+<h3 id="iteration">Iteration</h3>
+<p>After each detection its transits are masked (a window of twice the transit duration, centred on each
+transit) and the search repeats, up to five
+signals per star, so that multi-planet systems are found. The loop stops when the strongest remaining
+peak falls below SDE = 7 or a refined signal falls below SNR = 7. These thresholds are deliberately
+loose; vetting decides what survives.</p>
+<h3 id="throughput">Throughput</h3>
+<p>The full search of 1,279 stars took about 4.5 hours on a fanless MacBook Air (Apple M2, three to four
+worker processes, median 33 s per star) under a thermal guard that pauses work at the operating system's
+"serious" thermal-pressure level (<code>tools/thermal/</code>). It produced <strong>1,560 periodic signals</strong>, of which
+<strong>1,139</strong> had SNR ≥ 6 and were vetted.</p>
+</div></section><section class="row " id="14-crossmatch-with-known-signals"><div class="lab"><h2>Crossmatch with known signals</h2><span class="no">1.4</span></div><div class="body">
+<p>Every vetted signal is compared with five public lists (<code>tess_search/crossmatch.py</code>,
+downloaded by <code>scripts/03_catalogs.py</code>):</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>list</th>
+<th>source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TESS Objects of Interest (TOIs)</td>
+<td>ExoFOP-TESS</td>
+</tr>
+<tr>
+<td>Community TOIs (CTOIs)</td>
+<td>ExoFOP-TESS</td>
+</tr>
+<tr>
+<td>confirmed planets</td>
+<td>NASA Exoplanet Archive (<code>pscomppars</code>)</td>
+</tr>
+<tr>
+<td>TESS eclipsing binaries</td>
+<td>Prša et al. (2022), VizieR J/ApJS/258/16</td>
+</tr>
+<tr>
+<td>SPOC Threshold Crossing Events</td>
+<td>all 132 single- and multi-sector SPOC data-validation runs</td>
+</tr>
+</tbody>
+</table></div>
+<p>A detection matches a known signal on the same star if the two periods agree within 0.3%, or stand in a
+simple ratio (1:2, 2:1, 1:3, 3:1, 2:3, 3:2) within 0.3%, since pipelines often report half or double the
+true period. The SPOC TCE lists matter: they contain every signal NASA's pipeline detected, including
+those its human vetting team never promoted to TOIs. A signal is labelled <em>new</em> only if it matches
+nothing in any list; <em>SPOC TCE only</em> if it matches a TCE but no TOI, CTOI or confirmed planet.</p>
+</div></section><section class="row " id="references"><div class="lab"><h2>References</h2></div><div class="body">
+<ul>
+<li>Hippke, M., David, T. J., Mulders, G. D., &amp; Heller, R. 2019, AJ, 158, 143 (<code>wotan</code>)</li>
+<li>Kovács, G., Zucker, S., &amp; Mazeh, T. 2002, A&amp;A, 391, 369 (BLS)</li>
+<li>Ofir, A. 2014, A&amp;A, 561, A138 (period grid)</li>
+<li>Prša, A., et al. 2022, ApJS, 258, 16 (TESS eclipsing binaries)</li>
+<li>Stassun, K. G., et al. 2019, AJ, 158, 138 (TIC v8)</li>
+</ul></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">1 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="index.html">← Contents</a><a class="cbtn" href="02-vetting.html">Vetting →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

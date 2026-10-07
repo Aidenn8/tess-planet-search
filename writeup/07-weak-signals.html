@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weak signals · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Weak signals · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 7 of 8</p><h1>Weak signals</h1><p class="meta">21 weak signals and a pixel re-check</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>Twenty-one signals in no catalogue passed the rejecting tests but carried flags (usually a modest
+red-noise SNR or uneven transit depths), so they were classified as <em>weak candidates</em> rather than
+candidates. This chapter explains why most of them are expected to be false alarms and what the pixel
+data add.</p>
+</div></section><section class="row " id="71-expected-false-alarm-rate"><div class="lab"><h2>Expected false-alarm rate</h2><span class="no">7.1</span></div><div class="body">
+<p>The inverted-light-curve test (Chapter 3) produced false weak candidates on 3.0% of stars, or about 38
+expected among the 1,279 searched. The real search produced 23 weak candidates in total (21 novel and 2
+matching known signals). The number of weak candidates is therefore consistent with the number noise
+alone produces, and they should be read as a list to re-check with more data, not as candidates.</p>
+</div></section><section class="row " id="72-where-the-weak-signals-sit"><div class="lab"><h2>Where the weak signals sit</h2><span class="no">7.2</span></div><div class="body">
+<p>Nine of the 21 have periods of 36–41 days, at the upper end of the search range, where a signal rests on
+only a handful of transits (6–20 in the data) and a few coincident dips can masquerade as a periodic
+signal. The inverted light curves, which contain no planets at all, place two of their six false weak
+candidates in the same range.</p>
+<figure><img alt="Weak-signal periods" src="../assets/figures/fig10_weak_periods.png" /><figcaption><b>Figure 10.</b> Periods of the 21 novel weak candidates (real data) and of the false weak candidates from
+inverted light curves.</figcaption></figure>
+</div></section><section class="row " id="73-pixel-re-check"><div class="lab"><h2>Pixel re-check</h2><span class="no">7.3</span></div><div class="body">
+<p>Each weak signal was localized in the pixels (Chapter 4, <code>scripts/12_localize.py --weak</code>) and its
+pixel-to-light-curve depth ratio measured (<code>scripts/16_weak_recheck.py</code>). With the 12% scatter seen
+for confirmed planets added to each error, each signal falls in one of three classes:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>class</th>
+<th>rule</th>
+<th>signals</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>consistent</td>
+<td>ratio within 2σ of 1 and the light loss detected at &gt; 3σ in the pixels</td>
+<td>6</td>
+</tr>
+<tr>
+<td>marginal</td>
+<td>neither consistent nor clearly absent</td>
+<td>9</td>
+</tr>
+<tr>
+<td>not in pixels</td>
+<td>ratio more than 3σ below 1</td>
+<td>6</td>
+</tr>
+</tbody>
+</table></div>
+<p>A search tends to select noise peaks with inflated depths, so even a real weak signal would tend to come
+out below one; a low ratio is therefore expected in part, but the six signals more than 3σ below one
+(down to 0.03 ± 0.12) are dips that the processed light curve shows and the pixels do not, most likely
+light-curve artefacts. None of the weak signals is localized off target with confidence: the largest
+target exclusions (3.4–3.9σ) come with best-fit positions at the edge of the ±100″ search grid and with
+pixel detections below 6σ.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>TIC</th>
+<th>period (d)</th>
+<th>depth (ppm)</th>
+<th>R_p (R⊕)</th>
+<th>SNR</th>
+<th>pixel/light-curve ratio</th>
+<th>pixel class</th>
+<th>light-curve flags</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>55450839</td>
+<td>0.810</td>
+<td>207</td>
+<td>0.86</td>
+<td>6.2</td>
+<td>0.95 ± 0.26</td>
+<td>consistent</td>
+<td>modest red-noise SNR 5.5</td>
+</tr>
+<tr>
+<td>359482441</td>
+<td>21.066</td>
+<td>1063</td>
+<td>1.21</td>
+<td>7.3</td>
+<td>0.75 ± 0.21</td>
+<td>consistent</td>
+<td>modest red-noise SNR 5.3; transit depths vary by ~114%</td>
+</tr>
+<tr>
+<td>260658693</td>
+<td>26.412</td>
+<td>1280</td>
+<td>1.24</td>
+<td>7.1</td>
+<td>0.63 ± 0.20</td>
+<td>consistent</td>
+<td>transit depths vary by ~130%</td>
+</tr>
+<tr>
+<td>259039250</td>
+<td>31.303</td>
+<td>901</td>
+<td>1.29</td>
+<td>6.3</td>
+<td>0.91 ± 0.28</td>
+<td>consistent</td>
+<td>modest red-noise SNR 5.3; transit depths vary by ~91%</td>
+</tr>
+<tr>
+<td>260241701</td>
+<td>39.348</td>
+<td>1312</td>
+<td>1.85</td>
+<td>6.6</td>
+<td>0.65 ± 0.19</td>
+<td>consistent</td>
+<td>modest red-noise SNR 5.5; transit depths vary by ~110%</td>
+</tr>
+<tr>
+<td>38709037</td>
+<td>39.797</td>
+<td>667</td>
+<td>1.46</td>
+<td>6.1</td>
+<td>0.68 ± 0.18</td>
+<td>consistent</td>
+<td>modest red-noise SNR 5.5</td>
+</tr>
+<tr>
+<td>350433316</td>
+<td>9.375</td>
+<td>996</td>
+<td>1.68</td>
+<td>6.6</td>
+<td>0.67 ± 0.15</td>
+<td>marginal</td>
+<td>modest red-noise SNR 6.0</td>
+</tr>
+<tr>
+<td>359388713</td>
+<td>12.674</td>
+<td>1732</td>
+<td>1.79</td>
+<td>6.8</td>
+<td>0.54 ± 0.17</td>
+<td>marginal</td>
+<td>modest red-noise SNR 5.6</td>
+</tr>
+<tr>
+<td>232629466</td>
+<td>12.976</td>
+<td>1623</td>
+<td>2.02</td>
+<td>6.5</td>
+<td>0.59 ± 0.14</td>
+<td>marginal</td>
+<td>modest red-noise SNR 5.7</td>
+</tr>
+<tr>
+<td>356786247</td>
+<td>14.303</td>
+<td>448</td>
+<td>0.98</td>
+<td>6.8</td>
+<td>0.66 ± 0.15</td>
+<td>marginal</td>
+<td>modest red-noise SNR 6.4; transit depths vary by ~174%</td>
+</tr>
+<tr>
+<td>165471200</td>
+<td>18.841</td>
+<td>725</td>
+<td>1.13</td>
+<td>7.8</td>
+<td>0.32 ± 0.26</td>
+<td>marginal</td>
+<td>modest red-noise SNR 5.9</td>
+</tr>
+<tr>
+<td>232649744</td>
+<td>25.968</td>
+<td>2589</td>
+<td>1.30</td>
+<td>6.0</td>
+<td>0.64 ± 0.90</td>
+<td>marginal</td>
+<td>modest red-noise SNR 6.4; transit depths vary by ~194%</td>
+</tr>
+<tr>
+<td>258923893</td>
+<td>36.034</td>
+<td>571</td>
+<td>1.41</td>
+<td>6.0</td>
+<td>0.74 ± 0.29</td>
+<td>marginal</td>
+<td>modest red-noise SNR 5.2; transit depths vary by ~327%</td>
+</tr>
+<tr>
+<td>349830417</td>
+<td>37.940</td>
+<td>2826</td>
+<td>1.99</td>
+<td>6.6</td>
+<td>0.38 ± 0.22</td>
+<td>marginal</td>
+<td>modest red-noise SNR 5.6; transit depths vary by ~102%</td>
+</tr>
+<tr>
+<td>258776466</td>
+<td>39.376</td>
+<td>1427</td>
+<td>1.72</td>
+<td>8.2</td>
+<td>0.64 ± 0.15</td>
+<td>marginal</td>
+<td>modest red-noise SNR 6.9; transit depths vary by ~153%</td>
+</tr>
+<tr>
+<td>260369411</td>
+<td>16.818</td>
+<td>1049</td>
+<td>1.92</td>
+<td>6.4</td>
+<td>0.44 ± 0.13</td>
+<td>not in pixels</td>
+<td>modest red-noise SNR 5.4</td>
+</tr>
+<tr>
+<td>306574570</td>
+<td>17.008</td>
+<td>151</td>
+<td>0.67</td>
+<td>7.6</td>
+<td>0.24 ± 0.07</td>
+<td>not in pixels</td>
+<td>modest red-noise SNR 5.5; transit depths vary by ~289%</td>
+</tr>
+<tr>
+<td>311235628</td>
+<td>37.195</td>
+<td>1919</td>
+<td>2.38</td>
+<td>6.4</td>
+<td>0.43 ± 0.12</td>
+<td>not in pixels</td>
+<td>modest red-noise SNR 6.9</td>
+</tr>
+<tr>
+<td>167087044</td>
+<td>37.953</td>
+<td>1707</td>
+<td>1.60</td>
+<td>9.1</td>
+<td>0.30 ± 0.08</td>
+<td>not in pixels</td>
+<td>modest red-noise SNR 5.9; transit depths vary by ~179%</td>
+</tr>
+<tr>
+<td>441728165</td>
+<td>38.597</td>
+<td>372</td>
+<td>1.24</td>
+<td>6.3</td>
+<td>0.56 ± 0.11</td>
+<td>not in pixels</td>
+<td>modest red-noise SNR 5.5; transit depths vary by ~160%</td>
+</tr>
+<tr>
+<td>232629466</td>
+<td>38.772</td>
+<td>2874</td>
+<td>2.68</td>
+<td>7.3</td>
+<td>0.03 ± 0.12</td>
+<td>not in pixels</td>
+<td>transit depths vary by ~161%</td>
+</tr>
+</tbody>
+</table></div>
+<p>Depths and radii in this table are the light-curve vetting measurements. For one signal (TIC 232649744)
+the follow-up transit fit converged to an unphysical grazing solution (b = 1.08, 2.4% depth); the pixel
+test uses the vetting ephemeris and depth instead, so that a failed fit cannot make a signal look absent
+from the pixels.</p>
+</div></section><section class="row " id="74-worth-a-second-look"><div class="lab"><h2>Worth a second look</h2><span class="no">7.4</span></div><div class="body">
+<p>Among the six <em>consistent</em> signals, one stands out: <strong>TIC 55450839</strong> at 0.81 days, a 0.86 R⊕ object with
+603 transit events in the pixels and a depth ratio of 0.95 ± 0.26. Its SNR (6.2) is below the candidate
+threshold, so it is not a candidate, but the pixels see a dip of the expected size on the target. More
+TESS data would decide it. The other five consistent signals lie at 21–40-day periods where few transits
+exist and the light-curve flags (uneven transit depths) remain unexplained.</p></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">7 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="06-candidates.html">← Candidates</a><a class="cbtn" href="08-limitations-and-reproducibility.html">Limitations and reproducibility →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

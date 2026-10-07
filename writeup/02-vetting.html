@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vetting · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Vetting · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 2 of 8</p><h1>Vetting</h1><p class="meta">red-noise-aware tests, thresholds, verdicts</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>Most periodic dips in TESS light curves are not planets. This chapter defines the automated tests that
+separate planet-like signals from eclipsing binaries, light from neighbouring stars, instrumental
+artefacts and stellar variability (<code>tess_search/vetting.py</code>), and reports what they did to the 1,139
+vetted signals. The tests follow the logic of the Kepler Robovetter (Thompson et al. 2018) and recent
+TESS vetters such as LEO-Vetter (Kunimoto et al. 2025), simplified and documented in code.</p>
+</div></section><section class="row " id="21-correlated-noise"><div class="lab"><h2>Correlated noise</h2><span class="no">2.1</span></div><div class="body">
+<p>TESS light curves, centroids and backgrounds carry correlated ("red") noise: slow wobbles from pointing
+jitter, momentum dumps and scattered light. Error bars computed as if each 2-minute point were
+independent are far too small, and every test then fires on noise; an early version of the centroid
+test flagged TOI-700 d, a confirmed planet, at 20σ. Two mechanisms make the tests robust:</p>
+<ul>
+<li><strong>Noise at the transit's own timescale.</strong> Flux tests use the robust scatter of light-curve means
+  taken over windows as long as the transit core (0.8 × T₁₄), measured out of transit. This includes
+  red noise by construction. Its ratio to the white-noise expectation is recorded as β.</li>
+<li><strong>Null calibration.</strong> Centroid and background statistics are recomputed at 24 fake transit epochs
+  (random phases away from the transit and from phase 0.5). The real statistic must stand out from that
+  empirical distribution; the result is expressed as a robust z-score and an empirical p-value.</li>
+</ul>
+<p>The folded light curve is also scanned with a box of the transit's width at every phase. Away from the
+transit these box SNRs should scatter with unit standard deviation; their measured scatter (the
+red-noise factor) rescales every phase-based statistic, and the transit's own box SNR divided by it is
+the <strong>folded red-noise SNR</strong>.</p>
+</div></section><section class="row " id="22-measured-quantities"><div class="lab"><h2>Measured quantities</h2><span class="no">2.2</span></div><div class="body">
+<p>For each signal the following are computed:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>trapezoid fit</td>
+<td>depth, total duration T₁₄, ingress fraction, centre offset, fitted to the binned fold</td>
+</tr>
+<tr>
+<td>per-transit depths</td>
+<td>each transit's core (</td>
+</tr>
+<tr>
+<td>SNR (red-noise aware)</td>
+<td>weighted mean of per-transit depths over its error</td>
+</tr>
+<tr>
+<td>odd/even</td>
+<td>weighted mean depths of odd and even transits and their difference in σ</td>
+</tr>
+<tr>
+<td>secondary</td>
+<td>the strongest other box in the fold (SNR, phase, depth) and the depth at phase 0.5</td>
+</tr>
+<tr>
+<td>uniqueness</td>
+<td>folded red-noise SNR minus the third-strongest feature in the fold</td>
+</tr>
+<tr>
+<td>single-event share</td>
+<td>largest single transit's share of the summed SNR²</td>
+</tr>
+<tr>
+<td>depth consistency</td>
+<td>χ²/dof of per-transit depths and the excess fractional scatter</td>
+</tr>
+<tr>
+<td>halves</td>
+<td>signal SNR in the first and second halves of the transits</td>
+</tr>
+<tr>
+<td>implied radius</td>
+<td>√depth × R⋆</td>
+</tr>
+<tr>
+<td>duration ratio</td>
+<td>T₁₄ divided by the central-transit duration expected for the star (circular orbit)</td>
+</tr>
+<tr>
+<td>centroid motion</td>
+<td>in/out-of-transit flux-weighted centroid differences per sector, null-calibrated</td>
+</tr>
+<tr>
+<td>background change</td>
+<td>in/out-of-transit SPOC background, null-calibrated, signed</td>
+</tr>
+<tr>
+<td>SAP depth</td>
+<td>depth in pre-PDC flux, divided by the SPOC crowding factor</td>
+</tr>
+<tr>
+<td>edge fraction</td>
+<td>fraction of transits within 0.5 d of a data gap longer than 0.5 d</td>
+</tr>
+<tr>
+<td>harmonics</td>
+<td>proximity to the spacecraft orbit (13.7 d), sector (27.4 d) and stellar rotation, × ½, 1, 2</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="row " id="23-tests-and-thresholds"><div class="lab"><h2>Tests and thresholds</h2><span class="no">2.3</span></div><div class="body">
+<p>A test either <strong>rejects</strong> a signal (false positive) or <strong>flags</strong> it (a caution that prevents the
+<em>candidate</em> verdict). A missing test never counts as a pass.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>impostor</th>
+<th>test</th>
+<th>rejects when</th>
+<th>flags when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>eclipsing binary</td>
+<td>odd/even depths</td>
+<td>difference &gt; 3σ</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>dip at phase 0.5</td>
+<td>&gt; 4σ and &gt; 10% of the primary depth</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>other dip anywhere in the fold</td>
+<td>&gt; 5σ and &gt; 10% of the primary depth</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>implied radius</td>
+<td>&gt; 20 R⊕</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>V shape</td>
+<td>SNR &gt; 20 and ingress fraction &gt; 0.4</td>
+<td></td>
+</tr>
+<tr>
+<td>light from a neighbour</td>
+<td>centroid motion</td>
+<td>z &gt; 5, p ≤ 1/25 and implied source &gt; 30″ away</td>
+<td>z &gt; 4 and source &gt; 15″</td>
+</tr>
+<tr>
+<td></td>
+<td>duration vs. stellar density</td>
+<td>T₁₄ &gt; 3 × expected</td>
+<td>&gt; 2 × expected</td>
+</tr>
+<tr>
+<td>instrumental artefact</td>
+<td>transits observed</td>
+<td>fewer than 3</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>single-event share</td>
+<td>one transit &gt; 50% of the signal</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>data-gap pile-up</td>
+<td>&gt; 50% of transits beside gaps</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>duty cycle</td>
+<td>dip fills &gt; 15% of the orbit</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>spacecraft periods</td>
+<td>within 3% of 13.7 d or 27.4 d × ½, 1, 2</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>background in transit</td>
+<td></td>
+<td>rises at z &gt; 6, p ≤ 1/25</td>
+</tr>
+<tr>
+<td></td>
+<td>half-data consistency</td>
+<td></td>
+<td>SNR &gt; 9 overall but &lt; 1.5 in one half</td>
+</tr>
+<tr>
+<td></td>
+<td>per-transit depths</td>
+<td></td>
+<td>χ²/dof &gt; 3 and scatter &gt; 30% of the depth</td>
+</tr>
+<tr>
+<td>noise / variability</td>
+<td>folded red-noise SNR</td>
+<td>&lt; 5</td>
+<td>5–7, or not computable</td>
+</tr>
+<tr>
+<td></td>
+<td>uniqueness</td>
+<td></td>
+<td>&lt; 2</td>
+</tr>
+<tr>
+<td></td>
+<td>rotation harmonics</td>
+<td>within 3% of P_rot × ½, 1, 2 (clearly spotted star) and SNR &lt; 15</td>
+<td>same, SNR ≥ 15</td>
+</tr>
+</tbody>
+</table></div>
+<p>Three details are deliberate. Only ½, 1 and 2 times the spacecraft orbit are treated as systematics:
+in the injection test, rejecting ⅓ and ¼ of the orbit removed real injected planets without matching
+any known TESS systematic. The spacecraft window is 3% because TESS's orbit drifts by a few percent over
+the mission. And a background <em>dip</em> during transit is expected for bright stars whose wings leak into
+the background pixels, so only a background <em>rise</em> is flagged.</p>
+</div></section><section class="row " id="24-verdicts"><div class="lab"><h2>Verdicts</h2><span class="no">2.4</span></div><div class="body">
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>verdict</th>
+<th>rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>false positive</td>
+<td>any rejecting test fires</td>
+</tr>
+<tr>
+<td>candidate</td>
+<td>red-noise-aware SNR ≥ 7.3 (Kepler's TCE threshold), folded red-noise SNR ≥ 7, no flags</td>
+</tr>
+<tr>
+<td>weak candidate</td>
+<td>SNR ≥ 6, otherwise</td>
+</tr>
+<tr>
+<td>below threshold</td>
+<td>SNR &lt; 6</td>
+</tr>
+</tbody>
+</table></div>
+<p>Some rules were refined while the search ran (for example, the spacecraft-period window and the
+treatment of an untestable red-noise statistic). Every stored result was re-classified with the final
+rules (<code>scripts/06_summarize.py</code>), so all stars are judged alike.</p>
+</div></section><section class="row " id="25-outcome"><div class="lab"><h2>Outcome</h2><span class="no">2.5</span></div><div class="body">
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>verdict</th>
+<th>signals</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>false positive</td>
+<td>1,044</td>
+</tr>
+<tr>
+<td>candidate</td>
+<td>50</td>
+</tr>
+<tr>
+<td>weak candidate</td>
+<td>23</td>
+</tr>
+<tr>
+<td>below threshold</td>
+<td>22</td>
+</tr>
+</tbody>
+</table></div>
+<p>The most frequent reasons for rejection (a signal can have several):</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>reason</th>
+<th>signals</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dip lasts &gt; 3× longer than a planet could take to cross the star</td>
+<td>531</td>
+</tr>
+<tr>
+<td>dip fills &gt; 15% of the orbit</td>
+<td>480</td>
+</tr>
+<tr>
+<td>not distinct from other dips in the fold (folded red-noise SNR &lt; 5)</td>
+<td>442</td>
+</tr>
+<tr>
+<td>period near the stellar rotation period or a harmonic</td>
+<td>437</td>
+</tr>
+<tr>
+<td>red-noise test could not be run (flag)</td>
+<td>403</td>
+</tr>
+<tr>
+<td>another dip in the fold nearly as strong (flag)</td>
+<td>346</td>
+</tr>
+<tr>
+<td>per-transit depths inconsistent (flag)</td>
+<td>315</td>
+</tr>
+<tr>
+<td>one transit carries most of the signal</td>
+<td>205</td>
+</tr>
+<tr>
+<td>odd/even depths differ</td>
+<td>160</td>
+</tr>
+<tr>
+<td>dip at phase 0.5</td>
+<td>146</td>
+</tr>
+</tbody>
+</table></div>
+<p>Of the 73 signals that passed, 47 match a known planet, TOI or CTOI, 3 match only a SPOC TCE that was
+never promoted, and 23 match nothing. At full candidate strength the novel signals are <strong>5</strong>: two that
+appear in no list and three SPOC TCEs. The other 21 novel signals are weak candidates (Chapter 7).</p>
+<figure><img alt="Funnel" src="../assets/figures/fig02_funnel.png" /><figcaption><b>Figure 2.</b> Signals remaining after each stage, including the pixel-level and statistical checks of
+Chapters 4 and 5.</figcaption></figure>
+</div></section><section class="row " id="26-behaviour-on-known-signals"><div class="lab"><h2>Behaviour on known signals</h2><span class="no">2.6</span></div><div class="body">
+<p>Of the 84 catalogued signals the search recovered on these stars (Chapter 3), vetting passed 76 and
+rejected 8. The rejected ones include signals the TESS Follow-up Observing Program had already
+classified as false positives, for example TOI-419.01 (a nearby eclipsing binary), TOI-1178.01 (a
+V-shaped eclipse) and TOI-1635.01.</p>
+</div></section><section class="row " id="27-follow-up-of-surviving-novel-signals"><div class="lab"><h2>Follow-up of surviving novel signals</h2><span class="no">2.7</span></div><div class="body">
+<p>Every novel signal that passed (5 candidates, 21 weak candidates) was taken through a follow-up stage
+(<code>scripts/08_followup.py</code>): a fresh vetting pass, a least-squares physical transit fit (<code>batman</code>,
+stellar-density prior), an independent search of each half of the data near the candidate period, and
+a census of Gaia DR3 neighbours within three TESS pixels with the eclipse depth each would need to
+reproduce the signal. The per-signal results are in <code>results/followup/</code>. The deeper checks that follow
+in Chapters 4 and 5 start from these.</p>
+</div></section><section class="row " id="references"><div class="lab"><h2>References</h2></div><div class="body">
+<ul>
+<li>Kunimoto, M., et al. 2025, AJ (LEO-Vetter)</li>
+<li>Thompson, S. E., et al. 2018, ApJS, 235, 38 (Kepler DR25 Robovetter)</li>
+</ul></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">2 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="01-data-and-search.html">← Data and search</a><a class="cbtn" href="03-sensitivity-and-reliability.html">Sensitivity and reliability →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

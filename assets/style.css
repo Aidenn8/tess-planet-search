@@ -1,0 +1,157 @@
+/* Research page on a pitch-black ground: white Inter text, a large plain title, a quiet grey
+   navigation line, and rows with a narrow label column on the left and the content on the
+   right, separated by thin rules. Code, controls and buttons use IBM Plex Mono. The figures
+   are rendered on the same black. The page is dark in every colour scheme by design. */
+:root {
+  --bg: #000000; --ink: #ffffff; --ink2: #d4d4d4; --muted: #8e8e8e; --faint: #5e5e5e;
+  --rule: #2a2a2a; --rule-strong: #474747; --soft: #101010; --link: #ffffff;
+  --c1: #56b4e9; --c2: #e69f00; --c3: #2fc495; --c4: #da8fc2;
+  --sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --max: 1240px; --lab: 240px; --gap: 56px; --measure: 760px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark } }
+:root[data-theme="dark"] { color-scheme: dark }
+
+* { box-sizing: border-box }
+html { -webkit-text-size-adjust: 100% }
+body { background: var(--bg); color: var(--ink); font: 400 17px/1.62 var(--sans); margin: 0; padding: 40px 32px 88px;
+  font-optical-sizing: auto; letter-spacing: -0.003em; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale }
+.page { max-width: var(--max); margin: 0 auto }
+a { color: var(--link); text-decoration: underline; text-decoration-color: var(--faint); text-decoration-thickness: 1px; text-underline-offset: 3px }
+a:hover { text-decoration-color: var(--ink) }
+a:focus-visible { outline: 2px solid #fff; outline-offset: 3px }
+p { margin: 0 0 16px }
+ul, ol { padding-left: 1.25em; margin: 0 0 16px }
+li { margin-bottom: 8px }
+li::marker { color: var(--muted) }
+b, strong { font-weight: 500 }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 32px 0 }
+code { font: 0.86em var(--mono) }
+pre code { font: inherit }
+pre { font: 13px/1.6 var(--mono); color: var(--ink2); background: var(--soft); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 14px 16px; overflow-x: auto; margin: 0 0 16px }
+kbd { font: 500 0.78em var(--mono); border: 1px solid var(--rule-strong); border-radius: 4px; padding: 0 5px; background: var(--soft); color: var(--ink) }
+sup, sub { line-height: 0 }
+.muted { color: var(--muted) }
+.small { font-size: 14.5px }
+
+/* ---- navigation line */
+nav.top { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px 24px;
+  font-size: 14.5px; margin-bottom: 56px }
+nav.top .brand { color: var(--ink2); text-decoration: none }
+nav.top .links { display: flex; flex-wrap: wrap; gap: 4px 22px }
+nav.top .links a { color: var(--muted); text-decoration: none }
+nav.top .links a.on, nav.top .links a:hover { color: var(--ink) }
+
+/* ---- title block */
+.titleblock { padding-bottom: 36px }
+.eyebrow { font: 400 13px/1 var(--mono); color: var(--muted); margin: 0 0 22px; letter-spacing: 0 }
+h1 { font: 500 clamp(2.1rem, 4.3vw, 3.45rem)/1.08 var(--sans); letter-spacing: -0.032em; margin: 0 0 20px; max-width: 1020px; text-wrap: balance }
+.subtitle { font: 400 clamp(1.15rem, 1.9vw, 1.4rem)/1.4 var(--sans); letter-spacing: -0.012em; color: var(--ink2); margin: 0 0 14px; max-width: 900px; text-wrap: balance }
+.meta { color: var(--muted); font-size: 15px; margin: 0 }
+.meta a { color: var(--muted) }
+.meta a:hover { color: var(--ink) }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px }
+.cbtn { display: inline-flex; align-items: center; gap: 9px; font: 500 13px/1 var(--mono); color: var(--ink); background: var(--soft);
+  border: 1px solid var(--rule-strong); border-radius: 6px; padding: 10px 13px; text-decoration: none; white-space: nowrap }
+.cbtn:hover { border-color: var(--ink); background: #171717 }
+.cbtn .arr { color: var(--muted) }
+.cbtn:hover .arr { color: var(--ink) }
+
+/* ---- stats */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px 28px; margin-top: 34px; padding-top: 24px;
+  border-top: 1px solid var(--rule) }
+.stat b { display: block; font: 400 30px/1.1 var(--sans); letter-spacing: -0.025em; color: var(--ink); font-variant-numeric: tabular-nums }
+.stat b span { color: var(--muted) }
+.stat p { margin: 10px 0 0; font-size: 14px; line-height: 1.45; color: var(--muted) }
+
+/* ---- rows: label column + content */
+.row { display: grid; grid-template-columns: var(--lab) minmax(0, 1fr); column-gap: var(--gap); border-top: 1px solid var(--rule); padding: 48px 0 32px }
+.lab h2 { font: 400 16px/1.4 var(--sans); margin: 0; letter-spacing: 0; color: var(--ink) }
+.lab .no { display: block; color: var(--muted); font-size: 15px; margin-top: 12px; font-variant-numeric: tabular-nums }
+.body { min-width: 0 }
+.body > p, .body > ul, .body > ol, .body > h3, .body > h4, .body > pre, .body > .cands, .body > .chapters,
+.body > blockquote { max-width: var(--measure) }
+.body > figure, .body > .tbl { max-width: none }   /* figures and tables use the whole content column */
+.overview .body > p { font-size: 19px; line-height: 1.6; letter-spacing: -0.01em; color: var(--ink) }
+h3 { font: 400 22px/1.3 var(--sans); letter-spacing: -0.015em; margin: 40px 0 12px }
+h4 { font: 500 16px/1.4 var(--sans); margin: 30px 0 8px }
+.body > h3:first-child, .body > h4:first-child { margin-top: 0 }
+blockquote { margin: 0 0 16px; padding-left: 16px; border-left: 2px solid var(--rule-strong); color: var(--ink2) }
+mjx-container[display="true"] { display: block; max-width: 100%; overflow-x: auto; overflow-y: hidden; margin: 8px 0 14px !important }
+mjx-container { color: var(--ink) }
+
+/* ---- figures */
+figure { margin: 28px 0 34px }
+figure img { display: block; width: 100%; height: auto; background: #000 }
+figcaption { font-size: 15px; line-height: 1.55; color: var(--muted); margin-top: 12px; max-width: var(--measure) }
+figcaption b, figcaption strong { color: var(--ink); font-weight: 500 }
+figcaption p { margin: 0 }
+
+/* ---- tables */
+.tbl { margin: 24px 0 30px; overflow-x: auto; -webkit-overflow-scrolling: touch }
+table { border-collapse: collapse; width: 100%; font-size: 15px; line-height: 1.45; font-variant-numeric: tabular-nums;
+  border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong) }
+th { font-weight: 400; font-size: 13.5px; color: var(--muted); text-align: left; padding: 10px 14px 8px 0; border-bottom: 1px solid var(--rule);
+  vertical-align: bottom; white-space: nowrap }
+td { padding: 7px 14px 7px 0; vertical-align: top; color: var(--ink) }
+td:first-child, th:first-child { white-space: nowrap }
+td:last-child, th:last-child { padding-right: 0 }
+tbody tr:first-child td { padding-top: 10px }
+tbody tr:last-child td { padding-bottom: 10px }
+td.num { white-space: nowrap }
+tr.fp td { color: var(--muted) }
+td code, th code { white-space: nowrap }
+table.kv { border-top: 0 }
+table.kv th[scope="row"] { color: var(--muted); font-size: 15px; width: 190px; border-bottom: 0; padding: 6px 16px 6px 0; vertical-align: top }
+
+/* ---- candidate list */
+.cands { margin-top: 8px }
+.cand { padding: 24px 0 8px; border-top: 1px solid var(--rule) }
+.cand h3 { font: 500 19px/1.3 var(--sans); letter-spacing: -0.01em; margin: 0 0 6px }
+.cand .tag { display: inline-block; font: 400 12px/1 var(--mono); color: var(--muted); border: 1px solid var(--rule-strong); border-radius: 4px;
+  padding: 3px 6px; margin-left: 10px; vertical-align: 3px; letter-spacing: 0 }
+.cand .fact { font: 400 13px/1.6 var(--mono); color: var(--muted); margin: 0 0 12px }
+.cand .fact b { color: var(--ink2); font-weight: 400 }
+.cand ul { font-size: 16px; margin-bottom: 8px }
+.cand li { margin-bottom: 6px }
+
+/* ---- chapter list */
+ol.chapters { list-style: none; margin: 4px 0 0; padding: 0 }
+ol.chapters li { display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 14px; align-items: baseline;
+  padding: 13px 0; margin: 0; border-top: 1px solid var(--rule) }
+ol.chapters li:last-child { border-bottom: 1px solid var(--rule) }
+ol.chapters .n { font: 400 13px var(--mono); color: var(--muted) }
+ol.chapters a { text-decoration: none; color: var(--ink) }
+ol.chapters a:hover { text-decoration: underline; text-decoration-color: var(--faint) }
+ol.chapters .d { display: block; font-size: 14.5px; color: var(--muted); margin-top: 2px }
+
+/* ---- pager */
+.pager { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap }
+.pager .cbtn { white-space: normal; max-width: 48% }
+
+/* ---- colophon */
+.colophon { border-top: 1px solid var(--rule); padding-top: 24px; margin-top: 8px; font-size: 14px; line-height: 1.6; color: var(--muted);
+  display: grid; grid-template-columns: var(--lab) minmax(0, 1fr); column-gap: var(--gap) }
+.colophon p { margin: 0 0 6px; max-width: var(--measure) }
+.colophon a { color: var(--muted) }
+.colophon a:hover { color: var(--ink) }
+
+/* ---- narrow screens */
+@media (max-width: 960px) {
+  body { padding: 32px 20px 64px }
+  nav.top { margin-bottom: 40px }
+  .row, .colophon { grid-template-columns: minmax(0, 1fr); padding-top: 34px }
+  .lab { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px }
+  .lab .no { margin-top: 0 }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+}
+@media (max-width: 640px) {
+  body { padding: 24px 16px 56px; font-size: 16.5px }
+  .overview .body > p { font-size: 17.5px }
+  .stat b { font-size: 25px }
+  table.kv th[scope="row"] { width: 120px }
+  .pager .cbtn { max-width: none }
+}

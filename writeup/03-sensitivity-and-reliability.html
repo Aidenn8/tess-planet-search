@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sensitivity and reliability · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Sensitivity and reliability · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 3 of 8</p><h1>Sensitivity and reliability</h1><p class="meta">known planets, 300 injections, 200 inverted light curves</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>A candidate list is only as meaningful as the search's measured ability to find real planets
+(completeness) and to avoid inventing them (reliability). This chapter reports three measurements:
+recovery of planets already known around the searched stars, recovery of synthetic planets injected
+into the real light curves, and the false-alarm rate on light curves turned upside down.</p>
+</div></section><section class="row " id="31-recovery-of-known-signals"><div class="lab"><h2>Recovery of known signals</h2><span class="no">3.1</span></div><div class="body">
+<p>The searched stars host 97 catalogued signals with periods of 0.4–40 days: TOIs, CTOIs and confirmed
+planets (<code>scripts/check_known.py</code>). The search recovered <strong>84</strong> of them independently. Of the 13 it
+missed, 5 are confirmed planets discovered by radial velocity that do not transit (GJ 685 b, L 98-59 e
+and f, TOI-1450 A c and G 261-6 b), which no transit search can detect, and one is a TFOP-designated
+false alarm. The remaining seven misses are:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>star</th>
+<th>signal</th>
+<th>period (d)</th>
+<th>disposition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TIC 198162530</td>
+<td>TOI-5738.01</td>
+<td>0.7681</td>
+<td>PC</td>
+</tr>
+<tr>
+<td>TIC 272466980</td>
+<td>CTOI-272466980.01</td>
+<td>3.4561</td>
+<td>PC</td>
+</tr>
+<tr>
+<td>TIC 321669174</td>
+<td>TOI-2081.02</td>
+<td>5.1097</td>
+<td>PC</td>
+</tr>
+<tr>
+<td>TIC 374829238</td>
+<td>TOI-785.01</td>
+<td>18.6286</td>
+<td>PC</td>
+</tr>
+<tr>
+<td>TIC 198162530</td>
+<td>TOI-5738.02</td>
+<td>28.5462</td>
+<td>PC</td>
+</tr>
+<tr>
+<td>TIC 287139872</td>
+<td>TOI-1752.02</td>
+<td>32.7135</td>
+<td>CP</td>
+</tr>
+<tr>
+<td>TIC 287139872</td>
+<td>TOI-1752 c</td>
+<td>32.7144</td>
+<td>confirmed</td>
+</tr>
+</tbody>
+</table></div>
+<p>Counting confirmed transiting planets only, the search recovers <strong>25 of 26</strong>, the miss being TOI-1752 c
+at 32.7 d. The recoveries include all four planets of <strong>TOI-700</strong> (b, c, d and e; d and e are
+Earth-sized and in or near the habitable zone), <strong>L 98-59</strong> b, c and d, and ultra-short-period planets
+such as TOI-6000 b (0.449 d) and TOI-1442 b (0.409 d). Vetting passed 76 of the 84 recovered signals;
+the 8 it rejected include signals TFOP had already classified as false positives (Chapter 2).</p>
+</div></section><section class="row " id="32-injectionrecovery"><div class="lab"><h2>Injection–recovery</h2><span class="no">3.2</span></div><div class="body">
+<h3 id="design">Design</h3>
+<p>300 synthetic transits were planted into the <strong>raw</strong> PDCSAP and SAP fluxes of randomly chosen searched
+stars that host no known planet, TOI, CTOI or catalogued eclipsing binary
+(<code>scripts/05_reliability.py inject</code>). Each is a physical <code>batman</code> model (Kreidberg 2015) with quadratic
+limb darkening typical of M dwarfs in the TESS band (u₁ = 0.20, u₂ = 0.40), drawn from</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>parameter</th>
+<th>distribution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>planet radius</td>
+<td>uniform, 0.6–4.0 R⊕</td>
+</tr>
+<tr>
+<td>period</td>
+<td>log-uniform, 0.5–40 d</td>
+</tr>
+<tr>
+<td>impact parameter</td>
+<td>uniform, 0–0.9</td>
+</tr>
+<tr>
+<td>phase</td>
+<td>uniform</td>
+</tr>
+</tbody>
+</table></div>
+<p>The injected light curve then goes through every step of the real pipeline (cleaning, detrending,
+search, vetting), so each injected planet suffers everything a real one would. An injection is
+<strong>detected</strong> if a detection lies within 0.5% of its period with an epoch within 0.1 d, and <strong>kept</strong> if
+that detection is then classified as a candidate or weak candidate.</p>
+<h3 id="results">Results</h3>
+<ul>
+<li>detected: <strong>79.7%</strong>; detected and kept: <strong>74.0%</strong>; vetting kept 92.9% of detected planets.</li>
+<li>Of the 17 detected-then-rejected injections, 14 fell within 3% of a spacecraft period (½, 1 or 2 × the
+  13.7-day orbit), which the vetting rejects on purpose; the other 3 failed the transit-count, fold
+  distinctness and odd/even tests once each.</li>
+<li>Planets of 2–4 R⊕ inside 15 days: <strong>88.6%</strong> kept. Planets under 1.5 R⊕ inside 5 days: <strong>55.3%</strong>.</li>
+</ul>
+<p>Found-and-kept fraction by injected radius and period (number injected in parentheses):</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>radius (R⊕)</th>
+<th>P &lt; 5 d</th>
+<th>5–15 d</th>
+<th>15–40 d</th>
+<th>all</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.6–1.0</td>
+<td>29% (21)</td>
+<td>0% (4)</td>
+<td>0% (5)</td>
+<td>20% (30)</td>
+</tr>
+<tr>
+<td>1.0–1.5</td>
+<td>77% (26)</td>
+<td>36% (11)</td>
+<td>38% (8)</td>
+<td>60% (45)</td>
+</tr>
+<tr>
+<td>1.5–2.0</td>
+<td>94% (17)</td>
+<td>79% (14)</td>
+<td>50% (10)</td>
+<td>78% (41)</td>
+</tr>
+<tr>
+<td>2.0–3.0</td>
+<td>96% (48)</td>
+<td>78% (27)</td>
+<td>74% (27)</td>
+<td>85% (102)</td>
+</tr>
+<tr>
+<td>3.0–4.0</td>
+<td>92% (38)</td>
+<td>81% (27)</td>
+<td>76% (17)</td>
+<td>85% (82)</td>
+</tr>
+</tbody>
+</table></div>
+<figure><img alt="Completeness" src="../assets/figures/fig03_completeness.png" /><figcaption><b>Figure 3.</b> Completeness as a function of planet radius in three period ranges.</figcaption></figure>
+<p>The search is sensitive to Earth-sized planets on short orbits, which is where all four candidates lie,
+and loses sensitivity below 1 R⊕ and towards long periods, where few transits are observed. With 300
+injections the cells hold 4–48 planets each, so individual cell values carry binomial uncertainties of
+up to ±20%.</p>
+</div></section><section class="row " id="33-reliability-inverted-light-curves"><div class="lab"><h2>Reliability: inverted light curves</h2><span class="no">3.3</span></div><div class="body">
+<h3 id="design_1">Design</h3>
+<p>200 light curves (each searched star used at most once, again excluding known hosts) were flipped about
+their per-sector median before any cleaning, so that every dip becomes a bump and every bump a dip, and
+then run through the identical pipeline (<code>scripts/05_reliability.py invert</code>). No planet can survive the
+flip, so anything that passes vetting is a false alarm produced by noise and systematics with the same
+statistical character as the real data. One asymmetry makes the test conservative: stellar flares become
+dips in the inverted data and are no longer removed by the flare filter, which only clips upward
+outliers.</p>
+<h3 id="results_1">Results</h3>
+<ul>
+<li><strong>False candidates: 0</strong> in 200 stars. With none observed, the 95% upper limit is 3/200 = <strong>1.5%</strong> of
+  stars, or fewer than ~19 expected among 1,279; the best estimate is close to none.</li>
+<li><strong>False weak candidates:</strong> on 6 of 200 stars (<strong>3.0%</strong>), i.e. ~38 expected among the searched stars,
+  against 23 weak candidates found in the real search. Weak candidates are therefore mostly false
+  alarms, and are reported separately (Chapter 7).</li>
+</ul>
+</div></section><section class="row " id="34-what-a-candidate-verdict-means"><div class="lab"><h2>What a candidate verdict means</h2><span class="no">3.4</span></div><div class="body">
+<p>Together these measurements say that a candidate from this pipeline is unlikely to be a statistical
+fluctuation (no false candidates from inverted data), and that for short-period Earth-sized planets the
+search finds most of what is there. They say nothing about <em>astrophysical</em> false positives that produce
+real, planet-shaped dips: eclipsing binaries diluted by a brighter target, or neighbouring stars whose
+eclipses leak into the aperture. Those require looking at the pixels and weighing the alternatives
+statistically, which is the subject of Chapters 4 and 5.</p>
+</div></section><section class="row " id="references"><div class="lab"><h2>References</h2></div><div class="body">
+<ul>
+<li>Kreidberg, L. 2015, PASP, 127, 1161 (<code>batman</code>)</li>
+</ul></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">3 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="02-vetting.html">← Vetting</a><a class="cbtn" href="04-pixel-level-localization.html">Pixel-level localization →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

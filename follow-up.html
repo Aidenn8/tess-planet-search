@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Follow-up · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Follow-up · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="index.html">TESS M-dwarf deep search</a><div class="links"><a href="index.html">Overview</a><a href="writeup/index.html">Write-up</a><a href="follow-up.html" class=on>Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">FOLLOW_UP.md</p><h1>Follow-up guide</h1><p class="meta">for observers and collaborators · status as of October 2026</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>This page is for observers and collaborators. For each candidate it states what is already established,
+what is still open, which observation would settle it, and when that observation can be made. Every
+number comes from the result files in this repository; the status is as of October 2026.</p>
+</div></section><section class="row " id="at-a-glance"><div class="lab"><h2>At a glance</h2></div><div class="body">
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>candidate</th>
+<th>P (d)</th>
+<th>depth (ppm)</th>
+<th>T</th>
+<th>open question → next observation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TOI-218</strong>, new signal</td>
+<td>2.1468</td>
+<td>1273</td>
+<td>13.3</td>
+<td>no ground-based detection yet → multi-band photometry of a predicted transit resolving the 13.5″ binary</td>
+</tr>
+<tr>
+<td><strong>TIC 229689348</strong></td>
+<td>0.4654</td>
+<td>693</td>
+<td>13.0</td>
+<td>unresolved bound companion → high-resolution imaging</td>
+</tr>
+<tr>
+<td><strong>TIC 149390648</strong></td>
+<td>2.8369</td>
+<td>798</td>
+<td>13.4</td>
+<td>crowded field, unresolved companion → seeing-limited photometry of the field; imaging</td>
+</tr>
+<tr>
+<td><strong>TIC 198412174</strong></td>
+<td>1.3902</td>
+<td>382</td>
+<td>11.8</td>
+<td>a T = 18.2 star 5.3″ away is not excluded → photometry resolving it (it would need an ~11% eclipse); imaging</td>
+</tr>
+</tbody>
+</table></div>
+<p>The pixel-level localization puts all four signals on their target stars; for TIC 198412174 one close
+neighbour remains possible.</p>
+<p>TRICERATOPS false-positive probabilities, with the neighbours that the pixel localization excludes treated
+as cleared: TOI-218 0.088 (<strong>1.4 × 10⁻⁵</strong> with the existing speckle imaging), TIC 229689348 0.197,
+TIC 149390648 0.088, TIC 198412174 0.478. All four meet the TRICERATOPS <em>likely planet</em> criteria
+(FPP &lt; 0.5, NFPP &lt; 0.001). The evidence for each is in <a href="writeup/06-candidates.html">Chapter 6</a> and the
+per-candidate dossiers in <a href="https://github.com/Aidenn8/tess-planet-search/tree/research/results/candidates/"><code>results/candidates/</code></a>.</p>
+</div></section><section class="row " id="ephemerides"><div class="lab"><h2>Ephemerides</h2></div><div class="body">
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>TIC</th>
+<th>RA, Dec (°)</th>
+<th>T₀ (BJD_TDB)</th>
+<th>P (d)</th>
+<th>T₁₄ (h)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>32090583</td>
+<td>58.42035, −68.73945</td>
+<td>2459318.6971 ± 0.0010</td>
+<td>2.1467982 ± 0.0000019</td>
+<td>0.93</td>
+</tr>
+<tr>
+<td>229689348</td>
+<td>263.23532, +57.09234</td>
+<td>2459027.6289 ± 0.0005</td>
+<td>0.4653769 ± 0.0000005</td>
+<td>0.53</td>
+</tr>
+<tr>
+<td>149390648</td>
+<td>84.07329, −62.20426</td>
+<td>2459180.6342 ± 0.0015</td>
+<td>2.8368867 ± 0.0000038</td>
+<td>1.14</td>
+</tr>
+<tr>
+<td>198412174</td>
+<td>259.21165, +59.82059</td>
+<td>2459644.3198 ± 0.0008</td>
+<td>1.3901602 ± 0.0000014</td>
+<td>0.61</td>
+</tr>
+</tbody>
+</table></div>
+<p>Coordinates are TIC positions (epoch J2000). Periods and epochs come from least-squares transit fits to
+all TESS sectors of each star (period errors inflated for correlated noise; T₀ near the middle of each
+baseline); durations and depths (1273 ± 106, 693 ± 65, 798 ± 88 and 382 ± 43 ppm) are MCMC medians.
+Mid-transit uncertainties propagated to 2027 are 3.2, 3.7, 5.0 and 3.0 minutes, so no ephemeris
+refinement is needed before observing. Machine-readable:
+<a href="https://github.com/Aidenn8/tess-planet-search/blob/research/results/candidates/summary.csv"><code>results/candidates/summary.csv</code></a>.</p>
+</div></section><section class="row " id="upcoming-transits"><div class="lab"><h2>Upcoming transits</h2></div><div class="body">
+<p><a href="https://github.com/Aidenn8/tess-planet-search/blob/research/scripts/17_transit_predictions.py"><code>scripts/17_transit_predictions.py</code></a> lists every transit between
+2026-10-06 and 2027-03-31 for which the whole transit plus 30 minutes of baseline on each side occurs with
+the target above 30° and the Sun more than 12° below the horizon, at the six Las Cumbres Observatory (LCO)
+sites:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>candidate</th>
+<th>transits</th>
+<th>CTIO</th>
+<th>SAAO</th>
+<th>SSO</th>
+<th>Teide</th>
+<th>McDonald</th>
+<th>Haleakala</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TOI-218</td>
+<td>82</td>
+<td>16</td>
+<td>17</td>
+<td>14</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+<tr>
+<td>TIC 229689348</td>
+<td>378</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>18</td>
+<td>12</td>
+<td>6</td>
+</tr>
+<tr>
+<td>TIC 149390648</td>
+<td>62</td>
+<td>11</td>
+<td>12</td>
+<td>11</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+</tr>
+<tr>
+<td>TIC 198412174</td>
+<td>126</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>6</td>
+<td>6</td>
+<td>3</td>
+</tr>
+</tbody>
+</table></div>
+<p>The full list (132 event–site pairs, UTC windows and minimum altitudes) is in
+<a href="https://github.com/Aidenn8/tess-planet-search/blob/research/results/followup_planning/transits.csv"><code>results/followup_planning/transits.csv</code></a>, and the
+<a href="https://aidenn8.github.io/tess-planet-search/follow-up.html#next-transits">project page</a> lists the next
+eight per candidate. These are planning estimates: confirm with a scheduling tool such as the Swarthmore
+Transit Finder (TAPIR), which accepts a user-supplied ephemeris.</p>
+<h3 id="next-transits">Next observable transits</h3><p>The next eight per candidate (UTC). 1σ is the mid-transit uncertainty; the window includes 30 minutes of baseline on each side.</p><h4>TIC 32090583 (TOI-218)</h4><div class="tbl"><table><thead><tr><th>Mid-transit</th><th>1σ</th><th>Window</th><th>Site</th><th>Min. alt.</th></tr></thead><tbody><tr><td class="num">2026-10-06 00:16</td><td class="num">±3 min</td><td class="num">23:18–01:14</td><td>SAAO Sutherland (South Africa)</td><td class="num">49°</td></tr><tr><td class="num">2026-10-08 03:47</td><td class="num">±3 min</td><td class="num">02:49–04:45</td><td>Cerro Tololo (Chile)</td><td class="num">35°</td></tr><tr><td class="num">2026-10-10 07:19</td><td class="num">±3 min</td><td class="num">06:20–08:17</td><td>Cerro Tololo (Chile)</td><td class="num">50°</td></tr><tr><td class="num">2026-10-14 14:21</td><td class="num">±3 min</td><td class="num">13:23–15:19</td><td>Siding Spring (Australia)</td><td class="num">45°</td></tr><tr><td class="num">2026-10-18 21:24</td><td class="num">±3 min</td><td class="num">20:26–22:22</td><td>SAAO Sutherland (South Africa)</td><td class="num">39°</td></tr><tr><td class="num">2026-10-21 00:56</td><td class="num">±3 min</td><td class="num">23:58–01:54</td><td>SAAO Sutherland (South Africa)</td><td class="num">52°</td></tr><tr><td class="num">2026-10-23 04:27</td><td class="num">±3 min</td><td class="num">03:29–05:25</td><td>Cerro Tololo (Chile)</td><td class="num">44°</td></tr><tr><td class="num">2026-10-25 07:59</td><td class="num">±3 min</td><td class="num">07:01–08:57</td><td>Cerro Tololo (Chile)</td><td class="num">46°</td></tr></tbody></table></div><h4>TIC 229689348</h4><div class="tbl"><table><thead><tr><th>Mid-transit</th><th>1σ</th><th>Window</th><th>Site</th><th>Min. alt.</th></tr></thead><tbody><tr><td class="num">2026-10-06 02:38</td><td class="num">±3 min</td><td class="num">01:52–03:23</td><td>McDonald (Texas)</td><td class="num">42°</td></tr><tr><td class="num">2026-10-08 21:39</td><td class="num">±3 min</td><td class="num">20:53–22:24</td><td>Teide (Tenerife)</td><td class="num">32°</td></tr><tr><td class="num">2026-10-13 02:10</td><td class="num">±3 min</td><td class="num">01:24–02:56</td><td>McDonald (Texas)</td><td class="num">42°</td></tr><tr><td class="num">2026-10-15 21:11</td><td class="num">±3 min</td><td class="num">20:25–21:57</td><td>Teide (Tenerife)</td><td class="num">32°</td></tr><tr><td class="num">2026-10-22 20:43</td><td class="num">±3 min</td><td class="num">19:57–21:29</td><td>Teide (Tenerife)</td><td class="num">32°</td></tr><tr><td class="num">2026-10-29 20:15</td><td class="num">±3 min</td><td class="num">19:30–21:01</td><td>Teide (Tenerife)</td><td class="num">32°</td></tr><tr><td class="num">2027-02-02 05:54</td><td class="num">±4 min</td><td class="num">05:08–06:40</td><td>Teide (Tenerife)</td><td class="num">34°</td></tr><tr><td class="num">2027-02-03 15:24</td><td class="num">±4 min</td><td class="num">14:39–16:10</td><td>Haleakala (Hawaii)</td><td class="num">30°</td></tr></tbody></table></div><h4>TIC 149390648</h4><div class="tbl"><table><thead><tr><th>Mid-transit</th><th>1σ</th><th>Window</th><th>Site</th><th>Min. alt.</th></tr></thead><tbody><tr><td class="num">2026-10-08 23:34</td><td class="num">±5 min</td><td class="num">22:30–00:39</td><td>SAAO Sutherland (South Africa)</td><td class="num">38°</td></tr><tr><td class="num">2026-10-14 15:44</td><td class="num">±5 min</td><td class="num">14:40–16:49</td><td>Siding Spring (Australia)</td><td class="num">45°</td></tr><tr><td class="num">2026-10-20 07:55</td><td class="num">±5 min</td><td class="num">06:50–08:59</td><td>Cerro Tololo (Chile)</td><td class="num">54°</td></tr><tr><td class="num">2026-10-23 04:00</td><td class="num">±5 min</td><td class="num">02:55–05:04</td><td>Cerro Tololo (Chile)</td><td class="num">31°</td></tr><tr><td class="num">2026-10-26 00:05</td><td class="num">±5 min</td><td class="num">23:01–01:09</td><td>SAAO Sutherland (South Africa)</td><td class="num">49°</td></tr><tr><td class="num">2026-10-31 16:15</td><td class="num">±5 min</td><td class="num">15:11–17:19</td><td>Siding Spring (Australia)</td><td class="num">54°</td></tr><tr><td class="num">2026-11-03 12:20</td><td class="num">±5 min</td><td class="num">11:16–13:24</td><td>Siding Spring (Australia)</td><td class="num">30°</td></tr><tr><td class="num">2026-11-09 04:30</td><td class="num">±5 min</td><td class="num">03:26–05:35</td><td>Cerro Tololo (Chile)</td><td class="num">42°</td></tr></tbody></table></div><h4>TIC 198412174</h4><div class="tbl"><table><thead><tr><th>Mid-transit</th><th>1σ</th><th>Window</th><th>Site</th><th>Min. alt.</th></tr></thead><tbody><tr><td class="num">2026-10-10 03:11</td><td class="num">±3 min</td><td class="num">02:23–04:00</td><td>McDonald (Texas)</td><td class="num">33°</td></tr><tr><td class="num">2026-10-19 20:44</td><td class="num">±3 min</td><td class="num">19:56–21:33</td><td>Teide (Tenerife)</td><td class="num">31°</td></tr><tr><td class="num">2027-02-09 11:11</td><td class="num">±3 min</td><td class="num">10:23–12:00</td><td>McDonald (Texas)</td><td class="num">37°</td></tr><tr><td class="num">2027-02-12 05:55</td><td class="num">±3 min</td><td class="num">05:07–06:43</td><td>Teide (Tenerife)</td><td class="num">41°</td></tr><tr><td class="num">2027-02-13 15:17</td><td class="num">±3 min</td><td class="num">14:29–16:05</td><td>Haleakala (Hawaii)</td><td class="num">35°</td></tr><tr><td class="num">2027-02-16 10:00</td><td class="num">±3 min</td><td class="num">09:12–10:49</td><td>McDonald (Texas)</td><td class="num">32°</td></tr><tr><td class="num">2027-02-19 04:44</td><td class="num">±3 min</td><td class="num">03:56–05:32</td><td>Teide (Tenerife)</td><td class="num">35°</td></tr><tr><td class="num">2027-03-13 10:33</td><td class="num">±3 min</td><td class="num">09:45–11:21</td><td>McDonald (Texas)</td><td class="num">48°</td></tr></tbody></table></div>
+
+</div></section><section class="row " id="what-each-candidate-needs"><div class="lab"><h2>What each candidate needs</h2></div><div class="body">
+<h3 id="toi-218-a-third-signal">TOI-218: a third signal</h3>
+<p><strong>Established.</strong> The signal is on TIC 32090583 in the pixels (2.2 ± 3.0″) and the near-twin wide-binary
+companion, Gaia DR3 4667466549703138304 at 13.5″, is excluded at 4.4σ; the two known TOIs localize to the
+same star. Gemini-South 'Zorro' speckle imaging from 2020 (on ExoFOP, PI S. Howell) reaches Δ = 4.4 mag
+at 562 nm and 5.5 mag at 832 nm at 0.5″. With that contrast curve and the pixel-excluded neighbours cleared,
+TRICERATOPS gives FPP = 1.4 × 10⁻⁵ and NFPP &lt; 10⁻⁵, below the thresholds Giacalone et al. (2021) use
+for statistical validation (FPP &lt; 0.015, NFPP &lt; 0.001).</p>
+<p><strong>Open.</strong> No ground-based light curve has seen the transit yet, and TFOP notes describe the host as a
+flaring (eruptive) variable. Of the 22 TFOP time-series observations on ExoFOP, the public photometry
+(27 AstroImageJ tables and one TRAPPIST light curve, all from observations up to September 2025) contains
+one light curve that covers more than half of a predicted transit: LCO-CTIO 1 m on 2018-12-03 (87% coverage, timing ±1.8 min). It starts at ingress with no
+pre-transit baseline and is inconclusive: the target-to-companion flux ratio dips by 1874 ± 608 ppm with
+a flat baseline and 586 ± 1221 ppm with a linear one, against 1273 ppm expected
+(<a href="https://github.com/Aidenn8/tess-planet-search/blob/research/scripts/18_archival_ground_check.py"><code>scripts/18_archival_ground_check.py</code></a>,
+<a href="https://github.com/Aidenn8/tess-planet-search/tree/research/results/hardening/archival/"><code>results/hardening/archival/</code></a>). TFOP's four observations of TOI-218 since
+October 2025 have no public photometry yet; checking them against this ephemeris costs nothing.</p>
+<p><strong>Observation that settles it.</strong> Photometry of a predicted transit with at least an hour of baseline on
+both sides, with apertures that separate the 13.5″ pair. At 1.3 ppt in a 56-minute transit this is
+within reach of a 2-m-class telescope; simultaneous multi-band photometry (e.g. LCO's MuSCAT4 at Siding
+Spring, which has observed TOI-218 for TFOP since 2024) also tests for colour-dependent depths. The
+companion would need a 0.13% eclipse to produce the signal, so the same data clear it directly.</p>
+<h3 id="tic-229689348-an-112-hour-orbit">TIC 229689348: an 11.2-hour orbit</h3>
+<p><strong>Established.</strong> On target in the pixels at the correct period with all 25 sectors (3.6 ± 3.3″); the
+55″ offset in NASA's DV report came from difference images that failed SPOC's own quality test. The
+nearest neighbour (9.7″, T = 15.9) is excluded at 4.6σ and the bright star SPOC's offset pointed towards
+(48.3″) at 8.0σ. FPP = 0.197, almost all of it a planet on an unresolved bound companion.</p>
+<p><strong>Observation that settles it.</strong> High-resolution imaging (AO or speckle) to detect or exclude a close
+companion. A seeing-limited check of the neighbours is straightforward: the 9.7″ star would need a
+0.73% eclipse. The transit itself (0.69 ppt, 32 min) is below the ~1 ppt general threshold of TFOP's seeing-limited
+photometry sub-group (SG1) for detecting a transit on the target
+(<a href="https://tsc.mit.edu/2019/talks/Karen%20Collins.pdf">Collins 2019</a>). Northern target (Dec +57°).</p>
+<h3 id="tic-149390648-a-crowded-field">TIC 149390648: a crowded field</h3>
+<p><strong>Established.</strong> On target (4.2 ± 3.6″), in agreement with SPOC's own difference-image offset; all 89
+Gaia neighbours in the ~100″ field are excluded at ≥ 3.5σ. FPP = 0.088, NFPP = 0.00093 with the
+pixel-excluded neighbours cleared. The only neighbour scenario left is TIC 149390646, a TIC entry with
+T = 17.0 at a position where Gaia DR3 lists only a G = 21.6 source.</p>
+<p><strong>Open.</strong> The pixels lose 1.47 ± 0.23 times the light the light-curve depth predicts, the highest ratio
+in the set, which in a crowded field can mean the SPOC crowding correction is imperfect. The first half of the data alone does not lock onto the period.</p>
+<p><strong>Observation that settles it.</strong> Seeing-limited photometry of a predicted transit covering the field:
+the least-excluded neighbour (14.7″, T = 17.4) would need a 2.8% eclipse. High-resolution imaging for the
+bound-companion scenarios. Southern target (Dec −62°).</p>
+<h3 id="tic-198412174-which-star">TIC 198412174: which star?</h3>
+<p><strong>Established.</strong> On or near the target (2.2 ± 3.5″); every neighbour beyond 18″ is excluded at ≥ 5.4σ.</p>
+<p><strong>Open.</strong> A T = 18.2 star 5.3″ away at position angle 115° is excluded at only 1.3σ: two sources this close
+are below the localization's resolution. TRICERATOPS (FPP 0.478) weighs a planet on an unresolved bound
+companion (48%) about equally with the target (43%), because the transit is short for this star.</p>
+<p><strong>Observation that settles it.</strong> Two independent observations. (1) Seeing-limited photometry that
+resolves the 5.3″ pair during a predicted transit: that star would need an ~11% eclipse, easily seen
+with a 1-m telescope in good seeing; a flat light curve on it clears it. (2) AO or speckle imaging to test
+for a bound companion. The 382-ppm transit on the target is too shallow for most ground-based
+photometry. Northern target (Dec +60°).</p>
+</div></section><section class="row " id="neighbours-that-could-produce-each-signal"><div class="lab"><h2>Neighbours that could produce each signal</h2></div><div class="body">
+<p>For each candidate, the Gaia DR3 stars in the localization field that are bright enough to produce the
+signal (required eclipse depth below 100%), least-excluded first. Separations and position angles (east
+of north) are from the target at the median TESS epoch; "pixels" is how strongly the TESS difference
+images exclude the star as the source, including a 1.5″ systematic floor. Full list:
+<a href="https://github.com/Aidenn8/tess-planet-search/blob/research/results/followup_planning/neighbours.csv"><code>results/followup_planning/neighbours.csv</code></a>
+(<a href="https://github.com/Aidenn8/tess-planet-search/blob/research/scripts/19_neighbour_checklist.py"><code>scripts/19_neighbour_checklist.py</code></a>). For signals shallower than
+about 1 ppt, SG1's aim is to check every Gaia star within 2.5′ of the target for a nearby eclipsing binary
+(Collins 2019); the localization field covers about 100″, so stars between 100″ and 150″ still need that
+check.</p>
+<p><strong>TOI-218</strong> (11 neighbours in the field; 5 could produce the signal; the first is the wide-binary companion)</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Gaia DR3</th>
+<th>sep</th>
+<th>PA</th>
+<th>G</th>
+<th>T</th>
+<th>eclipse needed</th>
+<th>pixels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4667466549703138304</td>
+<td>13.5″</td>
+<td>226°</td>
+<td>14.8</td>
+<td>13.6</td>
+<td>0.13%</td>
+<td>4.4σ</td>
+</tr>
+<tr>
+<td>4667466652782354176</td>
+<td>36.1″</td>
+<td>65°</td>
+<td>17.4</td>
+<td>17.0</td>
+<td>0.53%</td>
+<td>8.2σ</td>
+</tr>
+<tr>
+<td>4667466476687967488</td>
+<td>37.0″</td>
+<td>158°</td>
+<td>20.3</td>
+<td>19.9</td>
+<td>5.6%</td>
+<td>8.4σ</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>TIC 229689348</strong> (20 neighbours; 10 could produce the signal)</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Gaia DR3</th>
+<th>sep</th>
+<th>PA</th>
+<th>G</th>
+<th>T</th>
+<th>eclipse needed</th>
+<th>pixels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1422141810046979968</td>
+<td>9.7″</td>
+<td>49°</td>
+<td>16.4</td>
+<td>15.9</td>
+<td>0.73%</td>
+<td>4.6σ</td>
+</tr>
+<tr>
+<td>1422141805751675264</td>
+<td>22.2″</td>
+<td>148°</td>
+<td>20.7</td>
+<td>20.2</td>
+<td>22%</td>
+<td>6.7σ</td>
+</tr>
+<tr>
+<td>1422142462882048000</td>
+<td>25.3″</td>
+<td>267°</td>
+<td>18.7</td>
+<td>17.7</td>
+<td>1.7%</td>
+<td>7.2σ</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>TIC 149390648</strong> (89 neighbours; 54 could produce the signal)</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Gaia DR3</th>
+<th>sep</th>
+<th>PA</th>
+<th>G</th>
+<th>T</th>
+<th>eclipse needed</th>
+<th>pixels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4757656533594500352</td>
+<td>14.7″</td>
+<td>311°</td>
+<td>18.0</td>
+<td>17.4</td>
+<td>2.8%</td>
+<td>3.5σ</td>
+</tr>
+<tr>
+<td>4757656529296176896</td>
+<td>16.4″</td>
+<td>357°</td>
+<td>20.3</td>
+<td>20.1</td>
+<td>29%</td>
+<td>4.5σ</td>
+</tr>
+<tr>
+<td>4757656533592367872</td>
+<td>16.6″</td>
+<td>57°</td>
+<td>20.7</td>
+<td>20.5</td>
+<td>29%</td>
+<td>6.0σ</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>TIC 198412174</strong> (16 neighbours; 9 could produce the signal)</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Gaia DR3</th>
+<th>sep</th>
+<th>PA</th>
+<th>G</th>
+<th>T</th>
+<th>eclipse needed</th>
+<th>pixels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1437353828295869824</td>
+<td>5.3″</td>
+<td>115°</td>
+<td>18.6</td>
+<td>18.1</td>
+<td>11%</td>
+<td><strong>1.3σ</strong></td>
+</tr>
+<tr>
+<td>1437353858359596928</td>
+<td>18.3″</td>
+<td>12°</td>
+<td>20.3</td>
+<td>19.6</td>
+<td>17%</td>
+<td>5.4σ</td>
+</tr>
+<tr>
+<td>1437353789640128000</td>
+<td>35.2″</td>
+<td>146°</td>
+<td>20.5</td>
+<td>19.6</td>
+<td>3.2%</td>
+<td>6.3σ</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="row " id="reporting-the-candidates"><div class="lab"><h2>Reporting the candidates</h2></div><div class="body">
+<p><strong>ExoFOP community TOIs (CTOIs).</strong> ExoFOP paused community-candidate uploads on 2026-03-31 and reopened
+them on 2026-08-19 with two new conditions: candidates must first be published in a peer-reviewed
+journal with online access, and uploaders must be approved through ExoFOP's <em>Published Candidate Upload
+Request</em> form. A Research Note of the AAS qualifies only if the methodology used to detect and vet the
+candidate was previously published in a peer-reviewed journal and is cited by the note
+(<a href="https://exofop.ipac.caltech.edu/tess/news.php">ExoFOP news</a>,
+<a href="https://exofop.ipac.caltech.edu/tess/candidate_help.php">candidate upload help</a>). An upload file in
+ExoFOP's bulk format is ready in
+<a href="https://github.com/Aidenn8/tess-planet-search/blob/research/results/hardening/exofop/params_planet_DRAFT.txt"><code>results/hardening/exofop/params_planet_DRAFT.txt</code></a>;
+it needs the paper URL and the uploader's tag. Candidate numbers follow ExoFOP's convention: TIC 32090583.01
+and .02 are already used by TOI-218.01 and .02, so the new signal is TIC 32090583.03. Its period is not a
+multiple of either known period (ratios 4.90 and 3.89), so it is a new candidate rather than an
+additional parameter set for an existing one.</p>
+<p><strong>TESS Follow-up Observing Program (TFOP).</strong> Seeing-limited photometry (SG1), reconnaissance
+spectroscopy (SG2), high-resolution imaging (SG3), precise radial velocities (SG4) and space photometry
+(SG5) for TESS candidates are coordinated within TFOP's sub-groups
+(<a href="https://tess.mit.edu/followup/">TFOP</a>, <a href="https://tess.mit.edu/followup/apply-join-tfop/">how to join</a>).
+TOI-218 is already observed within TFOP for TOI-218.01 and .02 (22 time-series and two imaging entries
+on ExoFOP).</p>
+</div></section><section class="row " id="contact"><div class="lab"><h2>Contact</h2></div><div class="body">
+<p>Questions, corrections and observations are welcome through
+<a href="https://github.com/Aidenn8/tess-planet-search/issues">GitHub issues</a> on this repository.</p></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

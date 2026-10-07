@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Candidates · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Candidates · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 6 of 8</p><h1>Candidates</h1><p class="meta">four candidates and one false positive in detail</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>Five signals that are in no planet catalogue passed every light-curve test. After the pixel-level,
+statistical and pipeline checks of Chapters 4 and 5, four remain planet candidates and one is a nearby
+eclipsing binary. This chapter assembles the evidence for each. Full per-signal dossiers, with every
+number and figure, are in <a href="https://github.com/Aidenn8/tess-planet-search/tree/research/results/candidates/"><code>results/candidates/</code></a>; a draft ExoFOP community-TOI
+upload for the four candidates is in <a href="https://github.com/Aidenn8/tess-planet-search/tree/research/results/hardening/exofop/"><code>results/hardening/exofop/</code></a>.</p>
+<p>A candidate is a signal that has survived every test available from TESS data and is worth follow-up
+observations. None of these is a confirmed planet.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th></th>
+<th>TOI-218 (new signal)</th>
+<th>TIC 229689348</th>
+<th>TIC 149390648</th>
+<th>TIC 198412174</th>
+<th>TIC 294053492</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>verdict</td>
+<td>candidate (strongest)</td>
+<td>candidate</td>
+<td>candidate</td>
+<td>candidate (ambiguous host)</td>
+<td>nearby eclipsing binary</td>
+</tr>
+<tr>
+<td>period (d)</td>
+<td>2.1467982</td>
+<td>0.4653769</td>
+<td>2.8368867</td>
+<td>1.3901602</td>
+<td>1.0852647</td>
+</tr>
+<tr>
+<td>radius (R⊕)</td>
+<td>1.05 ± 0.06</td>
+<td>1.25 ± 0.08</td>
+<td>1.00 ± 0.07</td>
+<td>1.35 ± 0.11</td>
+<td>–</td>
+</tr>
+<tr>
+<td>T_eq (K)</td>
+<td>578</td>
+<td>1131</td>
+<td>581</td>
+<td>954</td>
+<td>–</td>
+</tr>
+<tr>
+<td>SNR</td>
+<td>11.1</td>
+<td>10.4</td>
+<td>9.1</td>
+<td>9.7</td>
+<td>7.9</td>
+</tr>
+<tr>
+<td>source offset</td>
+<td>2.2 ± 3.0″</td>
+<td>3.6 ± 3.3″</td>
+<td>4.2 ± 3.6″</td>
+<td>2.2 ± 3.5″</td>
+<td>21.6 ± 3.1″</td>
+</tr>
+<tr>
+<td>FPP (cleared)</td>
+<td>0.088</td>
+<td>0.197</td>
+<td>0.088</td>
+<td>0.478</td>
+<td>–</td>
+</tr>
+<tr>
+<td>prior status</td>
+<td>in no list</td>
+<td>SPOC TCE, never a TOI</td>
+<td>SPOC TCE, never a TOI</td>
+<td>SPOC TCE, never a TOI</td>
+<td>in no list</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+</div></section><section class="row " id="61-toi-218-a-third-transiting-signal"><div class="lab"><h2>TOI-218: a third transiting signal</h2><span class="no">6.1</span></div><div class="body">
+<p><strong>Star.</strong> TIC 32090583 = Gaia DR3 4667466549703138176; RA 58.42035°, Dec −68.73945°; T = 13.33;
+T_eff = 3249 ± 157 K, R⋆ = 0.285 ± 0.009 R☉, M⋆ = 0.259 M☉ (TIC v8.2); 52 pc; Gaia RUWE 1.12; 41 sectors
+(Sectors 1–98). TOI-218 already has two TOIs: TOI-218.01 (0.438 d) and TOI-218.02 (8.352 d).</p>
+<p><strong>Signal.</strong> 2.1467982 ± 0.0000019 d, depth 1273 ± 106 ppm, T₁₄ = 0.93 h, b = 0.51; R_p = 1.05 ± 0.06 R⊕,
+T_eq ≈ 578 K. Found by the iterative search after both known TOIs were masked. Its period is not a
+simple ratio of either known period (4.90 and 3.89). It matches no TOI, CTOI, confirmed planet,
+eclipsing binary or SPOC TCE.</p>
+<p><strong>Evidence.</strong></p>
+<ul>
+<li>437 transits with data; red-noise-aware SNR 11.1; recovered independently in both halves of the data
+  (SNR 11.0 and 8.4, same period).</li>
+<li>Odd and even transits agree (0.9σ); no secondary eclipse; no single transit carries more than 3% of the
+  signal; flat-bottomed shape consistent with a planet.</li>
+<li><strong>A wide binary.</strong> TOI-218 has a near-twin companion 13.5″ away: Gaia DR3 4667466549703138304, with the
+  same parallax (19.03 mas) and proper motion (139.9, 191.2 mas yr⁻¹) and only 0.17 mag fainter in the
+  TESS band. The two are blended in every TESS aperture. The pixel localization places the new signal on
+  TIC 32090583 (2.2 ± 3.0″) and excludes the companion at 4.4σ; the two known TOIs also come from
+  TIC 32090583 (companion excluded at 8.7σ and 6.8σ). Before the Gaia-ID fix described in the
+  repository history, this companion was missing from the candidate's neighbour table.</li>
+<li>The target loses 1.25 ± 0.18 times the light the light-curve depth predicts, within the range of
+  confirmed planets.</li>
+<li>TRICERATOPS: FPP = 0.41 from photometry alone, almost entirely the scenario that the planet orbits the
+  companion; with the companion cleared by the pixel localization, <strong>FPP = 0.088, NFPP &lt; 10⁻⁵</strong>; adding the
+  existing speckle imaging, <strong>FPP = 1.4 × 10⁻⁵, NFPP &lt; 10⁻⁵</strong> (below).</li>
+<li>Additional candidates in systems that already host candidates are statistically more likely to be
+  real (Lissauer et al. 2012).</li>
+</ul>
+<p><strong>Open questions.</strong> TFOP notes describe the host as an eruptive (flaring) variable and suspect that
+TOI-218.01 may be stellar variability. Flares are removed before the search, and the new signal is a
+periodic, flat-bottomed, 0.9-hour dip present in hundreds of transits and in both halves of the data,
+which does not resemble spot modulation or flaring. No ground-based light curve has yet seen the transit.
+ExoFOP lists 22 TFOP time-series observations of TOI-218, obtained for the two known TOIs, with public
+photometry for those taken before October 2025: 27 AstroImageJ tables, a TRAPPIST light curve and
+joint-fit subsets, all checked against this ephemeris (<code>scripts/18_archival_ground_check.py</code>). Only one,
+LCO-CTIO 1 m on 2018-12-03 (tag 1415), covers more than half of a predicted transit (87%, timing
+uncertainty ±1.8 min). It starts at ingress, with no pre-transit baseline, and the answer depends on the
+baseline model: the target-to-companion flux ratio dips by 1874 ± 608 ppm with a flat baseline and by
+586 ± 1221 ppm with a linear one, against 1273 ppm expected. It neither confirms nor rules out the signal.
+The four TFOP observations since October 2025 have no public photometry yet.</p>
+<p><strong>High-resolution imaging.</strong> ExoFOP also lists Gemini-South 'Zorro' speckle imaging of TOI-218
+(2020-11-27; PI S. Howell), with contrast limits of Δ = 4.4 mag (562 nm) and 5.5 mag (832 nm) at 0.5″;
+ExoFOP lists no detected companion. Adding the public 562-nm contrast curve to the cleared TRICERATOPS run gives
+<strong>FPP = 1.4 × 10⁻⁵ and NFPP &lt; 10⁻⁵</strong>, far below the thresholds Giacalone et al. (2021) use for
+validation (FPP &lt; 0.015, NFPP &lt; 0.001). This work does not call the planet validated: the host is a
+flaring star, the 2020 imaging was taken for the two known TOIs, and a ground-based detection of the
+transit is the standard independent check.</p>
+<p><strong>What would settle it.</strong> Ground-based photometry of a predicted transit that resolves the 13.5″ pair,
+with baseline on both sides: at 1.3 ppt the transit is within reach of a 2-m telescope such as LCO's
+MuSCAT4, which has observed TOI-218 for TFOP since 2024 (<code>FOLLOW_UP.md</code> lists observable windows). The
+TFOP team's own unpublished light curves of TOI-218 may already cover transits of the new signal.</p>
+<hr />
+</div></section><section class="row " id="62-tic-229689348-an-112-hour-orbit"><div class="lab"><h2>TIC 229689348: an 11.2-hour orbit</h2><span class="no">6.2</span></div><div class="body">
+<p><strong>Star.</strong> Gaia DR3 1422141810046979584; RA 263.23532°, Dec +57.09234°; T = 12.99; T_eff = 3365 ± 157 K,
+R⋆ = 0.430 ± 0.013 R☉, M⋆ = 0.425 M☉; 77 pc; RUWE 1.02; 25 sectors (Sectors 15–86).</p>
+<p><strong>Signal.</strong> 0.4653769 ± 0.0000005 d (11.17 hours), depth 693 ± 65 ppm, T₁₄ = 0.53 h, b = 0.80;
+R_p = 1.25 ± 0.08 R⊕; a = 0.0089 AU; T_eq ≈ 1130 K; 272 times Earth's insolation. An ultra-short-period
+(USP) candidate.</p>
+<p><strong>Evidence.</strong></p>
+<ul>
+<li>1,088 transits with data; SNR 10.4; both halves recover it (8.5 and 7.8); odd/even 1.0σ; no secondary;
+  depths in SAP and PDCSAP flux agree (670 and 658 ppm); the folded transit is flat-bottomed.</li>
+<li><strong>NASA's pipeline saw it.</strong> SPOC flagged it in three multi-sector runs (Sectors 14–50, 14–55, 14–86) but
+  it was never promoted to a TOI. SPOC's reported SNR (5.8, 18.4, 3.8) tracks the accuracy of SPOC's period
+  estimate in each run, not the signal (Chapter 5). In the best run SPOC's difference-image centroid put the
+  source 55 ± 10″ away, which may be why it was not promoted; none of that run's 22 per-sector difference
+  images passed SPOC's quality metric.</li>
+<li><strong>The pixels put it on the target.</strong> The joint localization at the correct period with all 25 sectors
+  (1,138 transit events) places the source 3.6 ± 3.3″ from the target and excludes the neighbours at 9.7″
+  (4.6σ) and 48.3″ (the bright star SPOC's offset points towards, 8.0σ). Synthetic eclipses planted on
+  those neighbours are correctly traced to them, so the method could have seen an off-target source here.
+  The pixel/light-curve depth ratio is 1.02 ± 0.15.</li>
+<li>TRICERATOPS: FPP = 0.199 with NFPP below 10⁻⁵ once the six pixel-excluded neighbours are cleared. The
+  planet-on-target scenario carries 68%; the remaining probability is almost all unresolved bound
+  companions (20% for a planet transiting a companion).</li>
+</ul>
+<p><strong>Open questions.</strong> The transit is short for this star, which the fit explains with b ≈ 0.80; the
+shape-only density leans towards a denser host (3.1 +1.4/−2.0 × the TIC value), which is what gives the
+companion scenarios their weight.</p>
+<p><strong>What would settle it.</strong> High-resolution imaging to exclude a close bound companion; ground-based
+photometry of a transit (a 0.07% dip on a T = 13 star is at the edge of what 1-m class telescopes
+achieve, but ruling out deep eclipses on the neighbours is straightforward). At about 1.3 R⊕ and 11 hours,
+it would join the small population of Earth-sized USP planets around M dwarfs.</p>
+<hr />
+</div></section><section class="row " id="63-tic-149390648"><div class="lab"><h2>TIC 149390648</h2><span class="no">6.3</span></div><div class="body">
+<p><strong>Star.</strong> Gaia DR3 4757656533594499840; RA 84.07329°, Dec −62.20426°; T = 13.36; T_eff = 3382 ± 157 K,
+R⋆ = 0.345 ± 0.010 R☉, M⋆ = 0.328 M☉; 74 pc; RUWE 1.23; 32 sectors (Sectors 2–96).</p>
+<p><strong>Signal.</strong> 2.8368867 ± 0.0000038 d, depth 798 ± 88 ppm, T₁₄ = 1.14 h, b = 0.51; R_p = 1.00 ± 0.07 R⊕;
+T_eq ≈ 581 K.</p>
+<p><strong>Evidence.</strong></p>
+<ul>
+<li>242 transits; SNR 9.1; odd/even 0.1σ; no secondary; SAP and PDCSAP depths agree (818 and 829 ppm).</li>
+<li>SPOC flagged it once (Sectors 1–96, SNR 8.5) and never promoted it. SPOC's difference-image offset was
+  2.2 ± 3.3″, consistent with the target, and this work's localization agrees (4.2 ± 3.6″), with every
+  neighbour excluded at more than 3σ even though the field is crowded (28 Gaia neighbours within 63″
+  bright enough to mimic the dip if they were eclipsing binaries).</li>
+<li>TRICERATOPS: FPP = 0.088 and NFPP = 0.00093 once 15 pixel-excluded neighbours are cleared. The last
+  neighbour scenario left is a TIC entry with no Gaia counterpart whose TIC brightness is inconsistent with
+  the G = 21.6 source Gaia sees there (Chapter 5).</li>
+</ul>
+<p><strong>Open questions.</strong> The first half of the data alone does not lock onto the period (SNR 5.4, at a
+different period), while the second half does (7.6). The target loses 1.47 ± 0.23 times the expected
+light, the highest ratio among the candidates; in a crowded field this can indicate an imperfect crowding
+correction in the PDCSAP light curve.</p>
+<p><strong>What would settle it.</strong> Ground-based photometry that resolves the crowded field during a transit.</p>
+<hr />
+</div></section><section class="row " id="64-tic-198412174"><div class="lab"><h2>TIC 198412174</h2><span class="no">6.4</span></div><div class="body">
+<p><strong>Star.</strong> Gaia DR3 1437353828295347712; RA 259.21165°, Dec +59.82059°; T = 11.82; T_eff = 3713 ± 157 K,
+R⋆ = 0.573 ± 0.017 R☉, M⋆ = 0.565 M☉; 77 pc; RUWE 1.21; 37 sectors (Sectors 14–86). The brightest and
+largest host in the set.</p>
+<p><strong>Signal.</strong> 1.3901602 ± 0.0000014 d, depth 382 ± 43 ppm, T₁₄ = 0.61 h, b = 0.93 (near-grazing);
+R_p = 1.35 ± 0.11 R⊕; T_eq ≈ 954 K.</p>
+<p><strong>Evidence.</strong></p>
+<ul>
+<li>557 transits; SNR 9.7; both halves recover it (7.6 and 7.4); odd/even 0.0σ; no secondary.</li>
+<li>SPOC flagged it in three runs (Sectors 14–50, 14–78, 14–86) with falling SNR (8.5, 6.0, 4.4); as for
+  TIC 229689348, the fall follows SPOC's period error, and at this work's period the light curve gives
+  SNR 10.2.</li>
+<li>The pixels place the source on or very near the target (2.2 ± 3.5″); every other neighbour (the next
+  nearest is 18″ away) is excluded.</li>
+</ul>
+<p><strong>Open questions.</strong> Two separate ambiguities.</p>
+<ul>
+<li>A T = 18.2 star 5.3″ from the target is excluded at only 1.3σ; it would need an ~11% eclipse. Two
+  sources this close are below the localization's resolution (Chapter 4).</li>
+<li>TRICERATOPS gives FPP = 0.478, dominated by a planet transiting an unresolved bound companion (48%)
+  rather than the target (43%). The transit is short for this star's size, which a smaller, denser host
+  would explain; the shape-only density (6.8 +9.4/−6.6 × TIC) leans the same way but is unconstrained.</li>
+</ul>
+<p><strong>What would settle it.</strong> High-resolution imaging (adaptive optics or speckle) to detect or exclude both
+a close bound companion and the 5.3″ star's contribution. Seeing-limited photometry that resolves the
+5.3″ pair can also test that star directly: it would need an ~11% eclipse, easy to see in a 1-m telescope. If a companion hosts the transit, the planet
+would be larger than 1.35 R⊕.</p>
+<hr />
+</div></section><section class="row " id="65-tic-294053492-a-nearby-eclipsing-binary"><div class="lab"><h2>TIC 294053492: a nearby eclipsing binary</h2><span class="no">6.5</span></div><div class="body">
+<p><strong>Star.</strong> Gaia DR3 5486535779627128448; RA 107.26759°, Dec −58.43336°; T = 13.43; 97 pc; 21 sectors.</p>
+<p><strong>Signal.</strong> 1.0852647 d, depth ~860 ppm in the light curve.</p>
+<p>This signal passed every light-curve test and was listed as a candidate in the first version of this
+work. Its light-curve cautions were mild: a somewhat V-shaped dip, a lower depth in SAP than in PDCSAP
+flux (833 vs. 1,107 ppm in the vetting measurement), a weaker second half of the data (SNR 4.8 vs. 8.3),
+and a crowded field with 17 Gaia neighbours bright enough to mimic the dip.</p>
+<p><strong>The pixels.</strong> The light loss lies <strong>21.6 ± 3.1″ north-east of the target</strong>, which is excluded as the
+source at 7.7σ. Localizing from the odd and even sectors separately gives the same off-target position
+(target excluded at 6.1σ and 6.8σ). More light goes missing than the target could lose for the observed
+depth (1.76 ×). The best-fit position lies 2.1″ from Gaia DR3 5486535775331400832, a G = 19.8 background
+star (parallax 1.2 mas) that would need a ~16% eclipse to produce the dip: an ordinary eclipsing binary.
+That star is fainter than the G &lt; 19.5 limit of the first localization run, which is why the limit was
+extended to G = 21.</p>
+<p><strong>The statistics.</strong> TRICERATOPS, without pixel information, also gives substantial weight to a neighbour
+(NFPP = 0.30) but attributes it to the bright star 18.4″ to the north-west, which the pixels exclude at
+8.3σ. The faint true source carries little prior probability in TRICERATOPS. The two approaches agree that
+the target is not the host and disagree about which neighbour is, and the pixel data are the direct
+measurement.</p>
+<p>This signal is reported as a false positive and is not included in the community-TOI draft.</p>
+<figure class="wide"><img alt="Localization maps" src="../assets/figures/fig06_localization_maps.png" /><figcaption><b>Figure 6 (repeated from Chapter 4).</b> Localization of the four candidates and of TIC 294053492.</figcaption></figure>
+</div></section><section class="row " id="66-follow-up-priorities"><div class="lab"><h2>Follow-up priorities</h2><span class="no">6.6</span></div><div class="body">
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>priority</th>
+<th>candidate</th>
+<th>most useful observation</th>
+<th>why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>TOI-218</td>
+<td>photometry of a predicted transit resolving the 13.5″ pair; TFOP's unpublished light curves checked against the new ephemeris</td>
+<td>strongest signal; meets TRICERATOPS's validation thresholds with the existing speckle imaging; third member of a known system</td>
+</tr>
+<tr>
+<td>2</td>
+<td>TIC 229689348</td>
+<td>high-resolution imaging; ground-based check of the 10″ and 48″ neighbours</td>
+<td>Earth-sized USP; SPOC's offset not reproduced</td>
+</tr>
+<tr>
+<td>3</td>
+<td>TIC 149390648</td>
+<td>seeing-limited photometry of the crowded field</td>
+<td>likely planet; crowding is the main remaining question</td>
+</tr>
+<tr>
+<td>4</td>
+<td>TIC 198412174</td>
+<td>adaptive-optics or speckle imaging; photometry resolving the 5.3″ neighbour</td>
+<td>host ambiguous between the target and a possible companion</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="row " id="references"><div class="lab"><h2>References</h2></div><div class="body">
+<ul>
+<li>Lissauer, J. J., et al. 2012, ApJ, 750, 112 (multiplicity boost for candidates in multi-candidate systems)</li>
+</ul></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">6 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="05-transit-fits-and-false-positive-probabilities.html">← Transit fits and false-positive probabilities</a><a class="cbtn" href="07-weak-signals.html">Weak signals →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Four Earth-sized planet candidates from a deep search of the longest-observed TESS M dwarfs</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Four Earth-sized planet candidates from a deep search of the longest-observed TESS M dwarfs">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="index.html">TESS M-dwarf deep search</a><div class="links"><a href="index.html" class=on>Overview</a><a href="writeup/index.html">Write-up</a><a href="follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><h1>Four Earth-sized planet candidates from a deep search of the longest-observed TESS M dwarfs</h1><p class="subtitle">A transit search of the 1,279 M dwarfs NASA's TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA's own pipeline.</p><p class="meta"><a href="https://github.com/Aidenn8">Aidenn8</a> · October 2026</p><div class="actions"><a class="cbtn" href="https://github.com/Aidenn8/tess-planet-search">code<span class="arr">↗</span></a><a class="cbtn" href="writeup/index.html">technical write-up</a><a class="cbtn" href="follow-up.html">follow-up guide</a><a class="cbtn" href="https://github.com/Aidenn8/tess-planet-search/tree/research/results/candidates/">candidate dossiers<span class="arr">↗</span></a><a class="cbtn" href="https://github.com/Aidenn8/tess-planet-search/blob/research/results/followup_planning/transits.csv">transits.csv<span class="arr">↗</span></a></div></header><section class="row overview" id="overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+  <p>M dwarfs near the TESS continuous viewing zones now have years of 2-minute photometry, enough to reach
+  Earth-sized planets. This work searched the 1,279 M dwarfs with at least 20 sectors of SPOC light
+  curves through Sector 107 and found four Earth-sized transit candidates that appear in no planet or candidate
+  catalogue: a third signal in the TOI-218 system and three signals NASA's pipeline had flagged but never
+  promoted, including an 11.2-hour orbit around TIC 229689348.</p>
+  <p>Each candidate was then tested beyond the light curve. A new pixel-level localization, validated on confirmed
+  planets, known nearby eclipsing binaries and eclipses planted in the real images, places all four on their
+  target stars and shows that a fifth first-pass candidate is an eclipsing binary 22″ away. With the neighbours
+  the pixels exclude treated as cleared, all four meet the TRICERATOPS <i>likely planet</i> criteria, and TOI-218's
+  new signal, the only one with existing high-resolution imaging, also falls below the validation thresholds. None
+  is yet confirmed; the remaining questions are exactly what ground-based photometry and high-resolution imaging
+  answer.</p>
+  <div class="stats"><div class="stat"><b>1,279</b><p>M dwarfs searched, with 20 to 44 sectors of 2-minute data each</p></div><div class="stat"><b>1,560</b><p>periodic signals detected and vetted</p></div><div class="stat"><b>25 <span>of</span> 26</b><p>confirmed transiting planets in range recovered</p></div><div class="stat"><b>4</b><p>Earth-sized candidates in no planet or candidate catalogue</p></div></div></div></section><section class="row " id="candidates"><div class="lab"><h2>Candidates</h2><span class="no">four signals, one false positive</span></div><div class="body">
+  <figure class="wide"><img src="assets/figures/fig07_transits.png" alt="Folded transit light curves of the four candidates" loading="lazy"><figcaption><b>The four candidates.</b> Phase-folded TESS photometry in 8-minute bins with the median MCMC transit model. Radii include the stellar-radius uncertainty.</figcaption></figure>
+  <div class="tbl"><table><thead><tr><th>Target</th><th>Period</th><th>Radius (R⊕)</th><th>T<sub>eq</sub></th><th>Source offset</th><th>FPP</th><th>Status before this work</th></tr></thead><tbody><tr class=""><td>TOI-218 <span class="muted">· TIC 32090583</span></td><td class="num">2.1468 d</td><td class="num">1.05 ± 0.06</td><td class="num">578 K</td><td class="num">2.2 ± 3.0″</td><td class="num">0.09</td><td>new signal</td></tr><tr class=""><td>TIC 229689348</td><td class="num">0.4654 d (11.2 h)</td><td class="num">1.25 ± 0.08</td><td class="num">1131 K</td><td class="num">3.6 ± 3.3″</td><td class="num">0.20</td><td>NASA TCE</td></tr><tr class=""><td>TIC 198412174</td><td class="num">1.3902 d</td><td class="num">1.35 ± 0.11</td><td class="num">954 K</td><td class="num">2.2 ± 3.5″</td><td class="num">0.48</td><td>NASA TCE</td></tr><tr class=""><td>TIC 149390648</td><td class="num">2.8369 d</td><td class="num">1.00 ± 0.07</td><td class="num">581 K</td><td class="num">4.2 ± 3.6″</td><td class="num">0.09</td><td>NASA TCE</td></tr><tr class="fp"><td>TIC 294053492</td><td class="num">1.0853 d</td><td class="num">–</td><td class="num">–</td><td class="num">21.6 ± 3.1″</td><td class="num">–</td><td>eclipsing binary</td></tr></tbody></table></div>
+  <p class="small muted">Source offset: where the light goes missing relative to the target, from the joint
+  pixel-level fit (1.5″ systematic floor included). FPP: TRICERATOPS false-positive probability with the neighbours
+  the pixels exclude treated as cleared, before high-resolution imaging (TOI-218 with its existing imaging:
+  FPP = 1.4 × 10⁻⁵). NASA TCE: flagged by NASA's SPOC pipeline as a Threshold Crossing Event but never promoted
+  to a TESS Object of Interest.</p>
+  <div class="cands"><div class="cand"><h3>TOI-218, third signal<span class="tag">strongest</span></h3><p class="fact">P <b>2.1468 d</b> · R<sub>p</sub> <b>1.05 ± 0.06 R⊕</b> · T<sub>eq</sub> <b>578 K</b> · FPP <b>0.088</b></p><ul><li>A third periodic signal beside TOI-218.01 and .02, in 437 transits and in both halves of the data.</li><li>TOI-218 has an equal-brightness wide-binary companion 13.5″ away; the pixels place all three signals on TOI-218 and exclude the companion at 4.4σ for the new one.</li><li>With the existing Gemini speckle imaging, FPP = 1.4 × 10⁻⁵, below TRICERATOPS's validation thresholds.</li><li>Open: flaring host; no ground-based light curve has yet seen the transit.</li></ul></div><div class="cand"><h3>TIC 229689348<span class="tag">11.2-hour orbit</span></h3><p class="fact">P <b>0.4654 d</b> · R<sub>p</sub> <b>1.25 ± 0.08 R⊕</b> · T<sub>eq</sub> <b>1131 K</b> · FPP <b>0.197</b></p><ul><li>Flat-bottomed, 1,088 transits; flagged three times by NASA's pipeline but never promoted.</li><li>NASA's 55″ source offset came from difference images that failed its own quality metric; the joint localization puts the source on the target (3.6 ± 3.3″).</li><li>Open: unresolved bound companions, which imaging would test.</li></ul></div><div class="cand"><h3>TIC 149390648</h3><p class="fact">P <b>2.8369 d</b> · R<sub>p</sub> <b>1.00 ± 0.07 R⊕</b> · T<sub>eq</sub> <b>581 K</b> · FPP <b>0.088</b></p><ul><li>Earth-sized; on target in a crowded field, in agreement with NASA's own offset.</li><li>NFPP 0.00093 once the 15 neighbours the pixels exclude are cleared.</li><li>Open: the first half of the data alone does not lock onto the period.</li></ul></div><div class="cand"><h3>TIC 198412174<span class="tag">host ambiguous</span></h3><p class="fact">P <b>1.3902 d</b> · R<sub>p</sub> <b>1.35 ± 0.11 R⊕</b> · T<sub>eq</sub> <b>954 K</b> · FPP <b>0.478</b></p><ul><li>Near-grazing (b ≈ 0.93); on or near the target.</li><li>A T = 18.2 star 5.3″ away is below the localization's resolution, and TRICERATOPS weighs a planet on an unseen companion (46%) about equally with the target (45%).</li><li>Open: needs adaptive-optics or speckle imaging.</li></ul></div></div></div></section><section class="row " id="search"><div class="lab"><h2>Search and vetting</h2></div><div class="body">
+  <p>Light curves are cleaned of flares, detrended with a robust biweight filter, and searched from 0.4 to 40 days.
+  Because eight years of data with year-long gaps would need a prohibitively fine coherent period grid, box least
+  squares runs on each observing season separately and the seasons' likelihoods are added: a real planet adds up
+  in every season, noise does not. Eighteen tests then look for eclipsing binaries, contamination, artefacts and
+  stellar variability, with noise measured at the transit's own timescale.</p>
+  <figure><img src="assets/figures/fig02_funnel.png" alt="Bar chart of signals remaining after each stage" loading="lazy"><figcaption><b>From signals to candidates.</b> Signals remaining after each stage.</figcaption></figure>
+  <p>The pipeline recovers 25 of 26 confirmed transiting planets around these stars, keeps 74% of 300 planets
+  injected into the real light curves (89% of 2–4 R⊕ planets inside 15 days), and produces no false candidates from
+  200 light curves turned upside down.</p>
+  <figure><img src="assets/figures/fig03_completeness.png" alt="Completeness as a function of planet radius" loading="lazy"><figcaption><b>Completeness.</b> Fraction of injected planets found and kept, by radius and period.</figcaption></figure></div></section><section class="row " id="localization"><div class="lab"><h2>Where the light goes missing</h2><span class="no">pixel-level localization</span></div><div class="body">
+  <p>TESS pixels are 21″ wide, so an eclipsing binary a few pixels away can leak a planet-sized dip into the
+  target's light curve. For every sector the images taken during transit are subtracted from those just before
+  and after, and all sectors are fitted together with NASA's pixel response function, calibrated per sector on Gaia
+  stars, to find where the light disappeared. Per-pixel errors come from fake transits at random times; position
+  errors include a 1.5″ floor measured on 46 sources of known position.</p>
+  <figure class="wide"><img src="assets/figures/fig06_localization_maps.png" alt="Localization maps for five signals" loading="lazy"><figcaption><b>Localization of the five signals.</b> Shading shows where the source can be (bright: allowed; dark: excluded); the dashed contour is the 3σ region; circles are Gaia DR3 stars scaled by brightness. TIC 294053492’s light loss lies on a faint star 22″ north-east.</figcaption></figure>
+  <p>The method was validated before it was trusted: all 11 confirmed planets tested come out on their
+  own star, all 3 signals the TESS Follow-up Observing Program had traced to nearby eclipsing binaries come
+  out off target, and 34 of 35 reliable synthetic eclipses planted in the real pixels are traced to the
+  correct star.</p>
+  <figure><img src="assets/figures/fig04_localization_validation.png" alt="Localization validation" loading="lazy"><figcaption><b>Validation.</b> Left: position errors of sources with known positions against the expectation. Right: how strongly the target is excluded, for confirmed planets, known nearby eclipsing binaries and this work’s signals.</figcaption></figure></div></section><section class="row " id="pipeline"><div class="lab"><h2>What NASA's pipeline saw</h2></div><div class="body">
+  <p>Three candidates were SPOC Threshold Crossing Events that never became TOIs. Their reported SNR fell as data
+  accumulated. Folding this work's light curves at each SPOC period reproduces the drop: a period error of a few
+  10<sup>−5</sup> d smears a sub-hour transit by hours over a 2,000-day baseline. The signals did not fade.</p>
+  <figure><img src="assets/figures/fig08_spoc_period_drift.png" alt="SNR versus trial period" loading="lazy"><figcaption><b>Period drift.</b> SNR of this work’s light curve versus trial period, with the periods SPOC adopted in each run.</figcaption></figure></div></section><section class="row " id="statistics"><div class="lab"><h2>How likely is each alternative?</h2><span class="no">statistical validation</span></div><div class="body">
+  <p>TRICERATOPS weighs a planet on the target against eclipsing binaries, unresolved companions, background stars
+  and resolved neighbours. It has no pixel information, so it is run twice: on TESS photometry alone, and with the
+  neighbours the localization excludes treated as cleared. For TOI-218 this removes the twin companion as a host
+  and lowers the FPP from 0.41 to 0.09. What remains for every candidate is unresolved bound
+  companions, which high-resolution imaging tests directly. TOI-218 already has such imaging: Gemini-South speckle
+  observations from 2020, taken for its two known TOIs. With that contrast curve, FPP = 1.4 × 10⁻⁵
+  and NFPP < 10⁻⁵, below the thresholds TRICERATOPS uses for validation (FPP &lt; 0.015,
+  NFPP &lt; 0.001). It is not called validated here, because the host flares and no ground-based light curve has yet
+  seen the transit.</p>
+  <figure><img src="assets/figures/fig09_triceratops.png" alt="TRICERATOPS scenario probabilities" loading="lazy"><figcaption><b>Scenario probabilities</b> from TESS photometry alone, with pixel-excluded neighbours cleared, and for TOI-218 with its existing speckle imaging.</figcaption></figure></div></section><section class="row " id="false-positive"><div class="lab"><h2>A false positive caught</h2></div><div class="body">
+  <p>TIC 294053492 (1.0853 d) passed every light-curve test and was a candidate in the first pass. In
+  the pixels its light loss lies 21.6 ± 3.1″ north-east of the target, which is
+  excluded at 7.7σ, independently in odd and even sectors. The best-fit position is
+  2.1″ from a G = 19.8 background star that would need a ~16%
+  eclipse: an ordinary eclipsing binary.</p></div></section><section class="row " id="weak"><div class="lab"><h2>Weak signals</h2></div><div class="body">
+  <p>Twenty-one weaker signals passed the rejecting tests with flags. The inverted light curves predict about 38
+  such false alarms in this sample, many cluster at 36–41-day periods where few transits exist, and six are not
+  reproduced in the pixels at all.</p>
+  <figure><img src="assets/figures/fig10_weak_periods.png" alt="Weak signal periods" loading="lazy"><figcaption><b>Weak-signal periods</b> in real data and in inverted data, which contain no planets.</figcaption></figure></div></section><section class="row " id="follow-up"><div class="lab"><h2>Follow-up</h2></div><div class="body">
+  <p>Each candidate's remaining question has a specific observation that answers it: seeing-limited photometry that
+  resolves the neighbours during a predicted transit, and adaptive-optics or speckle imaging for unresolved
+  companions. Ephemerides, upcoming observable transits from the Las Cumbres Observatory sites, neighbour
+  checklists and the current route for reporting candidates are in the <a href="follow-up.html">follow-up guide</a>.</p>
+  <div class="actions"><a class="cbtn" href="follow-up.html">follow-up guide</a><a class="cbtn" href="https://github.com/Aidenn8/tess-planet-search/blob/research/results/followup_planning/transits.csv">transits.csv<span class="arr">↗</span></a>
+  <a class="cbtn" href="https://github.com/Aidenn8/tess-planet-search/blob/research/results/followup_planning/neighbours.csv">neighbours.csv<span class="arr">↗</span></a></div></div></section><section class="row " id="writeup"><div class="lab"><h2>Technical write-up</h2><span class="no">eight chapters</span></div><div class="body"><ol class="chapters"><li><span class="n">01</span><div><a href="writeup/01-data-and-search.html">Data and search</a><span class="d">sample, cleaning, stacked seasonal BLS, crossmatch</span></div></li><li><span class="n">02</span><div><a href="writeup/02-vetting.html">Vetting</a><span class="d">red-noise-aware tests, thresholds, verdicts</span></div></li><li><span class="n">03</span><div><a href="writeup/03-sensitivity-and-reliability.html">Sensitivity and reliability</a><span class="d">known planets, 300 injections, 200 inverted light curves</span></div></li><li><span class="n">04</span><div><a href="writeup/04-pixel-level-localization.html">Pixel-level localization</a><span class="d">difference imaging with the SPOC PRF and its validation</span></div></li><li><span class="n">05</span><div><a href="writeup/05-transit-fits-and-false-positive-probabilities.html">Transit fits and false-positive probabilities</a><span class="d">MCMC, NASA's pipeline history, TRICERATOPS</span></div></li><li><span class="n">06</span><div><a href="writeup/06-candidates.html">Candidates</a><span class="d">four candidates and one false positive in detail</span></div></li><li><span class="n">07</span><div><a href="writeup/07-weak-signals.html">Weak signals</a><span class="d">21 weak signals and a pixel re-check</span></div></li><li><span class="n">08</span><div><a href="writeup/08-limitations-and-reproducibility.html">Limitations and reproducibility</a><span class="d">caveats, commands, compute, data</span></div></li></ol></div></section><section class="row " id="reproduce"><div class="lab"><h2>Reproducing</h2></div><div class="body">
+  <p>Everything is generated by numbered scripts from public data (about 56 GB from MAST), on a fanless MacBook
+  Air under a thermal guard. Commands, seeds and compute times are in
+  <a href="writeup/08-limitations-and-reproducibility.html">Chapter 8</a>.</p>
+<pre><code>uv venv --python 3.12 .venv &amp;&amp; uv pip install --python .venv/bin/python -r requirements.txt
+.venv/bin/python -m pytest tests/</code></pre></div></section><section class="row " id="cite"><div class="lab"><h2>Citation</h2></div><div class="body"><pre><code>@misc{tess_mdwarf_deep_search_2026,
+  author       = {Aidenn8},
+  title        = {Four Earth-sized planet candidates from a deep search of the longest-observed TESS M dwarfs},
+  year         = {2026},
+  howpublished = {\url{https://github.com/Aidenn8/tess-planet-search}},
+  note         = {Version of October 2026}
+}</code></pre></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

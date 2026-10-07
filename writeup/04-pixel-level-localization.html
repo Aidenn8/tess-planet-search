@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pixel-level localization · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Pixel-level localization · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 4 of 8</p><h1>Pixel-level localization</h1><p class="meta">difference imaging with the SPOC PRF and its validation</p></header><section class="row overview"><div class="lab"><h2>Overview</h2></div><div class="body">
+<p>A light curve records the total light in a small aperture. TESS pixels are 21″ across, so several stars
+usually share that aperture, and an eclipsing binary a few pixels away can leak a planet-sized dip into
+the target's light curve. The light curve cannot distinguish the two cases; the pixels can, because each
+star spreads its light over the detector in a known pattern centred on its own position. This chapter
+describes a method that measures <em>where on the sky</em> the light goes missing during transit, how its
+errors were calibrated, and how it performed on cases whose answer is known
+(<code>tess_search/localize.py</code>, <code>scripts/12_localize.py</code>).</p>
+</div></section><section class="row " id="41-data"><div class="lab"><h2>Data</h2><span class="no">4.1</span></div><div class="body">
+<p>For every signal localized, all SPOC target pixel files (TPFs) of the star are used: 20–42 sectors per
+star, typically 11 × 11-pixel stamps at 2-minute cadence (about 47 MB per sector; 44 GB in total for the
+candidates, the test stars and the weak signals). Only cadences with <code>QUALITY = 0</code> and finite flux in
+every pixel are kept. Flares are removed per sector by running the light-curve flare detector (Chapter 1)
+on the summed aperture flux; a flare inside an in-transit window would otherwise appear as a strongly
+negative difference image that no dimming source can explain.</p>
+</div></section><section class="row " id="42-where-each-star-falls-on-the-pixels"><div class="lab"><h2>Where each star falls on the pixels</h2><span class="no">4.2</span></div><div class="body">
+<p>Each sector is calibrated independently.</p>
+<ul>
+<li><strong>Stars.</strong> All Gaia DR3 sources (Gaia Collaboration 2023) within 150″ and brighter than G = 21 are
+  retrieved from VizieR (I/355/gaiadr3). Their positions are moved from the Gaia epoch (2016.0) to the
+  sector's mid-time with their proper motions, which matters for nearby M dwarfs moving up to several
+  arcseconds over the mission. TESS magnitudes come from G and BP − RP (Stassun et al. 2019), and
+  fluxes from the TESS zero point (15,000 e⁻ s⁻¹ at T = 10).</li>
+<li><strong>Pixel response.</strong> The SPOC pixel response function (PRF) models for the sector's camera and CCD are
+  interpolated to the stamp's detector position (<code>TESS_PRF</code>, Bell &amp; Higgins 2022), giving, for any
+  sub-pixel location, the fraction of a point source's light in each stamp pixel.</li>
+<li><strong>Image fit.</strong> The median image of the sector is fitted as the sum of every star's PRF scaled by its
+  catalogue flux, with four free parameters: a shared pixel shift (Δx, Δy), a flux scale and a constant
+  background. The shift absorbs the small errors of the TPF's world coordinate system. Typical fitted
+  shifts are below 0.07 pixel (1.5″). Stamps whose model residual exceeds 50% of the image flux are
+  skipped.</li>
+</ul>
+</div></section><section class="row " id="43-difference-images"><div class="lab"><h2>Difference images</h2><span class="no">4.3</span></div><div class="body">
+<p>For a signal with period P, epoch t₀ and duration T₁₄, every transit event in a sector gives a
+difference image</p>
+<div class="arithmatex">\[\Delta_e = \tfrac{1}{2}\left(\bar F_{\rm before} + \bar F_{\rm after}\right) - \bar F_{\rm in},\]</div>
+<p>where <span class="arithmatex">\(\bar F_{\rm in}\)</span> averages the cadences of the transit core (|t − t_c| &lt; 0.4 T₁₄) and
+<span class="arithmatex">\(\bar F_{\rm before}\)</span>, <span class="arithmatex">\(\bar F_{\rm after}\)</span> average windows of width max(T₁₄, 1 h) beginning 0.75 T₁₄
+before and after the centre. Averaging both sides cancels slow linear drifts. Positive pixels lost light
+during transit. An event is used only if it has at least max(3, half the expected) in-transit cadences
+and at least three cadences on each side; events whose summed in-aperture change is a &gt; 5 MAD outlier
+among the sector's events (residual flares, glitches) are dropped. The sector's difference image is the
+mean of its events.</p>
+<p><strong>Per-pixel uncertainties</strong> come from <em>null events</em>: the same measurement repeated at up to 60 random
+times per sector whose windows do not touch any transit. The robust scatter of the null images is the
+noise of a single event at the transit's own timescale, including red noise and pointing jitter; the
+error of the sector mean is that scatter divided by √n_events. This works for long periods with only one
+or two transits per sector, where scatter between transits cannot be measured.</p>
+</div></section><section class="row " id="44-joint-fit-of-the-source-position"><div class="lab"><h2>Joint fit of the source position</h2><span class="no">4.4</span></div><div class="body">
+<p>All sectors are fitted together. For a trial sky position the model of sector s's difference image is</p>
+<div class="arithmatex">\[\Delta_s = A\,\mathrm{PRF}_s(x_s, y_s) + c_s ,\]</div>
+<p>with one light-loss amplitude A (e⁻ s⁻¹) shared by all sectors, because a star loses the same light in
+every sector, and a per-sector constant c_s for any background change. (x_s, y_s) is the trial position
+mapped into sector s's pixels, including that sector's calibrated shift. A and the c_s enter linearly
+and are solved in closed form, so each trial position costs one χ² evaluation summed over all pixels of
+all sectors.</p>
+<p>Trial positions are offsets east and north of the target, <strong>co-moving with the target</strong>, so a
+high-proper-motion host stays at the origin in every sector. They are scanned on a 5″ grid out to ±100″,
+then on a 1″ grid around the minimum. In addition each Gaia star is evaluated along its own
+proper-motion track. The best χ² of the grid and the stars is the reference, and</p>
+<div class="arithmatex">\[\Delta\chi^2_k = \frac{\chi^2_k - \chi^2_{\min}}{\max(\chi^2_\nu, 1)}\]</div>
+<p>measures how strongly position k (or star k) is excluded, with the errors inflated whenever the fit's
+reduced χ² exceeds one. The statistical 68% region is the area where Δχ² &lt; 2.30 (two parameters).</p>
+</div></section><section class="row " id="45-systematic-error-floor"><div class="lab"><h2>Systematic error floor</h2><span class="no">4.5</span></div><div class="body">
+<p>The PRF models and the sky-to-pixel calibration are not perfect, so a position error floor is added in
+quadrature: for a statistical one-dimensional error σ_stat and floor σ_sys,</p>
+<div class="arithmatex">\[\Delta\chi^2_{\rm eff} = \Delta\chi^2\,\frac{\sigma_{\rm stat}^2}{\sigma_{\rm stat}^2 + \sigma_{\rm sys}^2},\]</div>
+<p>and exclusion significances are the two-sided Gaussian equivalents of Δχ²_eff for two degrees of freedom.</p>
+<p>The floor was measured, not assumed. Among the validation runs below there are 46 cases whose true source
+is known (confirmed planets on their host, and synthetic eclipses planted at known positions). A floor of
+0.59″ makes their mean squared normalized miss equal to the two-dimensional expectation; a floor of 1.4″
+is the smallest for which 95% of them fall inside their 2σ region. <strong>1.5″ is adopted.</strong> With it the
+position errors are conservative: the known sources sit closer to their true positions than the errors
+predict (Figure 4, left).</p>
+</div></section><section class="row " id="46-validation"><div class="lab"><h2>Validation</h2><span class="no">4.6</span></div><div class="body">
+<h3 id="confirmed-planets-and-known-false-positives">Confirmed planets and known false positives</h3>
+<p>Every confirmed planet tested comes out on its own host, and every signal that TFOP had traced to a
+nearby eclipsing binary comes out off target:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>test case</th>
+<th>signal</th>
+<th>sectors</th>
+<th>offset from target</th>
+<th>target excluded at</th>
+<th>reduced χ²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>confirmed planet</td>
+<td>L 98-59 b</td>
+<td>27</td>
+<td>1.0 ± 2.3″</td>
+<td>0.2σ</td>
+<td>1.28</td>
+</tr>
+<tr>
+<td></td>
+<td>L 98-59 c</td>
+<td>27</td>
+<td>0.0 ± 2.3″</td>
+<td>0.0σ</td>
+<td>1.19</td>
+</tr>
+<tr>
+<td></td>
+<td>L 98-59 d</td>
+<td>27</td>
+<td>0.0 ± 2.3″</td>
+<td>0.0σ</td>
+<td>1.15</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-700 b</td>
+<td>37</td>
+<td>4.1 ± 3.4″</td>
+<td>1.1σ</td>
+<td>1.28</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-700 c</td>
+<td>30</td>
+<td>0.0 ± 2.3″</td>
+<td>0.0σ</td>
+<td>1.20</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-700 d</td>
+<td>22</td>
+<td>1.0 ± 3.4″</td>
+<td>0.1σ</td>
+<td>1.26</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-1756 b</td>
+<td>20</td>
+<td>3.2 ± 2.7″</td>
+<td>1.2σ</td>
+<td>1.20</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-2084 b</td>
+<td>33</td>
+<td>1.0 ± 2.7″</td>
+<td>0.2σ</td>
+<td>1.11</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-2094 b</td>
+<td>34</td>
+<td>0.0 ± 2.9″</td>
+<td>0.0σ</td>
+<td>1.03</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-5728 b</td>
+<td>30</td>
+<td>1.4 ± 3.3″</td>
+<td>0.3σ</td>
+<td>1.21</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-6000 b</td>
+<td>33</td>
+<td>4.5 ± 2.9″</td>
+<td>1.5σ</td>
+<td>1.01</td>
+</tr>
+<tr>
+<td>TFOP nearby EB</td>
+<td>TOI-419.01</td>
+<td>32</td>
+<td>26.8 ± 2.3″</td>
+<td>&gt; 37σ</td>
+<td>1.52</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-2084.02</td>
+<td>33</td>
+<td>13.0 ± 2.5″</td>
+<td>7.4σ</td>
+<td>1.12</td>
+</tr>
+<tr>
+<td></td>
+<td>TOI-2283.01</td>
+<td>42</td>
+<td>28.5 ± 6.2″</td>
+<td>3.5σ</td>
+<td>1.39</td>
+</tr>
+</tbody>
+</table></div>
+<p>The off-target cases also land on plausible sources. TOI-2084.02 coincides with a T = 18.2 star 14″
+east of the target that would need a 24% eclipse. TOI-2283.01 points 28″ to the north-north-west,
+where TFOP's own note reads "possible offset towards another star to the north", and coincides with a
+T = 14.5 star there. TOI-419.01, which TFOP retired with the note "may be on TIC 279251647", localizes
+onto a fainter T = 16.5 star (Gaia DR3 5480636006390944000) 21″ from the target that would need a 17%
+eclipse; TIC 279251647 itself lies 11.8″ from the best position and is excluded at 24σ. Separating two
+sources 12″ apart is well within the method's resolution, so this result suggests a different host for
+TOI-419.01's eclipses than the one TFOP tentatively named.</p>
+<figure><img alt="Localization validation" src="../assets/figures/fig04_localization_validation.png" /><figcaption><b>Figure 4.</b> Left: distribution of position errors of 46 sources of known position, normalized by the
+predicted error (1.5″ floor included), against the two-dimensional Gaussian expectation. Right: how
+strongly the target is excluded as the source, for confirmed planets, TFOP nearby eclipsing binaries
+and this work's five signals.</figcaption></figure>
+<h3 id="synthetic-eclipses-in-the-real-pixels">Synthetic eclipses in the real pixels</h3>
+<p>For each candidate star, and for one confirmed-planet star of each test system, synthetic eclipses were
+planted into the real pixel data: once on the target, and once on each of up to three neighbours that
+could most easily mimic the signal, with the eclipse depth chosen so that the diluted dip in the
+target's aperture equals the observed depth (required neighbour eclipse depths 0.1–32%). A box-shaped
+eclipse of the neighbour's PRF, scaled to the required light loss, is subtracted from every in-eclipse
+cadence at a period of 1.3713 × the signal's period, so it does not coincide with the real transits.</p>
+<ul>
+<li>39 eclipses were planted (12 on targets, 27 on neighbours 5.3–83″ away).</li>
+<li>35 fits are reliable (reduced χ² &lt; 2). Of these, <strong>34 are attributed to the correct star</strong>.</li>
+<li>For 22 of the 24 reliable neighbour injections, the target is excluded at more than 3σ. The two
+  exceptions are faint neighbours 9.6″ and 14.7″ away that would need 28% and 3% eclipses; there the target is
+  excluded at 2.7–2.8σ.</li>
+<li>The one misattribution is the target injection on TIC 198412174, assigned to a T = 18.2 star 5.3″ from
+  the target: two sources that close are below the method's resolution.</li>
+</ul>
+<h3 id="a-failure-mode-and-how-it-is-flagged">A failure mode, and how it is flagged</h3>
+<p>The four injections around TOI-6000 returned poor fits (reduced χ² 3.4–3.5), and the one on the target
+was localized 126″ away. Inspecting the difference images showed why: a bright neighbour in the stamp is
+a variable star whose brightness happens to vary coherently at the injected period (1.3713 × 0.449 d),
+appearing as a ±10σ signal of alternating sign from sector to sector. The model assumes a single source
+changes brightness in step with the transit ephemeris; a second, commensurate variable breaks that
+assumption. Because the failure shows up as a poor fit, every localization with reduced χ² ≥ 2 is
+flagged unreliable. All four flagged runs are TOI-6000 injections; the real TOI-6000 b signal, at a
+non-commensurate period, fits normally (reduced χ² 1.01) and localizes on target. No candidate is
+affected (reduced χ² 1.06–1.16).</p>
+</div></section><section class="row " id="47-second-test-is-the-light-loss-the-right-size"><div class="lab"><h2>Second test: is the light loss the right size?</h2><span class="no">4.7</span></div><div class="body">
+<p>Localization asks where the light goes; a complementary test asks how much. If the target hosts a
+transit of depth δ and its total flux is F⋆, it must lose δF⋆ in the difference images. The ratio</p>
+<div class="arithmatex">\[r = \frac{A_{\rm target}}{\delta\,F_\star}\]</div>
+<p>of the amplitude fitted at the target's position to that prediction is about one for a real on-target
+transit, and near zero for a dip that exists in the processed light curve but not in the pixels (a
+light-curve artefact). Across the 11 confirmed planets r spans 0.85–1.29 (standard deviation 0.12);
+that scatter, which reflects aperture and crowding corrections, is added to every ratio's error.</p>
+<figure><img alt="Pixel depth ratio" src="../assets/figures/fig05_depth_ratio.png" /><figcaption><b>Figure 5.</b> Pixel-to-light-curve depth ratio for confirmed planets, the four candidates and the 21 weak
+signals (Chapter 7). The band is the range spanned by confirmed planets.</figcaption></figure>
+<p>All four candidates are consistent with one (0.80 ± 0.13 to 1.47 ± 0.23) and are detected in the pixels
+at 8.7–13σ. The weak signals behave differently: six fall more than 3σ below one, i.e. their
+light-curve dips are not reproduced in the pixels (Chapter 7).</p>
+</div></section><section class="row " id="48-results-for-this-works-signals"><div class="lab"><h2>Results for this work&#x27;s signals</h2><span class="no">4.8</span></div><div class="body">
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>signal</th>
+<th>sectors</th>
+<th>transits</th>
+<th>offset from target</th>
+<th>target excluded at</th>
+<th>nearest neighbour excluded at</th>
+<th>depth ratio</th>
+<th>reduced χ²</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TOI-218 (TIC 32090583)</td>
+<td>41</td>
+<td>428</td>
+<td>2.2 ± 3.0″</td>
+<td>0.6σ</td>
+<td>4.4σ (13.5″, wide-binary companion)</td>
+<td>1.25 ± 0.18</td>
+<td>1.08</td>
+</tr>
+<tr>
+<td>TIC 229689348</td>
+<td>25</td>
+<td>1,138</td>
+<td>3.6 ± 3.3″</td>
+<td>0.7σ</td>
+<td>4.6σ (9.7″)</td>
+<td>1.02 ± 0.15</td>
+<td>1.12</td>
+</tr>
+<tr>
+<td>TIC 149390648</td>
+<td>32</td>
+<td>234</td>
+<td>4.2 ± 3.6″</td>
+<td>1.4σ</td>
+<td>all &gt; 3σ</td>
+<td>1.47 ± 0.23</td>
+<td>1.06</td>
+</tr>
+<tr>
+<td>TIC 198412174</td>
+<td>37</td>
+<td>546</td>
+<td>2.2 ± 3.5″</td>
+<td>0.4σ</td>
+<td>1.3σ (5.3″, T = 18.2)</td>
+<td>0.80 ± 0.13</td>
+<td>1.16</td>
+</tr>
+<tr>
+<td>TIC 294053492</td>
+<td>21</td>
+<td>419</td>
+<td><strong>21.6 ± 3.1″</strong></td>
+<td><strong>7.7σ</strong></td>
+<td>source on a G = 19.8 star</td>
+<td>–</td>
+<td>1.11</td>
+</tr>
+</tbody>
+</table></div>
+<p>Each candidate was also localized from the odd-numbered and even-numbered sectors separately. The four
+on-target signals stay on target in both halves (target excluded at ≤ 1.8σ in every half); TIC 294053492
+is off target in both halves independently (6.1σ and 6.8σ).</p>
+<figure class="wide"><img alt="Localization maps" src="../assets/figures/fig06_localization_maps.png" /><figcaption><b>Figure 6.</b> Where the light goes missing. Shading shows how strongly each position is excluded as the
+source (dark: allowed); the dashed contour is the 3σ region. Circles are Gaia DR3 stars sized by
+brightness, + the target and × the best-fit source position.</figcaption></figure>
+<p>The same method shows that all three signals in the TOI-218 system come from TIC 32090583 and not its
+equal-brightness wide-binary companion 13.5″ away: the companion is excluded at 8.7σ for TOI-218.01,
+6.8σ for TOI-218.02 and 4.4σ for the new signal.</p>
+</div></section><section class="row " id="49-comparison-with-spocs-difference-image-centroids"><div class="lab"><h2>Comparison with SPOC&#x27;s difference-image centroids</h2><span class="no">4.9</span></div><div class="body">
+<p>NASA's SPOC Data Validation (Twicken et al. 2018) also fits difference images, one sector at a time,
+and reports a multi-sector mean centroid offset. For the three candidates that were SPOC TCEs, the
+relevant DV reports were retrieved from MAST and parsed (<code>tess_search/spoc_dv.py</code>). In all five relevant
+runs, none of the 135 per-sector difference images passed SPOC's own quality metric, and in two runs
+SPOC's period was far enough off to smear the transit (Chapter 5). The 55″ offset SPOC reported for TIC
+229689348 in its Sectors 14–55 run is therefore not a reliable localization; the joint fit here, at the
+correct period with all 25 sectors, places the source on the target and excludes the bright star 48.3″
+away that the SPOC offset points towards at 8.0σ.</p>
+</div></section><section class="row " id="references"><div class="lab"><h2>References</h2></div><div class="body">
+<ul>
+<li>Bell, K. J., &amp; Higgins, M. E. 2022, <code>TESS_PRF</code> (Astrophysics Source Code Library)</li>
+<li>Gaia Collaboration, Vallenari, A., et al. 2023, A&amp;A, 674, A1</li>
+<li>Stassun, K. G., et al. 2019, AJ, 158, 138</li>
+<li>Twicken, J. D., et al. 2018, PASP, 130, 064502 (SPOC Data Validation)</li>
+</ul></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">4 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="03-sensitivity-and-reliability.html">← Sensitivity and reliability</a><a class="cbtn" href="05-transit-fits-and-false-positive-probabilities.html">Transit fits and false-positive probabilities →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>

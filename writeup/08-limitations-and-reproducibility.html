@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations and reproducibility · TESS M-dwarf deep search</title>
+<meta name="description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:title" content="Limitations and reproducibility · TESS M-dwarf deep search">
+<meta property="og:description" content="A transit search of the 1,279 M dwarfs NASA&#x27;s TESS has observed the longest, with every candidate checked in the light curve, in the pixels, statistically, and against NASA&#x27;s own pipeline.">
+<meta property="og:image" content="https://aidenn8.github.io/tess-planet-search/assets/figures/fig07_transits.png">
+<meta property="og:type" content="website">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script>window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"]]},options:{processHtmlClass:"arithmatex"}};</script><script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+<div class="page">
+<nav class="top"><a class="brand" href="../index.html">TESS M-dwarf deep search</a><div class="links"><a href="../index.html">Overview</a><a href="../writeup/index.html" class=on>Write-up</a><a href="../follow-up.html">Follow-up</a><a href="https://github.com/Aidenn8/tess-planet-search">Code</a></div></nav>
+<header class="titleblock"><p class="eyebrow">Chapter 8 of 8</p><h1>Limitations and reproducibility</h1><p class="meta">caveats, commands, compute, data</p></header><section class="row " id="81-limitations"><div class="lab"><h2>Limitations</h2><span class="no">8.1</span></div><div class="body">
+<p><strong>Scope of the search.</strong></p>
+<ul>
+<li>Only stars with SPOC 2-minute photometry in at least 20 sectors, T ≤ 13.5 and TIC contamination ratio
+  ≤ 0.2 were searched. Fainter, more crowded and less-observed M dwarfs, and full-frame-image photometry,
+  are outside the sample.</li>
+<li>Periods of 0.4–40 days with at least three observed transits. Sensitivity falls steeply below 1 R⊕
+  (20% of injected planets found and kept) and towards long periods (Chapter 3).</li>
+<li>Catalogue crossmatches reflect the TOI, CTOI, confirmed-planet, eclipsing-binary and SPOC TCE lists as
+  downloaded on 2026 October 4. A signal labelled new may have been reported since.</li>
+</ul>
+<p><strong>Vetting.</strong></p>
+<ul>
+<li>Thresholds were tuned on a small validation set (11 stars with known planets) and checked with
+  injection–recovery and inverted light curves; they are not the TESS team's thresholds.</li>
+<li>Some rules were refined while the search ran; all stored results were re-classified with the final
+  rules so that every star is judged alike, but the rules were not frozen before the search began.</li>
+<li>The light-curve centroid test is weak for dips of ~0.1%; the pixel-level localization replaces it for
+  the signals that matter.</li>
+</ul>
+<p><strong>Pixel-level localization.</strong></p>
+<ul>
+<li>Sources about 5″ apart cannot be separated (TIC 198412174's neighbour 5.3″ away).</li>
+<li>The model assumes that only one source in the stamp varies in step with the transit ephemeris. A
+  second variable star with a commensurate period breaks this; such fits are flagged by a reduced
+  χ² ≥ 2 (Chapter 4), but a weaker version of the same effect would not be flagged.</li>
+<li>Position errors include a 1.5″ systematic floor calibrated on 46 known cases; the calibration sample
+  is dominated by bright planet hosts and by synthetic eclipses in the candidates' own fields.</li>
+<li>Gaia DR3 is complete only to G ≈ 21; fainter blended sources are not in the star list, although the
+  position-grid fit does not need them to localize the light loss.</li>
+</ul>
+<p><strong>Transit parameters.</strong></p>
+<ul>
+<li>Stellar parameters come from TIC v8.2 (Mann et al. relations for M dwarfs). The 5% mass uncertainty
+  is assumed rather than catalogued. Radii carry the TIC radius error; systematic errors in the stellar
+  radius scale would shift all planet radii together.</li>
+<li>Detrending choices move radii: by 1–4% for the candidates' short transits, and by up to ~18% for the
+  3.2-hour transit of TOI-700 d (Chapter 5).</li>
+<li>Orbits are assumed circular; limb darkening uses broad generic M-dwarf priors; transit-timing
+  variations are not modelled.</li>
+<li>The shape-only stellar-density check is weak, as the L 98-59 c test shows.</li>
+</ul>
+<p><strong>Statistical validation.</strong></p>
+<ul>
+<li>Only TOI-218 has public high-resolution imaging; for the other three, unresolved companions are
+  constrained only by Gaia and the reported FPPs are upper-end values. TOI-218 falls below the numerical
+  validation thresholds once its 2020 speckle contrast curve is included, but is not called validated
+  (Chapter 6).</li>
+<li>The field-star population was queried from VizieR rather than the ESA Gaia archive, using TRICERATOPS's
+  own conversion from Gaia photometry to stellar properties.</li>
+<li>Treating pixel-excluded neighbours as cleared is analogous to clearing by ground-based photometry, but
+  it is this work's own method; the TESS-only FPPs are reported alongside.</li>
+</ul>
+<p><strong>Status.</strong> The four candidates are signals that survived every test available from TESS data. They are
+not confirmed planets. Confirmation needs ground-based photometry, high-resolution imaging, and
+radial-velocity measurements or a full statistical validation.</p>
+</div></section><section class="row " id="82-reproducing-the-results"><div class="lab"><h2>Reproducing the results</h2><span class="no">8.2</span></div><div class="body">
+<h3 id="environment">Environment</h3>
+<p>Python 3.12 with two virtual environments managed by <a href="https://docs.astral.sh/uv/"><code>uv</code></a>: the main one
+for everything except TRICERATOPS, which pins NumPy 1.x and runs separately.</p>
+<pre><code class="language-bash">uv venv --python 3.12 .venv &amp;&amp; uv pip install --python .venv/bin/python -r requirements.txt
+uv venv --python 3.12 .venv-tri &amp;&amp; uv pip install --python .venv-tri/bin/python -r requirements-triceratops.txt
+</code></pre>
+<p>Principal packages: NumPy 2.5, SciPy 1.18, Astropy 8.0, Astroquery 0.4.11, pandas 3.0, wotan 1.10,
+batman 2.5.3, emcee 3.1.6, TESS_PRF 0.1.3, lightkurve 2.5.1, Matplotlib 3.11; TRICERATOPS 1.1.0 (with
+NumPy 1.26).</p>
+<h3 id="pipeline">Pipeline</h3>
+<pre><code class="language-bash"># 1. sample and catalogues (MAST download lists, ~350 MB)
+mkdir -p data/scripts &amp;&amp; seq 1 107 | xargs -P 6 -I{} curl -s -f -o data/scripts/tesscurl_sector_{}_lc.sh \
+  https://archive.stsci.edu/missions/tess/download_scripts/sector/tesscurl_sector_{}_lc.sh
+.venv/bin/python scripts/01_select_targets.py
+.venv/bin/python scripts/03_catalogs.py
+
+# heavy steps run under the thermal guard on a fanless laptop (see tools/thermal/)
+caffeinate -i -s tools/thermal/daemon.sh &amp;
+G=&quot;.venv/bin/python tools/thermal/guarded_run.py --&quot;
+
+# 2. light curves (~12 GB), search, reliability
+$G .venv/bin/python scripts/02_download.py
+$G .venv/bin/python scripts/04_search.py --workers 3
+$G .venv/bin/python scripts/05_reliability.py inject --n 300
+$G .venv/bin/python scripts/05_reliability.py invert --n 200
+.venv/bin/python scripts/06_summarize.py &amp;&amp; .venv/bin/python scripts/check_known.py
+.venv/bin/python scripts/08_followup.py
+
+# 3. pixel files (~44 GB), localization, NASA cross-check
+.venv/bin/python scripts/10_download_tpfs.py                       # candidates and test stars
+.venv/bin/python scripts/10_download_tpfs.py &lt;TIC IDs of the weak signals&gt;
+.venv/bin/python scripts/11_spoc_period_check.py
+$G .venv/bin/python scripts/12_localize.py --workers 3
+$G .venv/bin/python scripts/12_localize.py --weak --workers 3
+.venv/bin/python scripts/16_weak_recheck.py
+
+# 4. statistical validation and transit fits
+.venv/bin/python scripts/13_triceratops_inputs.py
+$G .venv-tri/bin/python scripts/13_triceratops_run.py
+TRI_RUNS=3 $G .venv-tri/bin/python scripts/13_triceratops_run.py --cleared
+$G .venv/bin/python scripts/14_mcmc.py
+$G .venv/bin/python scripts/14_mcmc.py --only L98-59c TOI-700d --scale 3
+
+# 5. outputs
+.venv/bin/python scripts/15_dossiers.py &amp;&amp; .venv/bin/python scripts/09_report.py
+.venv/bin/python scripts/07_figures.py &amp;&amp; .venv/bin/python docs/make_figures.py
+.venv/bin/python docs/make_figures.py --dark &amp;&amp; .venv/bin/python site/build.py   # website figures and pages
+.venv/bin/python paper/make_figure.py &amp;&amp; .venv/bin/python paper/make_note.py
+.venv/bin/python -m pytest tests/
+</code></pre>
+<h3 id="compute">Compute</h3>
+<p>On an Apple M2 MacBook Air (8 cores, 16 GB, no fan, thermal guard active): search about 4.5 hours;
+injection and inversion tests a few hours alongside; localization of all candidates, test cases and
+injections about 10 minutes; TRICERATOPS about 3 hours (dominated by 10⁶-draw runs); MCMC under an hour.
+Raw data: 12 GB of compressed light curves and 44 GB of target pixel files, neither stored in this
+repository; every file can be re-downloaded from MAST by the scripts above.</p>
+<h3 id="determinism">Determinism</h3>
+<p>Random elements use fixed seeds: injection draws (seed 42), null-event placement in difference imaging
+(per-sector seeds), MCMC initialisation (seeds 1 and 2). TRICERATOPS's Monte Carlo is not seeded; its
+run-to-run scatter is reported with every FPP. Results can differ slightly if MAST reprocesses data or if
+the catalogues are re-downloaded at a later date.</p>
+<h3 id="tests">Tests</h3>
+<p><code>tests/</code> contains 13 tests: the search recovers an injected planet and both planets of a two-planet
+system in synthetic data and finds nothing strong in pure noise; flares are removed while transits
+survive; the period grid, transit masking and catalogue period relations behave as specified; vetting
+passes a clean planet, rejects an eclipsing binary with unequal eclipses and flags a secondary eclipse;
+the timescale-noise estimate matches white noise when it should; and 19-digit Gaia source IDs survive
+the neighbour bookkeeping exactly.</p>
+</div></section><section class="row " id="83-repository-map"><div class="lab"><h2>Repository map</h2><span class="no">8.3</span></div><div class="body">
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>path</th>
+<th>contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tess_search/</code></td>
+<td>library: target selection, download, cleaning, search, vetting, crossmatch, injection, pixels, localization, SPOC DV parsing, MCMC, assessments</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>numbered pipeline steps 01–16</td>
+</tr>
+<tr>
+<td><code>results/</code></td>
+<td>every result: per-star search records, signal tables, reliability runs, follow-up and hardening outputs, candidate dossiers</td>
+</tr>
+<tr>
+<td><code>results/candidates/</code></td>
+<td>one dossier per signal and a summary table</td>
+</tr>
+<tr>
+<td><code>results/hardening/</code></td>
+<td>localization, MCMC, TRICERATOPS, SPOC cross-check and weak-signal re-check outputs; draft ExoFOP upload</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>this technical write-up and its figures (<code>docs/make_figures.py</code>)</td>
+</tr>
+<tr>
+<td><code>paper/</code></td>
+<td>draft Research Note of the AAS and its figure</td>
+</tr>
+<tr>
+<td><code>REPORT.md</code></td>
+<td>generated summary of every number (<code>scripts/09_report.py</code>)</td>
+</tr>
+<tr>
+<td><code>EXPLAINER.md</code></td>
+<td>plain-language summary</td>
+</tr>
+<tr>
+<td><code>tools/thermal/</code></td>
+<td>thermal guard for long jobs on a fanless laptop</td>
+</tr>
+<tr>
+<td><code>tests/</code></td>
+<td>unit tests</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="row " id="84-data-and-acknowledgements"><div class="lab"><h2>Data and acknowledgements</h2><span class="no">8.4</span></div><div class="body">
+<p>This work uses data from the TESS mission, funded by NASA's Science Mission Directorate, obtained from
+the Mikulski Archive for Space Telescopes (MAST) at the Space Telescope Science Institute; light curves,
+target pixel files and Data Validation products from the Science Processing Operations Center (SPOC) at
+NASA Ames Research Center; the TESS Input Catalog; data from the European Space Agency mission Gaia,
+processed by the Gaia Data Processing and Analysis Consortium, accessed through the VizieR service at CDS
+Strasbourg; the Exoplanet Follow-up Observing Program (ExoFOP) and the NASA Exoplanet Archive, both
+operated by the California Institute of Technology under contract with NASA; and the open-source
+packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve,
+TESS_PRF and TRICERATOPS.</p></div></section><section class="row "><div class="lab"><h2>Continue</h2><span class="no">8 / 8</span></div><div class="body"><div class="pager"><a class="cbtn" href="07-weak-signals.html">← Weak signals</a><a class="cbtn" href="../follow-up.html">Follow-up guide →</a></div></div></section>
+<footer class="colophon"><div>TESS M-dwarf deep search</div><div><p><a href="https://github.com/Aidenn8">Aidenn8</a> · 2026 · <a href="https://github.com/Aidenn8/tess-planet-search">source on GitHub</a> · MIT License</p><p>This work uses TESS data from MAST and SPOC, the TESS Input Catalog, Gaia DR3 via VizieR, ExoFOP and the NASA Exoplanet Archive, and the open-source packages Astropy, Astroquery, NumPy, SciPy, pandas, Matplotlib, wotan, batman, emcee, lightkurve, TESS_PRF and TRICERATOPS.</p></div></footer>
+</div>
+</body>
+</html>
